@@ -1,0 +1,648 @@
+/* ── Page Card ────────────────────────────────────────────────── */
+
+.page-card {
+    background-color: white;
+    border-radius: 14px;
+    border: 1px solid #E8ECF0;
+    overflow: hidden;
+    flex: 1;
+}
+
+.page-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid #F0F2F5;
+}
+
+.page-card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #718096;
+    font-size: 16px;
+}
+
+/* ── Page Table ───────────────────────────────────────────────── */
+
+.page-table-wrapper {
+    overflow-x: auto;
+}
+
+.page-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.page-table thead tr {
+    background-color: #F7F8FA;
+}
+
+.page-table thead th {
+    padding: 10px 18px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: #718096;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid #E8ECF0;
+    white-space: nowrap;
+}
+
+.page-table tbody tr {
+    border-bottom: 1px solid #F0F2F5;
+    transition: background-color 0.15s;
+}
+
+.page-table tbody tr:hover {
+    background-color: #F7F8FA;
+}
+
+.page-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.page-table tbody td {
+    padding: 12px 18px;
+    font-size: 12px;
+    color: #1A202C;
+    white-space: nowrap;
+}
+
+/* ── Action Button ────────────────────────────────────────────── */
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    background-color: #E31837;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #C41230;
+}
+
+.action-btn i {
+    font-size: 16px;
+}
+
+.action-btn-outline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    background-color: white;
+    color: #4A5568;
+    border: 1px solid #E8ECF0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn-outline:hover {
+    border-color: #E31837;
+    color: #E31837;
+}
+
+/* ── Action Buttons in Table ──────────────────────────────────── */
+
+.action-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.approve-btn {
+    padding: 4px 10px;
+    background-color: #F0FFF4;
+    color: #276749;
+    border: 1px solid #C6F6D5;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.approve-btn:hover {
+    background-color: #276749;
+    color: white;
+}
+
+.reject-btn {
+    padding: 4px 10px;
+    background-color: #FFF5F5;
+    color: #C53030;
+    border: 1px solid #FED7D7;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.reject-btn:hover {
+    background-color: #C53030;
+    color: white;
+}
+
+.edit-btn {
+    padding: 4px 10px;
+    background-color: #EBF8FF;
+    color: #2B6CB0;
+    border: 1px solid #BEE3F8;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.edit-btn:hover {
+    background-color: #2B6CB0;
+    color: white;
+}
+
+.danger-btn {
+    padding: 4px 10px;
+    background-color: #FFF5F5;
+    color: #C53030;
+    border: 1px solid #FED7D7;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.danger-btn:hover {
+    background-color: #C53030;
+    color: white;
+}
+
+.btn-danger {
+    padding: 10px;
+    background-color: #C53030;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: white;
+    flex: 1;
+    transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #9B2C2C;
+}
+
+/* ── Leave Type Badges ────────────────────────────────────────── */
+
+.leave-type-cl {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background-color: #EBF8FF;
+    color: #2B6CB0;
+    border: 1px solid #BEE3F8;
+}
+
+.leave-type-sl {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background-color: #FFF5F5;
+    color: #C53030;
+    border: 1px solid #FED7D7;
+}
+
+.leave-type-pl {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background-color: #FAF5FF;
+    color: #6B46C1;
+    border: 1px solid #D6BCFA;
+}
+
+/* ── Role Badges ──────────────────────────────────────────────── */
+
+.role-employee {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background-color: #F0FFF4;
+    color: #276749;
+    border: 1px solid #C6F6D5;
+}
+
+.role-manager {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background-color: #EBF8FF;
+    color: #2B6CB0;
+    border: 1px solid #BEE3F8;
+}
+
+.role-admin {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background-color: #FAF5FF;
+    color: #6B46C1;
+    border: 1px solid #D6BCFA;
+}
+
+/* ── Status Badges ────────────────────────────────────────────── */
+
+.status-active {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background-color: #F0FFF4;
+    color: #276749;
+    border: 1px solid #C6F6D5;
+}
+
+.status-inactive {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background-color: #F7F8FA;
+    color: #718096;
+    border: 1px solid #E8ECF0;
+}
+
+.badge-bank-holiday {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background-color: #FFF5F5;
+    color: #C53030;
+    border: 1px solid #FED7D7;
+}
+
+/* ── Employee Cell ────────────────────────────────────────────── */
+
+.emp-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.emp-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1A202C;
+    margin: 0 0 2px;
+}
+
+.emp-code {
+    font-size: 10px;
+    color: #718096;
+    margin: 0;
+}
+
+.user-avatar-sm {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E31837, #FF6B6B);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+}
+
+/* ── Form Elements ────────────────────────────────────────────── */
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4A5568;
+    margin-bottom: 6px;
+}
+
+.form-input-field {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1A202C;
+    background-color: #F7FAFC;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.form-input-field:focus {
+    border-color: #E31837;
+    background-color: white;
+}
+
+.form-select-field {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1A202C;
+    background-color: #F7FAFC;
+    outline: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.form-select-field:focus {
+    border-color: #E31837;
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1A202C;
+    background-color: #F7FAFC;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-textarea:focus {
+    border-color: #E31837;
+    background-color: white;
+}
+
+/* ── Search Input ─────────────────────────────────────────────── */
+
+.search-input {
+    padding: 7px 12px;
+    border: 1px solid #E8ECF0;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #4A5568;
+    background-color: white;
+    outline: none;
+    width: 220px;
+}
+
+.search-input:focus {
+    border-color: #E31837;
+}
+
+/* ── Notification List ────────────────────────────────────────── */
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #F0F2F5;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: #F7F8FA;
+}
+
+.notification-item.unread {
+    background-color: #FAFBFF;
+}
+
+.notification-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.notification-icon-green {
+    background-color: #F0FFF4;
+    color: #276749;
+}
+
+.notification-icon-red {
+    background-color: #FFF5F5;
+    color: #C53030;
+}
+
+.notification-icon-blue {
+    background-color: #EBF8FF;
+    color: #2B6CB0;
+}
+
+.notification-icon-yellow {
+    background-color: #FFFBEB;
+    color: #B45309;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1A202C;
+    margin: 0 0 4px;
+}
+
+.notification-message {
+    font-size: 12px;
+    color: #718096;
+    margin: 0 0 4px;
+    line-height: 1.5;
+}
+
+.notification-time {
+    font-size: 11px;
+    color: #A0AEC0;
+    margin: 0;
+}
+
+.notification-unread-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #E31837;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+/* ── Quick Action ─────────────────────────────────────────────── */
+
+.quick-action-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #4A5568;
+    text-decoration: none;
+    transition: all 0.15s;
+    margin-bottom: 4px;
+    background-color: #F7F8FA;
+}
+
+.quick-action-item:hover {
+    background-color: #FFF0F0;
+    color: #E31837;
+}
+
+.quick-action-item i {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* ── Error Pages ──────────────────────────────────────────────── */
+
+.error-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F0F2F5;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.error-card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #E8ECF0;
+}
+
+.error-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+}
+
+.error-icon-red {
+    background-color: #FFF5F5;
+    color: #C53030;
+}
+
+.error-icon-yellow {
+    background-color: #FFFBEB;
+    color: #B45309;
+}
+
+.error-code {
+    font-size: 64px;
+    font-weight: 700;
+    color: #E31837;
+    margin: 0 0 8px;
+    line-height: 1;
+}
+
+.error-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1A202C;
+    margin: 0 0 12px;
+}
+
+.error-message {
+    font-size: 14px;
+    color: #718096;
+    margin: 0 0 24px;
+    line-height: 1.6;
+}
+
+/* ── Filter bar (shared with attendance) ──────────────────────── */
+
+.att-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.att-select {
+    padding: 7px 12px;
+    border: 1px solid #E8ECF0;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #4A5568;
+    background-color: white;
+    outline: none;
+    cursor: pointer;
+}
+
+.att-filter-btn {
+    padding: 7px 16px;
+    background-color: #E31837;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.att-filter-btn:hover {
+    background-color: #C41230;
+}
+
+.att-no-action {
+    font-size: 11px;
+    color: #A0AEC0;
+}

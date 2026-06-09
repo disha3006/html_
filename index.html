@@ -1,3701 +1,1420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
 </head>
 <body>
 <div>
   <p>
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
+      // ── Approve leave ──────────────────────────────────────────
 
-    <!-- ── Sidebar Fragment ─────────────────────────────────────────── -->
-    <aside th:fragment="sidebar" class="sidebar">
+      @Transactional
+      public String approveLeave(
+      String managerAdid, Long leaveId) {
 
-      <!-- Logo -->
-      <div class="sidebar-logo">
-        <img th:src="@{/images/hdfc-logo.png}"
-             alt="HDFC Bank"
-             class="hdfc-logo"/>
-        <div class="sidebar-divider"></div>
-        <span class="sidebar-app-name">VendorTrack</span>
-      </div>
+      User manager = getManager(managerAdid);
 
-      <!-- User pill -->
-      <div class="sidebar-user">
-        <div class="user-avatar">
-            <span th:text="${#strings.toUpperCase(
-                    #strings.substring(fullName, 0, 2))}">
-                AK
-            </span>
-        </div>
-        <div class="user-info">
-          <p class="user-name" th:text="${fullName}">
-            Arjun Kumar
-          </p>
-          <p class="user-meta">
-            <span th:text="${empCode}">EMP001</span>
-            ·
-            <span th:text="${role}">Employee</span>
-          </p>
-        </div>
-      </div>
+      LeaveRequest leave = leaveRequestRepository
+      .findById(leaveId)
+      .orElseThrow(() ->
+      new RuntimeException(
+      "Leave not found"));
 
-      <!-- Nav — Employee -->
-      <nav class="sidebar-nav"
-           th:if="${role == 'EMPLOYEE'}">
-        <p class="nav-section-label">MENU</p>
-        <a href="/dashboard"
-           th:classappend="${activePage == 'dashboard'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-layout-dashboard"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="/attendance"
-           th:classappend="${activePage == 'attendance'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-clock"></i>
-          <span>Attendance</span>
-        </a>
-        <a href="/leaves"
-           th:classappend="${activePage == 'leaves'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-calendar-event"></i>
-          <span>Leave</span>
-        </a>
-        <a href="/corrections"
-           th:classappend="${activePage == 'corrections'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-edit"></i>
-          <span>Corrections</span>
-        </a>
-        <a href="/notifications"
-           th:classappend="${activePage == 'notifications'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-bell"></i>
-          <span>Notifications</span>
-          <span class="nav-badge"
-                th:if="${unreadCount != null and unreadCount > 0}"
-                th:text="${unreadCount}">3</span>
-        </a>
-        <a href="/holidays"
-           th:classappend="${activePage == 'holidays'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-calendar"></i>
-          <span>Holidays</span>
-        </a>
-      </nav>
+      // Check belongs to manager's team
+      if (!leave.getUser().getManager().getId()
+      .equals(manager.getId())) {
+      return "error:Unauthorized";
+      }
 
-      <!-- Nav — Manager -->
-      <nav class="sidebar-nav"
-           th:if="${role == 'MANAGER'}">
-        <p class="nav-section-label">MENU</p>
-        <a href="/manager/dashboard"
-           th:classappend="${activePage == 'dashboard'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-layout-dashboard"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="/manager/team-attendance"
-           th:classappend="${activePage == 'team-attendance'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-users"></i>
-          <span>Team Attendance</span>
-        </a>
-        <a href="/manager/leave-approvals"
-           th:classappend="${activePage == 'leave-approvals'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-calendar-event"></i>
-          <span>Leave Approvals</span>
-          <span class="nav-badge"
-                th:if="${pendingLeaves != null and pendingLeaves > 0}"
-                th:text="${pendingLeaves}">2</span>
-        </a>
-        <a href="/manager/correction-approvals"
-           th:classappend="${activePage == 'correction-approvals'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-edit"></i>
-          <span>Corrections</span>
-          <span class="nav-badge"
-                th:if="${pendingCorrections != null and pendingCorrections > 0}"
-                th:text="${pendingCorrections}">1</span>
-        </a>
-        <a href="/notifications"
-           th:classappend="${activePage == 'notifications'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-bell"></i>
-          <span>Notifications</span>
-        </a>
-        <a href="/holidays"
-           th:classappend="${activePage == 'holidays'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-calendar"></i>
-          <span>Holidays</span>
-        </a>
-      </nav>
+      // Update status
+      leave.setStatus(LeaveStatus.APPROVED);
+      leave.setApprovedBy(manager);
+      leave.setActionedAt(LocalDateTime.now());
+      leaveRequestRepository.save(leave);
 
-      <!-- Nav — Admin -->
-      <nav class="sidebar-nav"
-           th:if="${role == 'ADMIN'}">
-        <p class="nav-section-label">MENU</p>
-        <a href="/admin/dashboard"
-           th:classappend="${activePage == 'dashboard'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-layout-dashboard"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="/admin/users"
-           th:classappend="${activePage == 'users'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-users"></i>
-          <span>Users</span>
-        </a>
-        <a href="/admin/vendors"
-           th:classappend="${activePage == 'vendors'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-building"></i>
-          <span>Vendors</span>
-        </a>
-        <a href="/admin/projects"
-           th:classappend="${activePage == 'projects'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-folder"></i>
-          <span>Projects</span>
-        </a>
-        <a href="/admin/shifts"
-           th:classappend="${activePage == 'shifts'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-clock"></i>
-          <span>Shifts</span>
-        </a>
-        <a href="/admin/holidays"
-           th:classappend="${activePage == 'holidays'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-calendar"></i>
-          <span>Holidays</span>
-        </a>
-        <a href="/admin/reports"
-           th:classappend="${activePage == 'reports'} ? 'active'"
-           class="nav-item">
-          <i class="ti ti-chart-bar"></i>
-          <span>Reports</span>
-        </a>
-      </nav>
+      // Mark attendance as ON_LEAVE
+      markAttendanceAsOnLeave(leave);
 
-      <!-- Logout -->
-      <div class="sidebar-footer">
-        <a href="/logout-page" class="logout-btn">
-          <i class="ti ti-logout"></i>
-          <span>Logout</span>
-        </a>
-      </div>
+      // Notify employee
+      notificationService.sendNotification(
+      leave.getUser(),
+      "Leave Approved",
+      "Your " + leave.getLeaveType().name()
+      + " leave for "
+      + leave.getStartDate() + " to "
+      + leave.getEndDate()
+      + " has been approved by "
+      + manager.getFullName(),
+      NotificationType.LEAVE_APPROVED);
 
-    </aside>
-    </html>
-    —--------------------------------------------------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Leave</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
+      log.info("Leave approved: {} by {}",
+      leaveId, managerAdid);
 
-    <div class="app-layout">
+      return "success:Leave approved successfully";
+      }
 
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+      // ── Reject leave ───────────────────────────────────────────
 
-      <!-- Main Content -->
-      <main class="main-content">
+      @Transactional
+      public String rejectLeave(
+      String managerAdid,
+      Long leaveId,
+      String rejectionReason) {
+
+      User manager = getManager(managerAdid);
+
+      LeaveRequest leave = leaveRequestRepository
+      .findById(leaveId)
+      .orElseThrow(() ->
+      new RuntimeException(
+      "Leave not found"));
+
+      if (!leave.getUser().getManager().getId()
+      .equals(manager.getId())) {
+      return "error:Unauthorized";
+      }
+
+      leave.setStatus(LeaveStatus.REJECTED);
+      leave.setApprovedBy(manager);
+      leave.setRejectionReason(rejectionReason);
+      leave.setActionedAt(LocalDateTime.now());
+      leaveRequestRepository.save(leave);
+
+      // Notify employee
+      notificationService.sendNotification(
+      leave.getUser(),
+      "Leave Rejected",
+      "Your " + leave.getLeaveType().name()
+      + " leave for "
+      + leave.getStartDate() + " to "
+      + leave.getEndDate()
+      + " has been rejected. Reason: "
+      + rejectionReason,
+      NotificationType.LEAVE_REJECTED);
+
+      log.info("Leave rejected: {} by {}",
+      leaveId, managerAdid);
+
+      return "success:Leave rejected";
+      }
+
+      // ── Mark attendance as ON_LEAVE ────────────────────────────
+
+      private void markAttendanceAsOnLeave(
+      LeaveRequest leave) {
+
+      LocalDate current = leave.getStartDate();
+
+      while (!current.isAfter(leave.getEndDate())) {
+
+      if (current.getDayOfWeek()
+      != DayOfWeek.SATURDAY
+      && current.getDayOfWeek()
+      != DayOfWeek.SUNDAY) {
+
+      OptionalAttendance> existing =
+        attendanceRepository
+        .findByUserAndDate(
+        leave.getUser(),
+        current);
+
+        if (existing.isPresent()) {
+        existing.get().setStatus(
+        AttendanceStatus.ON_LEAVE);
+        attendanceRepository
+        .save(existing.get());
+        } else {
+        Attendance attendance =
+        Attendance.builder()
+        .user(leave.getUser())
+        .date(current)
+        .status(AttendanceStatus
+        .ON_LEAVE)
+        .isRegularized(false)
+        .isWorkedOnHoliday(false)
+        .build();
+        attendanceRepository
+        .save(attendance);
+        }
+        }
+        current = current.plusDays(1);
+        }
+        }
+
+        // ── Helper ─────────────────────────────────────────────────
+
+        private User getManager(String adid) {
+        return userRepository.findByAdid(adid)
+        .orElseThrow(() ->
+        new RuntimeException(
+        "Manager not found: "
+        + adid));
+        }
+        }
+    ----------------------------------------------------------------------
+    package com.example.app.service;
+
+    import com.example.app.model.*;
+    import com.example.app.repository.*;
+    import lombok.RequiredArgsConstructor;
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.stereotype.Service;
+    import org.springframework.transaction.annotation.Transactional;
+
+    import java.time.LocalDateTime;
+    import java.util.List;
+
+    @Slf4j
+    @Service
+    @RequiredArgsConstructor
+    public class CorrectionApprovalService {
+
+    private final CorrectionRepository
+    correctionRepository;
+    private final AttendanceRepository
+    attendanceRepository;
+    private final UserRepository
+    userRepository;
+    private final NotificationService
+    notificationService;
+
+    // ── Get pending corrections ────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public ListCorrection> getPendingCorrections(
+    String managerAdid) {
+
+    User manager = getManager(managerAdid);
+
+    return correctionRepository
+    .findByUser_Manager_IdAndStatus(
+    manager.getId(),
+    CorrectionStatus.PENDING);
+    }
+
+    // ── Get pending correction count ───────────────────────────
+
+    @Transactional(readOnly = true)
+    public long getPendingCorrectionCount(
+    String managerAdid) {
+
+    User manager = getManager(managerAdid);
+
+    return correctionRepository
+    .countByUser_Manager_IdAndStatus(
+    manager.getId(),
+    CorrectionStatus.PENDING);
+    }
+
+    // ── Approve correction ─────────────────────────────────────
+
+    @Transactional
+    public String approveCorrection(
+    String managerAdid, Long correctionId) {
+
+    User manager = getManager(managerAdid);
+
+    Correction correction = correctionRepository
+    .findById(correctionId)
+    .orElseThrow(() ->
+    new RuntimeException(
+    "Correction not found"));
+
+    if (!correction.getUser().getManager().getId()
+    .equals(manager.getId())) {
+    return "error:Unauthorized";
+    }
+
+    // Update attendance record
+    Attendance attendance =
+    correction.getAttendance();
+
+    if (correction.getRequestedClockIn() != null) {
+    attendance.setClockIn(
+    correction.getRequestedClockIn());
+    }
+    if (correction.getRequestedClockOut() != null) {
+    attendance.setClockOut(
+    correction.getRequestedClockOut());
+    }
+
+    attendance.setIsRegularized(true);
+    attendanceRepository.save(attendance);
+
+    // Update correction
+    correction.setStatus(
+    CorrectionStatus.APPROVED);
+    correction.setReviewedBy(manager);
+    correction.setActionedAt(
+    LocalDateTime.now());
+    correctionRepository.save(correction);
+
+    // Notify employee
+    notificationService.sendNotification(
+    correction.getUser(),
+    "Correction Approved",
+    "Your correction request for "
+    + correction.getCorrectionDate()
+    + " has been approved by "
+    + manager.getFullName(),
+    NotificationType.CORRECTION_APPROVED);
+
+    log.info("Correction approved: {} by {}",
+    correctionId, managerAdid);
+
+    return "success:Correction approved";
+    }
+
+    // ── Reject correction ──────────────────────────────────────
+
+    @Transactional
+    public String rejectCorrection(
+    String managerAdid,
+    Long correctionId,
+    String reason) {
+
+    User manager = getManager(managerAdid);
+
+    Correction correction = correctionRepository
+    .findById(correctionId)
+    .orElseThrow(() ->
+    new RuntimeException(
+    "Correction not found"));
+
+    if (!correction.getUser().getManager().getId()
+    .equals(manager.getId())) {
+    return "error:Unauthorized";
+    }
+
+    correction.setStatus(
+    CorrectionStatus.REJECTED);
+    correction.setReviewedBy(manager);
+    correction.setRejectionReason(reason);
+    correction.setActionedAt(
+    LocalDateTime.now());
+    correctionRepository.save(correction);
+
+    // Notify employee
+    notificationService.sendNotification(
+    correction.getUser(),
+    "Correction Rejected",
+    "Your correction request for "
+    + correction.getCorrectionDate()
+    + " has been rejected. Reason: "
+    + reason,
+    NotificationType.CORRECTION_REJECTED);
+
+    log.info("Correction rejected: {} by {}",
+    correctionId, managerAdid);
+
+    return "success:Correction rejected";
+    }
+
+    // ── Helper ─────────────────────────────────────────────────
+
+    private User getManager(String adid) {
+    return userRepository.findByAdid(adid)
+    .orElseThrow(() ->
+    new RuntimeException(
+    "Manager not found: "
+    + adid));
+    }
+    }
+    -----------------------------------------------------------------------------
+    package com.example.app.service;
+
+    import com.example.app.model.*;
+    import com.example.app.repository.*;
+    import lombok.RequiredArgsConstructor;
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.stereotype.Service;
+    import org.springframework.transaction.annotation.Transactional;
+
+    import java.time.LocalDate;
+    import java.util.List;
+
+    @Slf4j
+    @Service
+    @RequiredArgsConstructor
+    public class ManagerService {
+
+    private final AttendanceRepository
+    attendanceRepository;
+    private final UserRepository
+    userRepository;
+
+    // ── Get team attendance for a date ─────────────────────────
+
+    @Transactional(readOnly = true)
+    public ListAttendance> getTeamAttendance(
+      String managerAdid, LocalDate date) {
+
+      User manager = userRepository
+      .findByAdid(managerAdid)
+      .orElseThrow(() ->
+      new RuntimeException(
+      "Manager not found"));
+
+      return attendanceRepository
+      .findByDateAndManagerId(
+      date, manager.getId());
+      }
+
+      // ── Get team members ───────────────────────────────────────
+
+      @Transactional(readOnly = true)
+      public ListUser> getTeamMembers(
+        String managerAdid) {
+
+        User manager = userRepository
+        .findByAdid(managerAdid)
+        .orElseThrow(() ->
+        new RuntimeException(
+        "Manager not found"));
+
+        return userRepository
+        .findByManagerId(manager.getId());
+        }
+        }
+        ----------------------------------------------------
+        package com.example.app.service;
+
+        import com.example.app.model.*;
+        import com.example.app.repository.*;
+        import lombok.RequiredArgsConstructor;
+        import lombok.extern.slf4j.Slf4j;
+        import org.springframework.stereotype.Service;
+        import org.springframework.transaction.annotation.Transactional;
+
+        import java.time.LocalDate;
+        import java.util.List;
+
+        @Slf4j
+        @Service
+        @RequiredArgsConstructor
+        public class ManagerService {
+
+        private final AttendanceRepository
+        attendanceRepository;
+        private final UserRepository
+        userRepository;
+
+        // ── Get team attendance for a date ─────────────────────────
+
+        @Transactional(readOnly = true)
+        public ListAttendance> getTeamAttendance(
+          String managerAdid, LocalDate date) {
+
+          User manager = userRepository
+          .findByAdid(managerAdid)
+          .orElseThrow(() ->
+          new RuntimeException(
+          "Manager not found: "
+          + managerAdid));
+
+          log.info("Getting team attendance for " +
+          "manager: {} date: {}",
+          managerAdid, date);
+
+          return attendanceRepository
+          .findByDateAndManagerId(
+          date, manager.getId());
+          }
+
+          // ── Get all team members ───────────────────────────────────
+
+          @Transactional(readOnly = true)
+          public ListUser> getTeamMembers(
+            String managerAdid) {
+
+            User manager = userRepository
+            .findByAdid(managerAdid)
+            .orElseThrow(() ->
+            new RuntimeException(
+            "Manager not found: "
+            + managerAdid));
+
+            log.info("Getting team members for " +
+            "manager: {}", managerAdid);
+
+            return userRepository
+            .findByManagerId(manager.getId());
+            }
+
+            // ── Get team size ──────────────────────────────────────────
+
+            @Transactional(readOnly = true)
+            public long getTeamSize(String managerAdid) {
+
+            User manager = userRepository
+            .findByAdid(managerAdid)
+            .orElseThrow(() ->
+            new RuntimeException(
+            "Manager not found: "
+            + managerAdid));
+
+            return userRepository
+            .countByManagerId(manager.getId());
+            }
+            }
+
+    --------------------------------------------
+    package com.example.app.controller;
+
+    import com.example.app.model.Attendance;
+    import com.example.app.model.AttendanceStatus;
+    import com.example.app.model.Correction;
+    import com.example.app.model.LeaveRequest;
+    import com.example.app.model.User;
+    import com.example.app.repository.UserRepository;
+    import com.example.app.service.CorrectionApprovalService;
+    import com.example.app.service.LeaveApprovalService;
+    import com.example.app.service.ManagerService;
+    import jakarta.servlet.http.HttpServletResponse;
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.format.annotation.DateTimeFormat;
+    import org.springframework.http.HttpHeaders;
+    import org.springframework.security.core.Authentication;
+    import org.springframework.stereotype.Controller;
+    import org.springframework.ui.Model;
+    import org.springframework.web.bind.annotation.*;
+    import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+    import java.time.LocalDate;
+    import java.util.List;
+
+    @Slf4j
+    @Controller
+    @RequestMapping("/manager")
+    public class ManagerDashboardController
+    extends BaseController {
+
+    private final ManagerService            managerService;
+    private final LeaveApprovalService      leaveApprovalService;
+    private final CorrectionApprovalService correctionApprovalService;
+
+    public ManagerDashboardController(
+    UserRepository userRepository,
+    ManagerService managerService,
+    LeaveApprovalService leaveApprovalService,
+    CorrectionApprovalService
+    correctionApprovalService) {
+    super(userRepository);
+    this.managerService            = managerService;
+    this.leaveApprovalService      = leaveApprovalService;
+    this.correctionApprovalService = correctionApprovalService;
+    }
+
+    // ── Manager Dashboard ──────────────────────────────────────
+
+    @GetMapping("/dashboard")
+    public String managerDashboard(
+    Authentication authentication,
+    Model model,
+    HttpServletResponse response) {
+
+    response.setHeader(HttpHeaders.CACHE_CONTROL,
+    "no-cache, no-store, must-revalidate");
+
+    String adid = authentication.getName();
+    loadUserToModel(authentication, model);
+    model.addAttribute("activePage", "dashboard");
+
+    // Pending counts for sidebar badges
+    long pendingLeaves =
+    leaveApprovalService
+    .getPendingLeaveCount(adid);
+    long pendingCorrections =
+    correctionApprovalService
+    .getPendingCorrectionCount(adid);
+
+    model.addAttribute("pendingLeaves",
+    pendingLeaves);
+    model.addAttribute("pendingCorrections",
+    pendingCorrections);
+
+    // Today's team attendance
+    ListAttendance> teamToday =
+    managerService.getTeamAttendance(
+    adid, LocalDate.now());
+
+    long presentCount = teamToday.stream()
+    .filter(a -> a.getStatus()
+    == AttendanceStatus.PRESENT
+    || a.getStatus()
+    == AttendanceStatus.LATE
+    || a.getStatus()
+    == AttendanceStatus.HALF_DAY)
+    .count();
+
+    long absentCount = teamToday.stream()
+    .filter(a -> a.getStatus()
+    == AttendanceStatus.ABSENT)
+    .count();
+
+    long onLeaveCount = teamToday.stream()
+    .filter(a -> a.getStatus()
+    == AttendanceStatus.ON_LEAVE)
+    .count();
+
+    // Team size
+    long teamSize = managerService
+    .getTeamSize(adid);
+
+    // Recent pending leaves for dashboard
+    ListLeaveRequest> recentLeaves =
+      leaveApprovalService
+      .getPendingLeaves(adid);
+
+      model.addAttribute("teamToday",    teamToday);
+      model.addAttribute("presentCount", presentCount);
+      model.addAttribute("absentCount",  absentCount);
+      model.addAttribute("onLeaveCount", onLeaveCount);
+      model.addAttribute("teamSize",     teamSize);
+      model.addAttribute("recentLeaves", recentLeaves);
+      model.addAttribute("todayDate",    LocalDate.now());
+
+      return "manager/dashboard";
+      }
+
+      // ── Team Attendance ────────────────────────────────────────
+
+      @GetMapping("/team-attendance")
+      public String teamAttendance(
+      @RequestParam(value = "date",
+      required = false)
+      @DateTimeFormat(iso =
+      DateTimeFormat.ISO.DATE)
+      LocalDate date,
+      Authentication authentication,
+      Model model) {
+
+      if (date == null) date = LocalDate.now();
+
+      String adid = authentication.getName();
+      loadUserToModel(authentication, model);
+      model.addAttribute("activePage",
+      "team-attendance");
+
+      ListAttendance> teamAttendance =
+        managerService.getTeamAttendance(
+        adid, date);
+
+        // Stats
+        long presentCount = teamAttendance.stream()
+        .filter(a -> a.getStatus()
+        == AttendanceStatus.PRESENT
+        || a.getStatus()
+        == AttendanceStatus.LATE
+        || a.getStatus()
+        == AttendanceStatus.HALF_DAY)
+        .count();
+
+        long absentCount = teamAttendance.stream()
+        .filter(a -> a.getStatus()
+        == AttendanceStatus.ABSENT)
+        .count();
+
+        long lateCount = teamAttendance.stream()
+        .filter(a -> a.getStatus()
+        == AttendanceStatus.LATE)
+        .count();
+
+        long onLeaveCount = teamAttendance.stream()
+        .filter(a -> a.getStatus()
+        == AttendanceStatus.ON_LEAVE)
+        .count();
+
+        long pendingLeaves =
+        leaveApprovalService
+        .getPendingLeaveCount(adid);
+        long pendingCorrections =
+        correctionApprovalService
+        .getPendingCorrectionCount(adid);
+
+        model.addAttribute("teamAttendance",
+        teamAttendance);
+        model.addAttribute("selectedDate",   date);
+        model.addAttribute("presentCount",   presentCount);
+        model.addAttribute("absentCount",    absentCount);
+        model.addAttribute("lateCount",      lateCount);
+        model.addAttribute("onLeaveCount",   onLeaveCount);
+        model.addAttribute("pendingLeaves",
+        pendingLeaves);
+        model.addAttribute("pendingCorrections",
+        pendingCorrections);
+
+        return "manager/team-attendance";
+        }
+
+        // ── Leave Approvals ────────────────────────────────────────
+
+        @GetMapping("/leave-approvals")
+        public String leaveApprovals(
+        Authentication authentication,
+        Model model) {
+
+        String adid = authentication.getName();
+        loadUserToModel(authentication, model);
+        model.addAttribute("activePage",
+        "leave-approvals");
+
+        ListLeaveRequest> pendingLeaves =
+          leaveApprovalService
+          .getPendingLeaves(adid);
+
+          long pendingLeaveCount =
+          leaveApprovalService
+          .getPendingLeaveCount(adid);
+          long pendingCorrections =
+          correctionApprovalService
+          .getPendingCorrectionCount(adid);
+
+          model.addAttribute("pendingLeaves",
+          pendingLeaves);
+          model.addAttribute("pendingLeaveCount",
+          pendingLeaveCount);
+          model.addAttribute("pendingCorrections",
+          pendingCorrections);
+
+          return "manager/leave-approvals";
+          }
+
+          @PostMapping("/leaves/approve/{id}")
+          public String approveLeave(
+          @PathVariable Long id,
+          Authentication authentication,
+          RedirectAttributes redirectAttributes) {
+
+          String adid = authentication.getName();
+          String result = leaveApprovalService
+          .approveLeave(adid, id);
+
+          if (result.startsWith("success:")) {
+          redirectAttributes.addFlashAttribute(
+          "successMessage",
+          result.substring(8));
+          } else {
+          redirectAttributes.addFlashAttribute(
+          "errorMessage",
+          result.substring(6));
+          }
+
+          return "redirect:/manager/leave-approvals";
+          }
+
+          @PostMapping("/leaves/reject/{id}")
+          public String rejectLeave(
+          @PathVariable Long id,
+          @RequestParam String rejectionReason,
+          Authentication authentication,
+          RedirectAttributes redirectAttributes) {
+
+          String adid = authentication.getName();
+          String result = leaveApprovalService
+          .rejectLeave(adid, id,
+          rejectionReason);
+
+          if (result.startsWith("success:")) {
+          redirectAttributes.addFlashAttribute(
+          "successMessage",
+          result.substring(8));
+          } else {
+          redirectAttributes.addFlashAttribute(
+          "errorMessage",
+          result.substring(6));
+          }
+
+          return "redirect:/manager/leave-approvals";
+          }
+
+          // ── Correction Approvals ───────────────────────────────────
+
+          @GetMapping("/correction-approvals")
+          public String correctionApprovals(
+          Authentication authentication,
+          Model model) {
+
+          String adid = authentication.getName();
+          loadUserToModel(authentication, model);
+          model.addAttribute("activePage",
+          "correction-approvals");
+
+          ListCorrection> pendingCorrections =
+            correctionApprovalService
+            .getPendingCorrections(adid);
+
+            long pendingLeaves =
+            leaveApprovalService
+            .getPendingLeaveCount(adid);
+            long pendingCorrectionCount =
+            correctionApprovalService
+            .getPendingCorrectionCount(adid);
+
+            model.addAttribute("pendingCorrections",
+            pendingCorrections);
+            model.addAttribute("pendingLeaves",
+            pendingLeaves);
+            model.addAttribute("pendingCorrectionCount",
+            pendingCorrectionCount);
+
+            return "manager/correction-approvals";
+            }
+
+            @PostMapping("/corrections/approve/{id}")
+            public String approveCorrection(
+            @PathVariable Long id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+            String adid = authentication.getName();
+            String result = correctionApprovalService
+            .approveCorrection(adid, id);
+
+            if (result.startsWith("success:")) {
+            redirectAttributes.addFlashAttribute(
+            "successMessage",
+            result.substring(8));
+            } else {
+            redirectAttributes.addFlashAttribute(
+            "errorMessage",
+            result.substring(6));
+            }
+
+            return "redirect:/manager/correction-approvals";
+            }
+
+            @PostMapping("/corrections/reject/{id}")
+            public String rejectCorrection(
+            @PathVariable Long id,
+            @RequestParam String reason,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+            String adid = authentication.getName();
+            String result = correctionApprovalService
+            .rejectCorrection(adid, id, reason);
+
+            if (result.startsWith("success:")) {
+            redirectAttributes.addFlashAttribute(
+            "successMessage",
+            result.substring(8));
+            } else {
+            redirectAttributes.addFlashAttribute(
+            "errorMessage",
+            result.substring(6));
+            }
+
+            return "redirect:/manager/correction-approvals";
+            }
+            }
+
+    ------------------------------------------------------------
+
+    <pre>
+  <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VendorTrack — Leave Approvals</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/pages.css}">
+    <link rel="stylesheet" th:href="@{/css/leave-approvals.css}">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+  <!-- Main Content -->
+    <main class="main-content">
 
         <!-- Top bar -->
         <div class="top-bar">
-          <div>
-            <h1 class="page-title">Leave</h1>
-            <p class="page-subtitle">
-              Apply and track your leave requests
-            </p>
-          </div>
-          <!-- Apply Leave Button -->
-          <button class="action-btn"
-                  onclick="openApplyModal()">
-            <i class="ti ti-plus"></i>
-            Apply Leave
-          </button>
-        </div>
-
-        <!-- Leave Balance Cards -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">CASUAL LEAVE</p>
-              <div class="stat-icon stat-icon-green">
-                <i class="ti ti-sun"></i>
-              </div>
-            </div>
-            <p class="stat-value">8</p>
-            <p class="stat-sub">of 12 remaining</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">SICK LEAVE</p>
-              <div class="stat-icon stat-icon-yellow">
-                <i class="ti ti-heart-rate-monitor"></i>
-              </div>
-            </div>
-            <p class="stat-value stat-value-yellow">10</p>
-            <p class="stat-sub">of 12 remaining</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">PRIVILEGED LEAVE</p>
-              <div class="stat-icon stat-icon-blue">
-                <i class="ti ti-star"></i>
-              </div>
-            </div>
-            <p class="stat-value">12</p>
-            <p class="stat-sub">of 15 remaining</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">TOTAL TAKEN</p>
-              <div class="stat-icon stat-icon-red">
-                <i class="ti ti-calendar-minus"></i>
-              </div>
-            </div>
-            <p class="stat-value stat-value-red">7</p>
-            <p class="stat-sub">days this year</p>
-          </div>
-        </div>
-
-        <!-- Leave History -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-calendar-event"></i>
-              <p class="card-title">Leave History</p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>TYPE</th>
-                <th>FROM</th>
-                <th>TO</th>
-                <th>DAYS</th>
-                <th>REASON</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td><span class="leave-type-cl">CL</span></td>
-                <td>15 May 2026</td>
-                <td>16 May 2026</td>
-                <td>2</td>
-                <td>Personal work</td>
-                <td><span class="badge-pending">Pending</span></td>
-                <td>
-                  <button class="danger-btn"
-                          onclick="cancelLeave(1)">
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="leave-type-sl">SL</span></td>
-                <td>28 Apr 2026</td>
-                <td>28 Apr 2026</td>
-                <td>1</td>
-                <td>Not feeling well</td>
-                <td><span class="badge-approved">Approved</span></td>
-                <td><span class="att-no-action">—</span></td>
-              </tr>
-              <tr>
-                <td><span class="leave-type-pl">PL</span></td>
-                <td>10 Mar 2026</td>
-                <td>12 Mar 2026</td>
-                <td>3</td>
-                <td>Family function</td>
-                <td><span class="badge-rejected">Rejected</span></td>
-                <td><span class="att-no-action">—</span></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-    </div>
-
-    <!-- Apply Leave Modal -->
-    <div class="modal-overlay" id="applyModal">
-      <div class="modal-card" style="width:420px;">
-        <div class="modal-header">
-          <div>
-            <p class="modal-title">Apply for Leave</p>
-            <p class="modal-subtitle">
-              Fill in the details below
-            </p>
-          </div>
-          <button class="modal-close"
-                  onclick="closeApplyModal()">
-            <i class="ti ti-x"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form th:action="@{/leaves/apply}"
-                method="post">
-            <input type="hidden"
-                   th:name="${_csrf.parameterName}"
-                   th:value="${_csrf.token}"/>
-
-            <!-- Leave Type -->
-            <div class="form-group">
-              <label class="form-label">Leave Type</label>
-              <select name="leaveType"
-                      class="form-select-field"
-                      required>
-                <option value="">Select type</option>
-                <option value="CL">
-                  Casual Leave (CL)
-                </option>
-                <option value="SL">
-                  Sick Leave (SL)
-                </option>
-                <option value="PL">
-                  Privileged Leave (PL)
-                </option>
-              </select>
-            </div>
-
-            <!-- Start Date -->
-            <div class="form-group">
-              <label class="form-label">From Date</label>
-              <input type="date"
-                     name="startDate"
-                     class="form-input-field"
-                     required/>
-            </div>
-
-            <!-- End Date -->
-            <div class="form-group">
-              <label class="form-label">To Date</label>
-              <input type="date"
-                     name="endDate"
-                     class="form-input-field"
-                     required/>
-            </div>
-
-            <!-- Reason -->
-            <div class="form-group">
-              <label class="form-label">Reason</label>
-              <textarea name="reason"
-                        class="form-textarea"
-                        rows="3"
-                        placeholder="Enter reason for leave"
-                        required></textarea>
-            </div>
-
-            <!-- Buttons -->
-            <div class="modal-actions">
-              <button type="button"
-                      class="btn-secondary"
-                      onclick="closeApplyModal()">
-                Cancel
-              </button>
-              <button type="submit"
-                      class="btn-primary">
-                Submit
-              </button>
-            </div>
-
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/leave.js}"></script>
-    </body>
-    </html>
-    —-----------------------------------------------------------------------------------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Corrections</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-    <div class="app-layout">
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-      <!-- Main Content -->
-      <main class="main-content">
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Corrections</h1>
-            <p class="page-subtitle">
-              Raise and track correction requests
-            </p>
-          </div>
-        </div>
-        <!-- Correction History -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-edit"></i>
-              <p class="card-title">My Corrections</p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>DATE</th>
-                <th>TYPE</th>
-                <th>REQUESTED IN</th>
-                <th>REQUESTED OUT</th>
-                <th>REASON</th>
-                <th>STATUS</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>12 May 2026</td>
-                <td>Missed Clock Out</td>
-                <td>09:12 AM</td>
-                <td>06:30 PM</td>
-                <td>Forgot to clock out</td>
-                <td>
-<span class="badge-pending">
-Pending
-</span>
-                </td>
-              </tr>
-              <tr>
-                <td>05 May 2026</td>
-                <td>Wrong Time</td>
-                <td>09:00 AM</td>
-                <td>06:00 PM</td>
-                <td>System error</td>
-                <td>
-<span class="badge-approved">
-Approved
-</span>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-    —-----------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Notifications</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Notifications</h1>
-            <p class="page-subtitle">
-              Your alerts and updates
-            </p>
-          </div>
-          <button class="action-btn-outline"
-                  onclick="markAllRead()">
-            <i class="ti ti-checks"></i>
-            Mark all read
-          </button>
-        </div>
-
-        <!-- Notifications List -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-bell"></i>
-              <p class="card-title">All Notifications</p>
-            </div>
-          </div>
-          <div class="notification-list">
-
-            <!-- Unread -->
-            <div class="notification-item unread">
-              <div class="notification-icon
-                                notification-icon-green">
-                <i class="ti ti-calendar-check"></i>
-              </div>
-              <div class="notification-content">
-                <p class="notification-title">
-                  Leave Approved
+            <div>
+                <h1 class="page-title">Leave Approvals</h1>
+                <p class="page-subtitle">
+                    Review and action leave requests
                 </p>
-                <p class="notification-message">
-                  Your sick leave for Apr 28
-                  has been approved by Priya Mehta
-                </p>
-                <p class="notification-time">
-                  2 hours ago
-                </p>
-              </div>
-              <div class="notification-unread-dot"></div>
             </div>
-
-            <!-- Unread -->
-            <div class="notification-item unread">
-              <div class="notification-icon
-                                notification-icon-red">
+          <!-- Pending count badge -->
+            <div class="pending-count-badge"
+                 th:if="${pendingLeaveCount > 0}">
                 <i class="ti ti-clock"></i>
-              </div>
-              <div class="notification-content">
-                <p class="notification-title">
-                  Clock In Reminder
-                </p>
-                <p class="notification-message">
-                  You have not clocked in yet today.
-                  Please clock in before 12:00 PM
-                </p>
-                <p class="notification-time">
-                  Today at 10:00 AM
-                </p>
-              </div>
-              <div class="notification-unread-dot"></div>
+                <span th:text="${pendingLeaveCount}
+                               + ' pending'">
+                    3 pending
+                </span>
             </div>
-
-            <!-- Read -->
-            <div class="notification-item">
-              <div class="notification-icon
-                                notification-icon-blue">
-                <i class="ti ti-edit"></i>
-              </div>
-              <div class="notification-content">
-                <p class="notification-title">
-                  Correction Approved
-                </p>
-                <p class="notification-message">
-                  Your correction request for
-                  May 5 has been approved
-                </p>
-                <p class="notification-time">
-                  Yesterday at 3:00 PM
-                </p>
-              </div>
-            </div>
-
-            <!-- Read -->
-            <div class="notification-item">
-              <div class="notification-icon
-                                notification-icon-yellow">
-                <i class="ti ti-calendar-x"></i>
-              </div>
-              <div class="notification-content">
-                <p class="notification-title">
-                  Leave Rejected
-                </p>
-                <p class="notification-message">
-                  Your privileged leave for Mar 10-12
-                  has been rejected. Reason: Team unavailability
-                </p>
-                <p class="notification-time">
-                  15 Mar 2026
-                </p>
-              </div>
-            </div>
-
-          </div>
         </div>
 
-      </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/notification.js}"></script>
-    </body>
-    </html>
-    —----------------------------------------------------------------
-
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Holidays</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Holiday Calendar</h1>
-            <p class="page-subtitle">
-              Bank holidays for 2026
-            </p>
-          </div>
+      <!-- Success/Error messages -->
+        <div th:if="${successMessage}"
+             class="alert-success-bar">
+            <i class="ti ti-circle-check"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}"
+             class="alert-error-bar">
+            <i class="ti ti-alert-circle"></i>
+            <span th:text="${errorMessage}"></span>
         </div>
 
-        <!-- Holiday List -->
+      <!-- Leave Approvals Table -->
         <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-calendar"></i>
-              <p class="card-title">
-                Bank Holidays 2026
-              </p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>DATE</th>
-                <th>DAY</th>
-                <th>HOLIDAY</th>
-                <th>TYPE</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>15 May 2026</td>
-                <td>Friday</td>
-                <td>Buddha Purnima</td>
-                <td>
-                                <span class="badge-bank-holiday">
-                                    Bank Holiday
-                                </span>
-                </td>
-              </tr>
-              <tr>
-                <td>15 Aug 2026</td>
-                <td>Saturday</td>
-                <td>Independence Day</td>
-                <td>
-                                <span class="badge-bank-holiday">
-                                    Bank Holiday
-                                </span>
-                </td>
-              </tr>
-              <tr>
-                <td>02 Oct 2026</td>
-                <td>Friday</td>
-                <td>Gandhi Jayanti</td>
-                <td>
-                                <span class="badge-bank-holiday">
-                                    Bank Holiday
-                                </span>
-                </td>
-              </tr>
-              <tr>
-                <td>20 Oct 2026</td>
-                <td>Tuesday</td>
-                <td>Diwali</td>
-                <td>
-                                <span class="badge-bank-holiday">
-                                    Bank Holiday
-                                </span>
-                </td>
-              </tr>
-              <tr>
-                <td>25 Dec 2026</td>
-                <td>Friday</td>
-                <td>Christmas</td>
-                <td>
-                                <span class="badge-bank-holiday">
-                                    Bank Holiday
-                                </span>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-
-    —------------------------------------------------------------------------------------------------------
-
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Manager Dashboard</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">
-              Good morning, Priya!
-            </h1>
-            <p class="page-subtitle">
-              Monday, 18 May 2026 · Manager
-            </p>
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">PRESENT TODAY</p>
-              <div class="stat-icon stat-icon-green">
-                <i class="ti ti-users"></i>
-              </div>
-            </div>
-            <p class="stat-value">8</p>
-            <p class="stat-sub">of 10 team members</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">ABSENT TODAY</p>
-              <div class="stat-icon stat-icon-red">
-                <i class="ti ti-user-off"></i>
-              </div>
-            </div>
-            <p class="stat-value stat-value-red">2</p>
-            <p class="stat-sub">team members</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">PENDING LEAVES</p>
-              <div class="stat-icon stat-icon-yellow">
-                <i class="ti ti-calendar-event"></i>
-              </div>
-            </div>
-            <p class="stat-value stat-value-yellow">3</p>
-            <p class="stat-sub">awaiting approval</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">PENDING CORRECTIONS</p>
-              <div class="stat-icon stat-icon-blue">
-                <i class="ti ti-edit"></i>
-              </div>
-            </div>
-            <p class="stat-value">2</p>
-            <p class="stat-sub">awaiting review</p>
-          </div>
-        </div>
-
-        <!-- Bottom row -->
-        <div class="bottom-grid">
-
-          <!-- Team attendance today -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-header-left">
-                <i class="ti ti-users"></i>
-                <p class="card-title">
-                  Team Today
-                </p>
-              </div>
-              <a href="/manager/team-attendance"
-                 class="card-link">
-                View all →
-              </a>
-            </div>
-            <div class="card-body">
-              <div class="list-item">
-                <div class="list-item-left">
-                  <div class="user-avatar-sm">AK</div>
-                  <div>
-                    <p class="list-item-title">
-                      Arjun Kumar
+            <div class="page-card-header">
+                <div class="page-card-header-left">
+                    <i class="ti ti-calendar-event"></i>
+                    <p class="card-title">
+                        Pending Leave Requests
                     </p>
-                    <p class="list-item-sub">
-                      Clocked in at 09:12 AM
-                    </p>
-                  </div>
                 </div>
-                <span class="badge-present">
-                            Present
-                        </span>
-              </div>
-              <div class="list-item">
-                <div class="list-item-left">
-                  <div class="user-avatar-sm">SR</div>
-                  <div>
-                    <p class="list-item-title">
-                      Sara Rathod
-                    </p>
-                    <p class="list-item-sub">
-                      Clocked in at 09:45 AM
-                    </p>
-                  </div>
-                </div>
-                <span class="badge-late">Late</span>
-              </div>
-              <div class="list-item">
-                <div class="list-item-left">
-                  <div class="user-avatar-sm">MV</div>
-                  <div>
-                    <p class="list-item-title">
-                      Mihir Verma
-                    </p>
-                    <p class="list-item-sub">
-                      Not clocked in
-                    </p>
-                  </div>
-                </div>
-                <span class="badge-absent">Absent</span>
-              </div>
             </div>
-          </div>
 
-          <!-- Pending leave approvals -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-header-left">
-                <i class="ti ti-calendar-event"></i>
-                <p class="card-title">
-                  Pending Leaves
-                </p>
-              </div>
-              <a href="/manager/leave-approvals"
-                 class="card-link">
-                View all →
-              </a>
+          <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(pendingLeaves)}"
+                 class="att-empty">
+                <i class="ti ti-circle-check"></i>
+                <p>No pending leave requests</p>
             </div>
-            <div class="card-body">
-              <div class="list-item">
-                <div class="list-item-left">
-                  <div class="date-badge">
-                    <span class="date-day">20</span>
-                    <span class="date-month">MAY</span>
-                  </div>
-                  <div>
-                    <p class="list-item-title">
-                      Arjun Kumar · CL
-                    </p>
-                    <p class="list-item-sub">
-                      May 20-21 · 2 days
-                    </p>
-                  </div>
-                </div>
-                <span class="badge-pending">Pending</span>
-              </div>
-              <div class="list-item">
-                <div class="list-item-left">
-                  <div class="date-badge">
-                    <span class="date-day">25</span>
-                    <span class="date-month">MAY</span>
-                  </div>
-                  <div>
-                    <p class="list-item-title">
-                      Sara Rathod · SL
-                    </p>
-                    <p class="list-item-sub">
-                      May 25 · 1 day
-                    </p>
-                  </div>
-                </div>
-                <span class="badge-pending">Pending</span>
-              </div>
-            </div>
-          </div>
 
-        </div>
+          <!-- Table -->
+            <div th:if="${!#lists.isEmpty(pendingLeaves)}"
+                 class="page-table-wrapper">
+                <table class="page-table">
+                    <thead>
+                        <tr>
+                            <th>EMPLOYEE</th>
+                            <th>TYPE</th>
+                            <th>FROM</th>
+                            <th>TO</th>
+                            <th>DAYS</th>
+                            <th>REASON</th>
+                            <th>APPLIED</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="leave : ${pendingLeaves}">
 
-      </main>
-    </div>
+                            <!-- Employee -->
+                            <td>
+                                <div class="emp-cell">
+                                    <div class="user-avatar-sm"
+                                         th:text="${#strings
+                                                   .toUpperCase(
+                                                   #strings
+                                                   .substring(
+                                                   leave.user
+                                                   .fullName,
+                                                   0, 2))}">
+                                        AK
+                                    </div>
+                                    <div>
+                                        <p class="emp-name"
+                                           th:text="${leave
+                                                    .user
+                                                    .fullName}">
+                                            Arjun Kumar
+                                        </p>
+                                        <p class="emp-code"
+                                           th:text="${leave
+                                                    .user
+                                                    .empCode}">
+                                            EMP001
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-    —------------------------------------------------------------------------------------------------------------
-
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Leave Approvals</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Leave Approvals</h1>
-            <p class="page-subtitle">
-              Review and action leave requests
-            </p>
-          </div>
-        </div>
-
-        <!-- Leave Approvals Table -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-calendar-event"></i>
-              <p class="card-title">
-                Pending Leave Requests
-              </p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>EMPLOYEE</th>
-                <th>TYPE</th>
-                <th>FROM</th>
-                <th>TO</th>
-                <th>DAYS</th>
-                <th>REASON</th>
-                <th>APPLIED</th>
-                <th>ACTION</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      AK
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Arjun Kumar
-                      </p>
-                      <p class="emp-code">
-                        EMP001
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                                <span class="leave-type-cl">
+                          <!-- Type -->
+                            <td>
+                                <span th:if="${leave.leaveType
+                                             .name() == 'CL'}"
+                                      class="leave-type-cl">
                                     CL
                                 </span>
-                </td>
-                <td>20 May 2026</td>
-                <td>21 May 2026</td>
-                <td>2</td>
-                <td>Personal work</td>
-                <td>18 May 2026</td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="approve-btn"
-                            onclick="approveLeave(1)">
-                      Approve
-                    </button>
-                    <button class="reject-btn"
-                            onclick="rejectLeave(1)">
-                      Reject
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      SR
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Sara Rathod
-                      </p>
-                      <p class="emp-code">
-                        EMP002
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                                <span class="leave-type-sl">
+                                <span th:if="${leave.leaveType
+                                             .name() == 'SL'}"
+                                      class="leave-type-sl">
                                     SL
                                 </span>
-                </td>
-                <td>25 May 2026</td>
-                <td>25 May 2026</td>
-                <td>1</td>
-                <td>Not feeling well</td>
-                <td>18 May 2026</td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="approve-btn"
-                            onclick="approveLeave(2)">
-                      Approve
-                    </button>
-                    <button class="reject-btn"
-                            onclick="rejectLeave(2)">
-                      Reject
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
+                                <span th:if="${leave.leaveType
+                                             .name() == 'PL'}"
+                                      class="leave-type-pl">
+                                    PL
+                                </span>
+                            </td>
+
+                          <!-- From -->
+                            <td th:text="${leave.startDate
+                                         .dayOfMonth + ' '
+                                         + leave.startDate
+                                           .month.name()
+                                           .substring(0,3)
+                                         + ' '
+                                         + leave.startDate
+                                           .year}">
+                                20 May 2026
+                            </td>
+
+                          <!-- To -->
+                            <td th:text="${leave.endDate
+                                         .dayOfMonth + ' '
+                                         + leave.endDate
+                                           .month.name()
+                                           .substring(0,3)
+                                         + ' '
+                                         + leave.endDate
+                                           .year}">
+                                21 May 2026
+                            </td>
+
+                          <!-- Days -->
+                            <td th:text="${leave.totalDays}">
+                                2
+                            </td>
+
+                          <!-- Reason -->
+                            <td th:text="${leave.reason}">
+                                Personal work
+                            </td>
+
+                          <!-- Applied -->
+                            <td th:text="${leave.appliedAt
+                                         .dayOfMonth + ' '
+                                         + leave.appliedAt
+                                           .month.name()
+                                           .substring(0,3)
+                                         + ' '
+                                         + leave.appliedAt
+                                           .year}">
+                                18 May 2026
+                            </td>
+
+                          <!-- Action -->
+                            <td>
+                                <div class="action-buttons">
+                                    <!-- Approve -->
+                                    <form th:action="@{
+                                          /manager/leaves
+                                          /approve/{id}
+                                          (id=${leave.id})}"
+                                          method="post">
+                                        <button type="submit"
+                                                class="approve-btn">
+                                            Approve
+                                        </button>
+                                    </form>
+                                  <!-- Reject -->
+                                    <button class="reject-btn"
+                                            th:onclick="'openRejectModal('
+                                                       + ${leave.id}
+                                                       + ')'">
+                                        Reject
+                                    </button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-      </main>
-    </div>
+    </main>
+</div>
 
-    <!-- Reject Modal -->
-    <div class="modal-overlay" id="rejectModal">
-      <div class="modal-card" style="width:380px;">
+<!-- Reject Modal -->
+<div class="modal-overlay" id="rejectModal">
+    <div class="modal-card" style="width:380px;">
         <div class="modal-header">
-          <div>
-            <p class="modal-title">Reject Leave</p>
-            <p class="modal-subtitle">
-              Please provide a reason
-            </p>
-          </div>
-          <button class="modal-close"
-                  onclick="closeRejectModal()">
-            <i class="ti ti-x"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form th:action="@{/manager/leaves/reject}"
-                method="post">
-            <input type="hidden"
-                   th:name="${_csrf.parameterName}"
-                   th:value="${_csrf.token}"/>
-            <input type="hidden"
-                   id="rejectLeaveId"
-                   name="leaveId"/>
-            <div class="form-group">
-              <label class="form-label">
-                Rejection Reason
-              </label>
-              <textarea name="rejectionReason"
-                        class="form-textarea"
-                        rows="3"
-                        placeholder="Enter reason"
-                        required></textarea>
-            </div>
-            <div class="modal-actions">
-              <button type="button"
-                      class="btn-secondary"
-                      onclick="closeRejectModal()">
-                Cancel
-              </button>
-              <button type="submit"
-                      class="btn-danger">
-                Reject
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/leave-approvals.js}"></script>
-    </body>
-    </html>
-    —------------------------------------------------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Correction Approvals</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">
-              Correction Approvals
-            </h1>
-            <p class="page-subtitle">
-              Review and action correction requests
-            </p>
-          </div>
-        </div>
-
-        <!-- Corrections Table -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-edit"></i>
-              <p class="card-title">
-                Pending Corrections
-              </p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>EMPLOYEE</th>
-                <th>DATE</th>
-                <th>TYPE</th>
-                <th>REQ IN</th>
-                <th>REQ OUT</th>
-                <th>REASON</th>
-                <th>ACTION</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      AK
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Arjun Kumar
-                      </p>
-                      <p class="emp-code">
-                        EMP001
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>12 May 2026</td>
-                <td>Missed Clock Out</td>
-                <td>09:12 AM</td>
-                <td>06:30 PM</td>
-                <td>Forgot to clock out</td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="approve-btn"
-                            onclick="approveCorrection(1)">
-                      Approve
-                    </button>
-                    <button class="reject-btn"
-                            onclick="rejectCorrection(1)">
-                      Reject
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/correction-approvals.js}"></script>
-    </body>
-    </html>
-    —---------------------------------------------------------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Team Attendance</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Team Attendance</h1>
-            <p class="page-subtitle">
-              Monday, 18 May 2026
-            </p>
-          </div>
-          <!-- Date filter -->
-          <form th:action="@{/manager/team-attendance}"
-                method="get"
-                class="att-filter-form">
-            <input type="date"
-                   name="date"
-                   class="att-select"/>
-            <button type="submit"
-                    class="att-filter-btn">
-              Filter
-            </button>
-          </form>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">PRESENT</p>
-              <div class="stat-icon stat-icon-green">
-                <i class="ti ti-circle-check"></i>
-              </div>
-            </div>
-            <p class="stat-value">8</p>
-            <p class="stat-sub">team members</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">LATE</p>
-              <div class="stat-icon stat-icon-yellow">
-                <i class="ti ti-clock-exclamation"></i>
-              </div>
-            </div>
-            <p class="stat-value stat-value-yellow">2</p>
-            <p class="stat-sub">team members</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">ABSENT</p>
-              <div class="stat-icon stat-icon-red">
-                <i class="ti ti-circle-x"></i>
-              </div>
-            </div>
-            <p class="stat-value stat-value-red">1</p>
-            <p class="stat-sub">team members</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">ON LEAVE</p>
-              <div class="stat-icon stat-icon-blue">
-                <i class="ti ti-beach"></i>
-              </div>
-            </div>
-            <p class="stat-value">1</p>
-            <p class="stat-sub">team members</p>
-          </div>
-        </div>
-
-        <!-- Team Table -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-users"></i>
-              <p class="card-title">Team Members</p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>EMPLOYEE</th>
-                <th>CLOCK IN</th>
-                <th>CLOCK OUT</th>
-                <th>HOURS</th>
-                <th>STATUS</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      AK
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Arjun Kumar
-                      </p>
-                      <p class="emp-code">
-                        EMP001
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>09:12 AM</td>
-                <td>06:30 PM</td>
-                <td>9.3 hrs</td>
-                <td>
-                                <span class="badge-present">
-                                    Present
-                                </span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      SR
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Sara Rathod
-                      </p>
-                      <p class="emp-code">
-                        EMP002
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>10:30 AM</td>
-                <td>--:--</td>
-                <td>--</td>
-                <td>
-                                <span class="badge-late">
-                                    Late
-                                </span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      MV
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Mihir Verma
-                      </p>
-                      <p class="emp-code">
-                        EMP003
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>--:--</td>
-                <td>--:--</td>
-                <td>0 hrs</td>
-                <td>
-                                <span class="badge-absent">
-                                    Absent
-                                </span>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-    —--------------------------------------------------------------------------------------------------------------------
-
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Admin Dashboard</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Admin Dashboard</h1>
-            <p class="page-subtitle">
-              Monday, 18 May 2026 · System Overview
-            </p>
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">TOTAL EMPLOYEES</p>
-              <div class="stat-icon stat-icon-green">
-                <i class="ti ti-users"></i>
-              </div>
-            </div>
-            <p class="stat-value">124</p>
-            <p class="stat-sub">active employees</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">TOTAL VENDORS</p>
-              <div class="stat-icon stat-icon-blue">
-                <i class="ti ti-building"></i>
-              </div>
-            </div>
-            <p class="stat-value">8</p>
-            <p class="stat-sub">vendor companies</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">TOTAL PROJECTS</p>
-              <div class="stat-icon stat-icon-yellow">
-                <i class="ti ti-folder"></i>
-              </div>
-            </div>
-            <p class="stat-value stat-value-yellow">12</p>
-            <p class="stat-sub">active projects</p>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top">
-              <p class="stat-label">PRESENT TODAY</p>
-              <div class="stat-icon stat-icon-green">
-                <i class="ti ti-circle-check"></i>
-              </div>
-            </div>
-            <p class="stat-value">98</p>
-            <p class="stat-sub">of 124 employees</p>
-          </div>
-        </div>
-
-        <!-- Bottom row -->
-        <div class="bottom-grid">
-
-          <!-- Recent activity -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-header-left">
-                <i class="ti ti-activity"></i>
-                <p class="card-title">
-                  Recent Activity
+            <div>
+                <p class="modal-title">Reject Leave</p>
+                <p class="modal-subtitle">
+                    Please provide a reason
                 </p>
-              </div>
             </div>
-            <div class="card-body">
-              <div class="list-item">
-                <div class="list-item-left">
-                  <div class="notification-icon
-                                        notification-icon-green">
-                    <i class="ti ti-user-plus"></i>
-                  </div>
-                  <div>
-                    <p class="list-item-title">
-                      New user added
-                    </p>
-                    <p class="list-item-sub">
-                      Neha Patil · EMP125
-                    </p>
-                  </div>
-                </div>
-                <span class="days-away">
-                            2 hrs ago
-                        </span>
-              </div>
-              <div class="list-item">
-                <div class="list-item-left">
-                  <div class="notification-icon
-                                        notification-icon-blue">
-                    <i class="ti ti-building"></i>
-                  </div>
-                  <div>
-                    <p class="list-item-title">
-                      New vendor added
-                    </p>
-                    <p class="list-item-sub">
-                      DataPro India
-                    </p>
-                  </div>
-                </div>
-                <span class="days-away">
-                            Yesterday
-                        </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Quick links -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-header-left">
-                <i class="ti ti-layout-grid"></i>
-                <p class="card-title">Quick Actions</p>
-              </div>
-            </div>
-            <div class="card-body">
-              <a href="/admin/users"
-                 class="quick-action-item">
-                <i class="ti ti-user-plus"></i>
-                <span>Add New User</span>
-                <i class="ti ti-chevron-right ms-auto"></i>
-              </a>
-              <a href="/admin/vendors"
-                 class="quick-action-item">
-                <i class="ti ti-building-plus"></i>
-                <span>Add New Vendor</span>
-                <i class="ti ti-chevron-right ms-auto"></i>
-              </a>
-              <a href="/admin/holidays"
-                 class="quick-action-item">
-                <i class="ti ti-calendar-plus"></i>
-                <span>Add Holiday</span>
-                <i class="ti ti-chevron-right ms-auto"></i>
-              </a>
-              <a href="/admin/reports"
-                 class="quick-action-item">
-                <i class="ti ti-chart-bar"></i>
-                <span>View Reports</span>
-                <i class="ti ti-chevron-right ms-auto"></i>
-              </a>
-            </div>
-          </div>
-
-        </div>
-
-      </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-    —----------------------------------------------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Manage Users</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Manage Users</h1>
-            <p class="page-subtitle">
-              Add and manage employee accounts
-            </p>
-          </div>
-          <button class="action-btn"
-                  onclick="openAddUserModal()">
-            <i class="ti ti-plus"></i>
-            Add User
-          </button>
-        </div>
-
-        <!-- Users Table -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-users"></i>
-              <p class="card-title">All Users</p>
-            </div>
-            <!-- Search -->
-            <input type="text"
-                   placeholder="Search by name or ADID..."
-                   class="search-input"
-                   oninput="searchUsers(this.value)"/>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>EMPLOYEE</th>
-                <th>ADID</th>
-                <th>EMP CODE</th>
-                <th>DEPARTMENT</th>
-                <th>VENDOR</th>
-                <th>ROLE</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      AK
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Arjun Kumar
-                      </p>
-                      <p class="emp-code">
-                        Java Developer
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>arjun.kumar</td>
-                <td>EMP001</td>
-                <td>IT Operations</td>
-                <td>TechSoft Solutions</td>
-                <td>
-                                <span class="role-employee">
-                                    Employee
-                                </span>
-                </td>
-                <td>
-                                <span class="status-active">
-                                    Active
-                                </span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="edit-btn"
-                            onclick="editUser(1)">
-                      Edit
-                    </button>
-                    <button class="danger-btn"
-                            onclick="toggleUser(1)">
-                      Disable
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="emp-cell">
-                    <div class="user-avatar-sm">
-                      PM
-                    </div>
-                    <div>
-                      <p class="emp-name">
-                        Priya Mehta
-                      </p>
-                      <p class="emp-code">
-                        Project Manager
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td>priya.mehta</td>
-                <td>MGR001</td>
-                <td>IT Operations</td>
-                <td>—</td>
-                <td>
-                                <span class="role-manager">
-                                    Manager
-                                </span>
-                </td>
-                <td>
-                                <span class="status-active">
-                                    Active
-                                </span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="edit-btn"
-                            onclick="editUser(2)">
-                      Edit
-                    </button>
-                    <button class="danger-btn"
-                            onclick="toggleUser(2)">
-                      Disable
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/admin-users.js}"></script>
-    </body>
-    </html>
-    —---------------------------------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Manage Vendors</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Manage Vendors</h1>
-            <p class="page-subtitle">
-              Add and manage vendor companies
-            </p>
-          </div>
-          <button class="action-btn"
-                  onclick="openAddVendorModal()">
-            <i class="ti ti-plus"></i>
-            Add Vendor
-          </button>
-        </div>
-
-        <!-- Vendors Table -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-building"></i>
-              <p class="card-title">All Vendors</p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>VENDOR NAME</th>
-                <th>CONTACT PERSON</th>
-                <th>EMAIL</th>
-                <th>PHONE</th>
-                <th>EMPLOYEES</th>
-                <th>ACTION</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>
-                  <p class="emp-name">
-                    TechSoft Solutions
-                  </p>
-                </td>
-                <td>Rajesh Nair</td>
-                <td>rajesh@techsoft.com</td>
-                <td>9876543210</td>
-                <td>45</td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="edit-btn"
-                            onclick="editVendor(1)">
-                      Edit
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <p class="emp-name">
-                    DataPro India
-                  </p>
-                </td>
-                <td>Sunita Sharma</td>
-                <td>sunita@datapro.com</td>
-                <td>9876543211</td>
-                <td>32</td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="edit-btn"
-                            onclick="editVendor(2)">
-                      Edit
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-    —----------------------------------------------------------------------------------------------------------------
-    <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>VendorTrack — Manage Holidays</title>
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-      <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-      <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-      <link rel="stylesheet" th:href="@{/css/pages.css}">
-    </head>
-    <body>
-
-    <div class="app-layout">
-
-      <!-- Sidebar -->
-      <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-      <!-- Main Content -->
-      <main class="main-content">
-
-        <!-- Top bar -->
-        <div class="top-bar">
-          <div>
-            <h1 class="page-title">Manage Holidays</h1>
-            <p class="page-subtitle">
-              Add and manage bank holidays
-            </p>
-          </div>
-          <button class="action-btn"
-                  onclick="openAddHolidayModal()">
-            <i class="ti ti-plus"></i>
-            Add Holiday
-          </button>
-        </div>
-
-        <!-- Holidays Table -->
-        <div class="page-card">
-          <div class="page-card-header">
-            <div class="page-card-header-left">
-              <i class="ti ti-calendar"></i>
-              <p class="card-title">
-                Bank Holidays 2026
-              </p>
-            </div>
-          </div>
-          <div class="page-table-wrapper">
-            <table class="page-table">
-              <thead>
-              <tr>
-                <th>DATE</th>
-                <th>DAY</th>
-                <th>HOLIDAY NAME</th>
-                <th>ACTION</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>15 May 2026</td>
-                <td>Friday</td>
-                <td>Buddha Purnima</td>
-                <td>
-                  <button class="danger-btn"
-                          onclick="deleteHoliday(1)">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>15 Aug 2026</td>
-                <td>Saturday</td>
-                <td>Independence Day</td>
-                <td>
-                  <button class="danger-btn"
-                          onclick="deleteHoliday(2)">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-    </div>
-
-    <!-- Add Holiday Modal -->
-    <div class="modal-overlay" id="addHolidayModal">
-      <div class="modal-card" style="width:380px;">
-        <div class="modal-header">
-          <div>
-            <p class="modal-title">Add Holiday</p>
-            <p class="modal-subtitle">
-              Add a new bank holiday
-            </p>
-          </div>
-          <button class="modal-close"
-                  onclick="closeAddHolidayModal()">
-            <i class="ti ti-x"></i>
-          </button>
+            <button class="modal-close"
+                    onclick="closeRejectModal()">
+                <i class="ti ti-x"></i>
+            </button>
         </div>
         <div class="modal-body">
-          <form th:action="@{/admin/holidays/add}"
-                method="post">
-            <input type="hidden"
-                   th:name="${_csrf.parameterName}"
-                   th:value="${_csrf.token}"/>
-            <div class="form-group">
-              <label class="form-label">
-                Holiday Name
-              </label>
-              <input type="text"
-                     name="name"
-                     class="form-input-field"
-                     placeholder="e.g. Diwali"
-                     required/>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Date</label>
-              <input type="date"
-                     name="holidayDate"
-                     class="form-input-field"
-                     required/>
-            </div>
-            <div class="modal-actions">
-              <button type="button"
-                      class="btn-secondary"
-                      onclick="closeAddHolidayModal()">
-                Cancel
-              </button>
-              <button type="submit"
-                      class="btn-primary">
-                Add Holiday
-              </button>
-            </div>
-          </form>
+            <form id="rejectForm"
+                  method="post">
+                <div class="form-group">
+                    <label class="form-label">
+                        Rejection Reason
+                    </label>
+                    <textarea name="rejectionReason"
+                              class="form-textarea"
+                              rows="3"
+                              placeholder="Enter reason"
+                              required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button"
+                            class="btn-secondary"
+                            onclick="closeRejectModal()">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="btn-danger">
+                        Reject
+                    </button>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/admin-holidays.js}"></script>
-    </body>
-    </html>
-    —-------------------------------------------------------------------------
-    /* ── Leave Balance Cards ──────────────────────────────────────── */
-
-    .leave-balance-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-    }
-
-    /* ── Leave History Table ──────────────────────────────────────── */
-
-    .leave-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .leave-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .leave-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .leave-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .leave-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .leave-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .leave-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .leave-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Apply Leave Modal ────────────────────────────────────────── */
-
-    .leave-modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 20, 40, 0.6);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    }
-
-    .leave-modal-card {
-    background-color: white;
-    border-radius: 20px;
-    width: 420px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-    —--------------------------------------------------------------------------------------
-    /* ── Correction Table ─────────────────────────────────────────── */
-
-    .correction-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .correction-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .correction-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .correction-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .correction-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .correction-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .correction-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .correction-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Correction Type Badge ────────────────────────────────────── */
-
-    .correction-type {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background-color: #EBF8FF;
-    color: #2B6CB0;
-    border: 1px solid #BEE3F8;
-    }
-    —-------------------------------------------------------------------------------------------------------------
-    /* ── Notification List ────────────────────────────────────────── */
-
-    .notification-page-list {
-    display: flex;
-    flex-direction: column;
-    }
-
-    .notification-page-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 16px 20px;
-    border-bottom: 1px solid #F0F2F5;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.15s;
-    }
-
-    .notification-page-item:last-child {
-    border-bottom: none;
-    }
-
-    .notification-page-item:hover {
-    background-color: #F7F8FA;
-    }
-
-    .notification-page-item.unread {
-    background-color: #FAFBFF;
-    border-left: 3px solid #E31837;
-    }
-
-    /* ── Notification Icon ────────────────────────────────────────── */
-
-    .notif-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-    }
-
-    .notif-icon-green  { background-color: #F0FFF4; color: #276749; }
-    .notif-icon-red    { background-color: #FFF5F5; color: #C53030; }
-    .notif-icon-blue   { background-color: #EBF8FF; color: #2B6CB0; }
-    .notif-icon-yellow { background-color: #FFFBEB; color: #B45309; }
-
-    /* ── Notification Content ─────────────────────────────────────── */
-
-    .notif-content {
-    flex: 1;
-    }
-
-    .notif-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 4px;
-    }
-
-    .notif-message {
-    font-size: 12px;
-    color: #718096;
-    margin: 0 0 6px;
-    line-height: 1.5;
-    }
-
-    .notif-time {
-    font-size: 11px;
-    color: #A0AEC0;
-    margin: 0;
-    }
-
-    /* ── Unread dot ───────────────────────────────────────────────── */
-
-    .notif-unread-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #E31837;
-    flex-shrink: 0;
-    margin-top: 4px;
-    }
-
-    /* ── Mark all read button ─────────────────────────────────────── */
-
-    .mark-all-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background-color: white;
-    color: #4A5568;
-    border: 1px solid #E8ECF0;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    }
-
-    .mark-all-btn:hover {
-    border-color: #E31837;
-    color: #E31837;
-    }
-    —------------------------------------------------------------------------------------------------------
-    /* ── Holiday Table ────────────────────────────────────────────── */
-
-    .holiday-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .holiday-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .holiday-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .holiday-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .holiday-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .holiday-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .holiday-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .holiday-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Holiday date badge ───────────────────────────────────────── */
-
-    .holiday-date-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    }
-
-    .holiday-date-box {
-    width: 40px;
-    height: 40px;
-    background-color: #FFF0F0;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    }
-
-    .holiday-date-day {
-    font-size: 14px;
-    font-weight: 600;
-    color: #E31837;
-    line-height: 1;
-    }
-
-    .holiday-date-month {
-    font-size: 9px;
-    color: #E31837;
-    letter-spacing: 0.5px;
-    }
-
-    /* ── Upcoming badge ───────────────────────────────────────────── */
-
-    .holiday-upcoming {
-    font-size: 10px;
-    color: #718096;
-    background-color: #F0F2F5;
-    padding: 3px 8px;
-    border-radius: 20px;
-    }
-
-    .holiday-past {
-    font-size: 10px;
-    color: #A0AEC0;
-    background-color: #F7F8FA;
-    padding: 3px 8px;
-    border-radius: 20px;
-    }
-    —-----------------------------------------------------------------------------------
-    /* ── Team Member List ─────────────────────────────────────────── */
-
-    .team-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 16px;
-    }
-
-    .team-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background-color: #F7F8FA;
-    border-radius: 10px;
-    }
-
-    .team-member-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    }
-
-    .team-member-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 2px;
-    }
-
-    .team-member-time {
-    font-size: 11px;
-    color: #718096;
-    margin: 0;
-    }
-
-    /* ── Pending approval items ───────────────────────────────────── */
-
-    .approval-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background-color: #F7F8FA;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    }
-
-    .approval-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    }
-
-    .approval-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 2px;
-    }
-
-    .approval-detail {
-    font-size: 11px;
-    color: #718096;
-    margin: 0;
-    }
-    —-------------------------------------------
-    /* ── Team Attendance Table ────────────────────────────────────── */
-
-    .team-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .team-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .team-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .team-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .team-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .team-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .team-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .team-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Date filter ──────────────────────────────────────────────── */
-
-    .date-filter-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    }
-
-    .date-input {
-    padding: 7px 12px;
-    border: 1px solid #E8ECF0;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #4A5568;
-    background-color: white;
-    outline: none;
-    }
-
-    .date-input:focus {
-    border-color: #E31837;
-    }
-    —-------------------------------------------------------------------------------------------------------
-    /* ── Leave Approvals Table ────────────────────────────────────── */
-
-    .approvals-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .approvals-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .approvals-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .approvals-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .approvals-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .approvals-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .approvals-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .approvals-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Reject modal ─────────────────────────────────────────────── */
-
-    .reject-modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 20, 40, 0.6);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    }
-    —----------------------------------------------------------------------
-    /* ── Correction Approvals Table ───────────────────────────────── */
-
-    .corr-approvals-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .corr-approvals-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .corr-approvals-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .corr-approvals-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .corr-approvals-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .corr-approvals-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .corr-approvals-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .corr-approvals-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-    —--------------------------------------------------------------------------------------------------------
-    /* ── Quick action items ───────────────────────────────────────── */
-
-    .admin-quick-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px 16px;
-    }
-
-    .admin-quick-action {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    color: #4A5568;
-    text-decoration: none;
-    transition: all 0.15s;
-    background-color: #F7F8FA;
-    }
-
-    .admin-quick-action:hover {
-    background-color: #FFF0F0;
-    color: #E31837;
-    }
-
-    .admin-quick-action i {
-    font-size: 18px;
-    flex-shrink: 0;
-    }
-
-    /* ── Recent activity ──────────────────────────────────────────── */
-
-    .activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 16px;
-    }
-
-    .activity-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    background-color: #F7F8FA;
-    border-radius: 10px;
-    }
-
-    .activity-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-    }
-
-    .activity-title {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 2px;
-    }
-
-    .activity-sub {
-    font-size: 11px;
-    color: #718096;
-    margin: 0;
-    }
-
-    .activity-time {
-    font-size: 11px;
-    color: #A0AEC0;
-    margin-left: auto;
-    white-space: nowrap;
-    }
-    —--------------------------------------------------------------------------------------------------
-
-
-    /* ── Quick action items ───────────────────────────────────────── */
-
-    .admin-quick-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px 16px;
-    }
-
-    .admin-quick-action {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    color: #4A5568;
-    text-decoration: none;
-    transition: all 0.15s;
-    background-color: #F7F8FA;
-    }
-
-    .admin-quick-action:hover {
-    background-color: #FFF0F0;
-    color: #E31837;
-    }
-
-    .admin-quick-action i {
-    font-size: 18px;
-    flex-shrink: 0;
-    }
-
-    /* ── Recent activity ──────────────────────────────────────────── */
-
-    .activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 16px;
-    }
-
-    .activity-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    background-color: #F7F8FA;
-    border-radius: 10px;
-    }
-
-    .activity-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-    }
-
-    .activity-title {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 2px;
-    }
-
-    .activity-sub {
-    font-size: 11px;
-    color: #718096;
-    margin: 0;
-    }
-
-    .activity-time {
-    font-size: 11px;
-    color: #A0AEC0;
-    margin-left: auto;
-    white-space: nowrap;
-    }
-    —---------------------------------------------------------------------------------------
-
-    /* ── Users Table ──────────────────────────────────────────────── */
-
-    .users-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .users-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .users-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .users-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .users-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .users-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .users-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .users-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Search bar ───────────────────────────────────────────────── */
-
-    .users-search {
-    padding: 7px 12px;
-    border: 1px solid #E8ECF0;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #4A5568;
-    background-color: white;
-    outline: none;
-    width: 220px;
-    }
-
-    .users-search:focus {
-    border-color: #E31837;
-    }
-    —-----------------------------------------------------------
-    /* ── Vendors Table ────────────────────────────────────────────── */
-
-    .vendors-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .vendors-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .vendors-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .vendors-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .vendors-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .vendors-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .vendors-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .vendors-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Vendor employee count badge ──────────────────────────────── */
-
-    .vendor-emp-count {
-    font-size: 12px;
-    font-weight: 500;
-    color: #2B6CB0;
-    }
-    —---------------------------------------------------------------------
-
-    /* ── Admin Holidays Table ─────────────────────────────────────── */
-
-    .admin-holiday-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .admin-holiday-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .admin-holiday-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .admin-holiday-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .admin-holiday-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .admin-holiday-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .admin-holiday-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .admin-holiday-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-    —------------------------------------------------
-    /* ── Page Card ────────────────────────────────────────────────── */
-
-    .page-card {
-    background-color: white;
-    border-radius: 14px;
-    border: 1px solid #E8ECF0;
-    overflow: hidden;
-    flex: 1;
-    }
-
-    .page-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    border-bottom: 1px solid #F0F2F5;
-    }
-
-    .page-card-header-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #718096;
-    font-size: 16px;
-    }
-
-    /* ── Page Table ───────────────────────────────────────────────── */
-
-    .page-table-wrapper {
-    overflow-x: auto;
-    }
-
-    .page-table {
-    width: 100%;
-    border-collapse: collapse;
-    }
-
-    .page-table thead tr {
-    background-color: #F7F8FA;
-    }
-
-    .page-table thead th {
-    padding: 10px 18px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: #718096;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid #E8ECF0;
-    white-space: nowrap;
-    }
-
-    .page-table tbody tr {
-    border-bottom: 1px solid #F0F2F5;
-    transition: background-color 0.15s;
-    }
-
-    .page-table tbody tr:hover {
-    background-color: #F7F8FA;
-    }
-
-    .page-table tbody tr:last-child {
-    border-bottom: none;
-    }
-
-    .page-table tbody td {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #1A202C;
-    white-space: nowrap;
-    }
-
-    /* ── Action Button ────────────────────────────────────────────── */
-
-    .action-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 16px;
-    background-color: #E31837;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    }
-
-    .action-btn:hover {
-    background-color: #C41230;
-    }
-
-    .action-btn i {
-    font-size: 16px;
-    }
-
-    .action-btn-outline {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 16px;
-    background-color: white;
-    color: #4A5568;
-    border: 1px solid #E8ECF0;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    }
-
-    .action-btn-outline:hover {
-    border-color: #E31837;
-    color: #E31837;
-    }
-
-    /* ── Action Buttons in Table ──────────────────────────────────── */
-
-    .action-buttons {
-    display: flex;
-    gap: 6px;
-    }
-
-    .approve-btn {
-    padding: 4px 10px;
-    background-color: #F0FFF4;
-    color: #276749;
-    border: 1px solid #C6F6D5;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    }
-
-    .approve-btn:hover {
-    background-color: #276749;
-    color: white;
-    }
-
-    .reject-btn {
-    padding: 4px 10px;
-    background-color: #FFF5F5;
-    color: #C53030;
-    border: 1px solid #FED7D7;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    }
-
-    .reject-btn:hover {
-    background-color: #C53030;
-    color: white;
-    }
-
-    .edit-btn {
-    padding: 4px 10px;
-    background-color: #EBF8FF;
-    color: #2B6CB0;
-    border: 1px solid #BEE3F8;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    }
-
-    .edit-btn:hover {
-    background-color: #2B6CB0;
-    color: white;
-    }
-
-    .danger-btn {
-    padding: 4px 10px;
-    background-color: #FFF5F5;
-    color: #C53030;
-    border: 1px solid #FED7D7;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    }
-
-    .danger-btn:hover {
-    background-color: #C53030;
-    color: white;
-    }
-
-    .btn-danger {
-    padding: 10px;
-    background-color: #C53030;
-    border: none;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    color: white;
-    flex: 1;
-    transition: background-color 0.2s;
-    }
-
-    .btn-danger:hover {
-    background-color: #9B2C2C;
-    }
-
-    /* ── Leave Type Badges ────────────────────────────────────────── */
-
-    .leave-type-cl {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background-color: #EBF8FF;
-    color: #2B6CB0;
-    border: 1px solid #BEE3F8;
-    }
-
-    .leave-type-sl {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background-color: #FFF5F5;
-    color: #C53030;
-    border: 1px solid #FED7D7;
-    }
-
-    .leave-type-pl {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background-color: #FAF5FF;
-    color: #6B46C1;
-    border: 1px solid #D6BCFA;
-    }
-
-    /* ── Status Badges ────────────────────────────────────────────── */
-
-    .badge-pending {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FFFBEB;
-    color: #B45309;
-    border: 1px solid #FDE68A;
-    white-space: nowrap;
-    }
-
-    .badge-approved {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #F0FFF4;
-    color: #276749;
-    border: 1px solid #C6F6D5;
-    white-space: nowrap;
-    }
-
-    .badge-rejected {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FFF5F5;
-    color: #C53030;
-    border: 1px solid #FED7D7;
-    white-space: nowrap;
-    }
-
-    .badge-present {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #F0FFF4;
-    color: #276749;
-    border: 1px solid #C6F6D5;
-    white-space: nowrap;
-    }
-
-    .badge-late {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FFFBEB;
-    color: #B45309;
-    border: 1px solid #FDE68A;
-    white-space: nowrap;
-    }
-
-    .badge-absent {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FFF5F5;
-    color: #C53030;
-    border: 1px solid #FED7D7;
-    white-space: nowrap;
-    }
-
-    .badge-halfday {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FAF5FF;
-    color: #6B46C1;
-    border: 1px solid #D6BCFA;
-    white-space: nowrap;
-    }
-
-    .badge-onleave {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #EBF8FF;
-    color: #2B6CB0;
-    border: 1px solid #BEE3F8;
-    white-space: nowrap;
-    }
-
-    .badge-bank-holiday {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FFF5F5;
-    color: #C53030;
-    border: 1px solid #FED7D7;
-    }
-
-    /* ── Role Badges ──────────────────────────────────────────────── */
-
-    .role-employee {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #F0FFF4;
-    color: #276749;
-    border: 1px solid #C6F6D5;
-    }
-
-    .role-manager {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #EBF8FF;
-    color: #2B6CB0;
-    border: 1px solid #BEE3F8;
-    }
-
-    .role-admin {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FAF5FF;
-    color: #6B46C1;
-    border: 1px solid #D6BCFA;
-    }
-
-    /* ── User Status ──────────────────────────────────────────────── */
-
-    .status-active {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #F0FFF4;
-    color: #276749;
-    border: 1px solid #C6F6D5;
-    }
-
-    .status-inactive {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #F7F8FA;
-    color: #718096;
-    border: 1px solid #E8ECF0;
-    }
-
-    /* ── Employee Cell ────────────────────────────────────────────── */
-
-    .emp-cell {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    }
-
-    .emp-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 2px;
-    }
-
-    .emp-code {
-    font-size: 10px;
-    color: #718096;
-    margin: 0;
-    }
-
-    .user-avatar-sm {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #E31837, #FF6B6B);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 10px;
-    font-weight: 600;
-    color: white;
-    }
-
-    /* ── Form Elements ────────────────────────────────────────────── */
-
-    .form-group {
-    margin-bottom: 16px;
-    }
-
-    .form-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: #4A5568;
-    margin-bottom: 6px;
-    }
-
-    .form-input-field {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #1A202C;
-    background-color: #F7FAFC;
-    outline: none;
-    transition: border-color 0.2s;
-    box-sizing: border-box;
-    }
-
-    .form-input-field:focus {
-    border-color: #E31837;
-    background-color: white;
-    }
-
-    .form-select-field {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #1A202C;
-    background-color: #F7FAFC;
-    outline: none;
-    cursor: pointer;
-    box-sizing: border-box;
-    }
-
-    .form-select-field:focus {
-    border-color: #E31837;
-    }
-
-    .form-textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid #E2E8F0;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #1A202C;
-    background-color: #F7FAFC;
-    outline: none;
-    resize: vertical;
-    box-sizing: border-box;
-    font-family: inherit;
-    transition: border-color 0.2s;
-    }
-
-    .form-textarea:focus {
-    border-color: #E31837;
-    background-color: white;
-    }
-
-    /* ── Search Input ─────────────────────────────────────────────── */
-
-    .search-input {
-    padding: 7px 12px;
-    border: 1px solid #E8ECF0;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #4A5568;
-    background-color: white;
-    outline: none;
-    width: 220px;
-    transition: border-color 0.2s;
-    }
-
-    .search-input:focus {
-    border-color: #E31837;
-    }
-
-    /* ── Notification List ────────────────────────────────────────── */
-
-    .notification-list {
-    display: flex;
-    flex-direction: column;
-    }
-
-    .notification-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 18px;
-    border-bottom: 1px solid #F0F2F5;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.15s;
-    }
-
-    .notification-item:last-child {
-    border-bottom: none;
-    }
-
-    .notification-item:hover {
-    background-color: #F7F8FA;
-    }
-
-    .notification-item.unread {
-    background-color: #FAFBFF;
-    border-left: 3px solid #E31837;
-    }
-
-    .notification-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    }
-
-    .notification-icon-green  { background-color: #F0FFF4; color: #276749; }
-    .notification-icon-red    { background-color: #FFF5F5; color: #C53030; }
-    .notification-icon-blue   { background-color: #EBF8FF; color: #2B6CB0; }
-    .notification-icon-yellow { background-color: #FFFBEB; color: #B45309; }
-
-    .notification-content {
-    flex: 1;
-    }
-
-    .notification-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 4px;
-    }
-
-    .notification-message {
-    font-size: 12px;
-    color: #718096;
-    margin: 0 0 4px;
-    line-height: 1.5;
-    }
-
-    .notification-time {
-    font-size: 11px;
-    color: #A0AEC0;
-    margin: 0;
-    }
-
-    .notification-unread-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #E31837;
-    flex-shrink: 0;
-    margin-top: 4px;
-    }
-
-    /* ── Quick Action ─────────────────────────────────────────────── */
-
-    .quick-action-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    color: #4A5568;
-    text-decoration: none;
-    transition: all 0.15s;
-    margin-bottom: 4px;
-    background-color: #F7F8FA;
-    }
-
-    .quick-action-item:hover {
-    background-color: #FFF0F0;
-    color: #E31837;
-    }
-
-    .quick-action-item i {
-    font-size: 18px;
-    flex-shrink: 0;
-    }
-
-    /* ── Days Away Badge ──────────────────────────────────────────── */
-
-    .days-away {
-    font-size: 10px;
-    color: #718096;
-    background-color: #F0F2F5;
-    padding: 3px 8px;
-    border-radius: 20px;
-    white-space: nowrap;
-    }
-
-    /* ── No Data ──────────────────────────────────────────────────── */
-
-    .no-data {
-    font-size: 12px;
-    color: #A0AEC0;
-    text-align: center;
-    padding: 16px 0;
-    margin: 0;
-    }
-
-    /* ── Error Pages ──────────────────────────────────────────────── */
-
-    .error-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #F0F2F5;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    }
-
-    .error-card {
-    background-color: white;
-    border-radius: 20px;
-    padding: 48px 40px;
-    text-align: center;
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #E8ECF0;
-    }
-
-    .error-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 28px;
-    }
-
-    .error-icon-red {
-    background-color: #FFF5F5;
-    color: #C53030;
-    }
-
-    .error-icon-yellow {
-    background-color: #FFFBEB;
-    color: #B45309;
-    }
-
-    .error-code {
-    font-size: 64px;
-    font-weight: 700;
-    color: #E31837;
-    margin: 0 0 8px;
-    line-height: 1;
-    }
-
-    .error-title {
-    font-size: 20px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 12px;
-    }
-
-    .error-message {
-    font-size: 14px;
-    color: #718096;
-    margin: 0 0 24px;
-    line-height: 1.6;
-    }
-  </p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/leave-approvals.js}"></script>
+</body>
+</html>
+</pre>
+
+  function openRejectModal(leaveId) {
+  document.getElementById('rejectForm')
+  .action = '/manager/leaves/reject/'
+  + leaveId;
+  document.getElementById('rejectModal')
+  .style.display = 'flex';
+  }
+
+  function closeRejectModal() {
+  document.getElementById('rejectModal')
+  .style.display = 'none';
+  }
+
+  // Close on overlay click
+  document.getElementById('rejectModal')
+  .addEventListener('click', function(e) {
+  if (e.target === this) closeRejectModal();
+  });
+
+  // Auto hide messages
+  window.onload = function() {
+  const successMsg = document.querySelector(
+  '.alert-success-bar');
+  if (successMsg) {
+  setTimeout(() => {
+  successMsg.style.transition =
+  'opacity 0.5s';
+  successMsg.style.opacity = '0';
+  setTimeout(() =>
+  successMsg.remove(), 500);
+  }, 4000);
+  }
+
+  const errorMsg = document.querySelector(
+  '.alert-error-bar');
+  if (errorMsg) {
+  setTimeout(() => {
+  errorMsg.style.transition =
+  'opacity 0.5s';
+  errorMsg.style.opacity = '0';
+  setTimeout(() =>
+  errorMsg.remove(), 500);
+  }, 5000);
+  }
+  };
+
+  <pre>
+    <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VendorTrack — Correction Approvals</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/pages.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/correction-approvals.css}">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+  <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Top bar -->
+        <div class="top-bar">
+            <div>
+                <h1 class="page-title">
+                    Correction Approvals
+                </h1>
+                <p class="page-subtitle">
+                    Review and action correction requests
+                </p>
+            </div>
+            <div class="pending-count-badge"
+                 th:if="${pendingCorrectionCount > 0}">
+                <i class="ti ti-clock"></i>
+                <span th:text="${pendingCorrectionCount}
+                               + ' pending'">
+                    2 pending
+                </span>
+            </div>
+        </div>
+
+      <!-- Success/Error messages -->
+        <div th:if="${successMessage}"
+             class="alert-success-bar">
+            <i class="ti ti-circle-check"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}"
+             class="alert-error-bar">
+            <i class="ti ti-alert-circle"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+      <!-- Corrections Table -->
+        <div class="page-card">
+            <div class="page-card-header">
+                <div class="page-card-header-left">
+                    <i class="ti ti-edit"></i>
+                    <p class="card-title">
+                        Pending Corrections
+                    </p>
+                </div>
+            </div>
+
+          <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(
+                         pendingCorrections)}"
+                 class="att-empty">
+                <i class="ti ti-circle-check"></i>
+                <p>No pending correction requests</p>
+            </div>
+
+          <!-- Table -->
+            <div th:if="${!#lists.isEmpty(
+                         pendingCorrections)}"
+                 class="page-table-wrapper">
+                <table class="page-table">
+                    <thead>
+                        <tr>
+                            <th>EMPLOYEE</th>
+                            <th>DATE</th>
+                            <th>TYPE</th>
+                            <th>REQ IN</th>
+                            <th>REQ OUT</th>
+                            <th>REASON</th>
+                            <th>RAISED ON</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="correction :
+                                     ${pendingCorrections}">
+
+                            <!-- Employee -->
+                            <td>
+                                <div class="emp-cell">
+                                    <div class="user-avatar-sm"
+                                         th:text="${#strings
+                                                   .toUpperCase(
+                                                   #strings
+                                                   .substring(
+                                                   correction
+                                                   .user
+                                                   .fullName,
+                                                   0, 2))}">
+                                        AK
+                                    </div>
+                                    <div>
+                                        <p class="emp-name"
+                                           th:text="${correction
+                                                    .user
+                                                    .fullName}">
+                                            Arjun Kumar
+                                        </p>
+                                        <p class="emp-code"
+                                           th:text="${correction
+                                                    .user
+                                                    .empCode}">
+                                            EMP001
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+
+                          <!-- Date -->
+                            <td th:text="${correction
+                                         .correctionDate
+                                         .dayOfMonth + ' '
+                                         + correction
+                                           .correctionDate
+                                           .month.name()
+                                           .substring(0,3)
+                                         + ' '
+                                         + correction
+                                           .correctionDate
+                                           .year}">
+                                12 May 2026
+                            </td>
+
+                          <!-- Type -->
+                            <td th:text="${#strings.replace(
+                                          correction
+                                          .correctionType
+                                          .name(),
+                                          '_', ' ')}">
+                                Missed Clock Out
+                            </td>
+
+                          <!-- Req Clock In -->
+                            <td th:text="${correction
+                                         .requestedClockIn
+                                         != null
+                                         ? correction
+                                           .requestedClockIn
+                                           .toLocalTime()
+                                           .toString()
+                                         : '--:--'}">
+                                09:12 AM
+                            </td>
+
+                          <!-- Req Clock Out -->
+                            <td th:text="${correction
+                                         .requestedClockOut
+                                         != null
+                                         ? correction
+                                           .requestedClockOut
+                                           .toLocalTime()
+                                           .toString()
+                                         : '--:--'}">
+                                06:30 PM
+                            </td>
+
+                          <!-- Reason -->
+                            <td th:text="${correction
+                                         .reason}">
+                                Forgot to clock out
+                            </td>
+
+                          <!-- Raised on -->
+                            <td th:text="${correction
+                                         .raisedAt
+                                         .dayOfMonth + ' '
+                                         + correction
+                                           .raisedAt
+                                           .month.name()
+                                           .substring(0,3)
+                                         + ' '
+                                         + correction
+                                           .raisedAt
+                                           .year}">
+                                18 May 2026
+                            </td>
+
+                          <!-- Action -->
+                            <td>
+                                <div class="action-buttons">
+                                    <!-- Approve -->
+                                    <form th:action="@{
+                                          /manager
+                                          /corrections
+                                          /approve/{id}
+                                          (id=${correction
+                                          .id})}"
+                                          method="post">
+                                        <button
+                                                type="submit"
+                                                class="approve-btn">
+                                            Approve
+                                        </button>
+                                    </form>
+                                  <!-- Reject -->
+                                    <button
+                                            class="reject-btn"
+                                            th:onclick="'openRejectModal('
+                                                   + ${correction.id}
+                                                   + ')'">
+                                        Reject
+                                    </button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="rejectModal">
+    <div class="modal-card" style="width:380px;">
+        <div class="modal-header">
+            <div>
+                <p class="modal-title">
+                    Reject Correction
+                </p>
+                <p class="modal-subtitle">
+                    Please provide a reason
+                </p>
+            </div>
+            <button class="modal-close"
+                    onclick="closeRejectModal()">
+                <i class="ti ti-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="rejectForm" method="post">
+                <div class="form-group">
+                    <label class="form-label">
+                        Rejection Reason
+                    </label>
+                    <textarea name="reason"
+                              class="form-textarea"
+                              rows="3"
+                              placeholder="Enter reason"
+                              required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button"
+                            class="btn-secondary"
+                            onclick="closeRejectModal()">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="btn-danger">
+                        Reject
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/correction-approvals.js}"></script>
+</body>
+</html>
+  </pre>
+      </p>
 </div>
 </body>
 </html>

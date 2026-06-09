@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Viewer</title>
+<style>
+body {
+    background:#1e1e1e;
+    color:#d4d4d4;
+    font-family:Consolas, Monaco, monospace;
+    margin:0;
+    padding:20px;
+}
+pre {
+    background:#252526;
+    padding:20px;
+    border-radius:8px;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    overflow:auto;
+    line-height:1.5;
+}
+</style>
+</head>
+<body>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div&gt;
+  &lt;p&gt;
+      // ── Approve leave ──────────────────────────────────────────
+
+      @Transactional
+      public String approveLeave(
+      String managerAdid, Long leaveId) {
+
+      User manager = getManager(managerAdid);
+
+      LeaveRequest leave = leaveRequestRepository
+      .findById(leaveId)
+      .orElseThrow(() -&gt;
+      new RuntimeException(
+      &quot;Leave not found&quot;));
+
+      // Check belongs to manager&#x27;s team
+      if (!leave.getUser().getManager().getId()
+      .equals(manager.getId())) {
+      return &quot;error:Unauthorized&quot;;
+      }
+
+      // Update status
+      leave.setStatus(LeaveStatus.APPROVED);
+      leave.setApprovedBy(manager);
+      leave.setActionedAt(LocalDateTime.now());
+      leaveRequestRepository.save(leave);
+
+      // Mark attendance as ON_LEAVE
+      markAttendanceAsOnLeave(leave);
+
+      // Notify employee
+      notificationService.sendNotification(
+      leave.getUser(),
+      &quot;Leave Approved&quot;,
+      &quot;Your &quot; + leave.getLeaveType().name()
+      + &quot; leave for &quot;
+      + leave.getStartDate() + &quot; to &quot;
+      + leave.getEndDate()
+      + &quot; has been approved by &quot;
+      + manager.getFullName(),
+      NotificationType.LEAVE_APPROVED);
+
+      log.info(&quot;Leave approved: {} by {}&quot;,
+      leaveId, managerAdid);
+
+      return &quot;success:Leave approved successfully&quot;;
+      }
+
+      // ── Reject leave ───────────────────────────────────────────
+
+      @Transactional
+      public String rejectLeave(
+      String managerAdid,
+      Long leaveId,
+      String rejectionReason) {
+
+      User manager = getManager(managerAdid);
+
+      LeaveRequest leave = leaveRequestRepository
+      .findById(leaveId)
+      .orElseThrow(() -&gt;
+      new RuntimeException(
+      &quot;Leave not found&quot;));
+
+      if (!leave.getUser().getManager().getId()
+      .equals(manager.getId())) {
+      return &quot;error:Unauthorized&quot;;
+      }
+
+      leave.setStatus(LeaveStatus.REJECTED);
+      leave.setApprovedBy(manager);
+      leave.setRejectionReason(rejectionReason);
+      leave.setActionedAt(LocalDateTime.now());
+      leaveRequestRepository.save(leave);
+
+      // Notify employee
+      notificationService.sendNotification(
+      leave.getUser(),
+      &quot;Leave Rejected&quot;,
+      &quot;Your &quot; + leave.getLeaveType().name()
+      + &quot; leave for &quot;
+      + leave.getStartDate() + &quot; to &quot;
+      + leave.getEndDate()
+      + &quot; has been rejected. Reason: &quot;
+      + rejectionReason,
+      NotificationType.LEAVE_REJECTED);
+
+      log.info(&quot;Leave rejected: {} by {}&quot;,
+      leaveId, managerAdid);
+
+      return &quot;success:Leave rejected&quot;;
+      }
+
+      // ── Mark attendance as ON_LEAVE ────────────────────────────
+
+      private void markAttendanceAsOnLeave(
+      LeaveRequest leave) {
+
+      LocalDate current = leave.getStartDate();
+
+      while (!current.isAfter(leave.getEndDate())) {
+
+      if (current.getDayOfWeek()
+      != DayOfWeek.SATURDAY
+      &amp;&amp; current.getDayOfWeek()
+      != DayOfWeek.SUNDAY) {
+
+      OptionalAttendance&gt; existing =
+        attendanceRepository
+        .findByUserAndDate(
+        leave.getUser(),
+        current);
+
+        if (existing.isPresent()) {
+        existing.get().setStatus(
+        AttendanceStatus.ON_LEAVE);
+        attendanceRepository
+        .save(existing.get());
+        } else {
+        Attendance attendance =
+        Attendance.builder()
+        .user(leave.getUser())
+        .date(current)
+        .status(AttendanceStatus
+        .ON_LEAVE)
+        .isRegularized(false)
+        .isWorkedOnHoliday(false)
+        .build();
+        attendanceRepository
+        .save(attendance);
+        }
+        }
+        current = current.plusDays(1);
+        }
+        }
+
+        // ── Helper ─────────────────────────────────────────────────
+
+        private User getManager(String adid) {
+        return userRepository.findByAdid(adid)
+        .orElseThrow(() -&gt;
+        new RuntimeException(
+        &quot;Manager not found: &quot;
+        + adid));
+        }
+        }
+    ----------------------------------------------------------------------
+    package com.example.app.service;
+
+    import com.example.app.model.*;
+    import com.example.app.repository.*;
+    import lombok.RequiredArgsConstructor;
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.stereotype.Service;
+    import org.springframework.transaction.annotation.Transactional;
+
+    import java.time.LocalDateTime;
+    import java.util.List;
+
+    @Slf4j
+    @Service
+    @RequiredArgsConstructor
+    public class CorrectionApprovalService {
+
+    private final CorrectionRepository
+    correctionRepository;
+    private final AttendanceRepository
+    attendanceRepository;
+    private final UserRepository
+    userRepository;
+    private final NotificationService
+    notificationService;
+
+    // ── Get pending corrections ────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public ListCorrection&gt; getPendingCorrections(
+    String managerAdid) {
+
+    User manager = getManager(managerAdid);
+
+    return correctionRepository
+    .findByUser_Manager_IdAndStatus(
+    manager.getId(),
+    CorrectionStatus.PENDING);
+    }
+
+    // ── Get pending correction count ───────────────────────────
+
+    @Transactional(readOnly = true)
+    public long getPendingCorrectionCount(
+    String managerAdid) {
+
+    User manager = getManager(managerAdid);
+
+    return correctionRepository
+    .countByUser_Manager_IdAndStatus(
+    manager.getId(),
+    CorrectionStatus.PENDING);
+    }
+
+    // ── Approve correction ─────────────────────────────────────
+
+    @Transactional
+    public String approveCorrection(
+    String managerAdid, Long correctionId) {
+
+    User manager = getManager(managerAdid);
+
+    Correction correction = correctionRepository
+    .findById(correctionId)
+    .orElseThrow(() -&gt;
+    new RuntimeException(
+    &quot;Correction not found&quot;));
+
+    if (!correction.getUser().getManager().getId()
+    .equals(manager.getId())) {
+    return &quot;error:Unauthorized&quot;;
+    }
+
+    // Update attendance record
+    Attendance attendance =
+    correction.getAttendance();
+
+    if (correction.getRequestedClockIn() != null) {
+    attendance.setClockIn(
+    correction.getRequestedClockIn());
+    }
+    if (correction.getRequestedClockOut() != null) {
+    attendance.setClockOut(
+    correction.getRequestedClockOut());
+    }
+
+    attendance.setIsRegularized(true);
+    attendanceRepository.save(attendance);
+
+    // Update correction
+    correction.setStatus(
+    CorrectionStatus.APPROVED);
+    correction.setReviewedBy(manager);
+    correction.setActionedAt(
+    LocalDateTime.now());
+    correctionRepository.save(correction);
+
+    // Notify employee
+    notificationService.sendNotification(
+    correction.getUser(),
+    &quot;Correction Approved&quot;,
+    &quot;Your correction request for &quot;
+    + correction.getCorrectionDate()
+    + &quot; has been approved by &quot;
+    + manager.getFullName(),
+    NotificationType.CORRECTION_APPROVED);
+
+    log.info(&quot;Correction approved: {} by {}&quot;,
+    correctionId, managerAdid);
+
+    return &quot;success:Correction approved&quot;;
+    }
+
+    // ── Reject correction ──────────────────────────────────────
+
+    @Transactional
+    public String rejectCorrection(
+    String managerAdid,
+    Long correctionId,
+    String reason) {
+
+    User manager = getManager(managerAdid);
+
+    Correction correction = correctionRepository
+    .findById(correctionId)
+    .orElseThrow(() -&gt;
+    new RuntimeException(
+    &quot;Correction not found&quot;));
+
+    if (!correction.getUser().getManager().getId()
+    .equals(manager.getId())) {
+    return &quot;error:Unauthorized&quot;;
+    }
+
+    correction.setStatus(
+    CorrectionStatus.REJECTED);
+    correction.setReviewedBy(manager);
+    correction.setRejectionReason(reason);
+    correction.setActionedAt(
+    LocalDateTime.now());
+    correctionRepository.save(correction);
+
+    // Notify employee
+    notificationService.sendNotification(
+    correction.getUser(),
+    &quot;Correction Rejected&quot;,
+    &quot;Your correction request for &quot;
+    + correction.getCorrectionDate()
+    + &quot; has been rejected. Reason: &quot;
+    + reason,
+    NotificationType.CORRECTION_REJECTED);
+
+    log.info(&quot;Correction rejected: {} by {}&quot;,
+    correctionId, managerAdid);
+
+    return &quot;success:Correction rejected&quot;;
+    }
+
+    // ── Helper ─────────────────────────────────────────────────
+
+    private User getManager(String adid) {
+    return userRepository.findByAdid(adid)
+    .orElseThrow(() -&gt;
+    new RuntimeException(
+    &quot;Manager not found: &quot;
+    + adid));
+    }
+    }
+    -----------------------------------------------------------------------------
+    package com.example.app.service;
+
+    import com.example.app.model.*;
+    import com.example.app.repository.*;
+    import lombok.RequiredArgsConstructor;
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.stereotype.Service;
+    import org.springframework.transaction.annotation.Transactional;
+
+    import java.time.LocalDate;
+    import java.util.List;
+
+    @Slf4j
+    @Service
+    @RequiredArgsConstructor
+    public class ManagerService {
+
+    private final AttendanceRepository
+    attendanceRepository;
+    private final UserRepository
+    userRepository;
+
+    // ── Get team attendance for a date ─────────────────────────
+
+    @Transactional(readOnly = true)
+    public ListAttendance&gt; getTeamAttendance(
+      String managerAdid, LocalDate date) {
+
+      User manager = userRepository
+      .findByAdid(managerAdid)
+      .orElseThrow(() -&gt;
+      new RuntimeException(
+      &quot;Manager not found&quot;));
+
+      return attendanceRepository
+      .findByDateAndManagerId(
+      date, manager.getId());
+      }
+
+      // ── Get team members ───────────────────────────────────────
+
+      @Transactional(readOnly = true)
+      public ListUser&gt; getTeamMembers(
+        String managerAdid) {
+
+        User manager = userRepository
+        .findByAdid(managerAdid)
+        .orElseThrow(() -&gt;
+        new RuntimeException(
+        &quot;Manager not found&quot;));
+
+        return userRepository
+        .findByManagerId(manager.getId());
+        }
+        }
+        ----------------------------------------------------
+        package com.example.app.service;
+
+        import com.example.app.model.*;
+        import com.example.app.repository.*;
+        import lombok.RequiredArgsConstructor;
+        import lombok.extern.slf4j.Slf4j;
+        import org.springframework.stereotype.Service;
+        import org.springframework.transaction.annotation.Transactional;
+
+        import java.time.LocalDate;
+        import java.util.List;
+
+        @Slf4j
+        @Service
+        @RequiredArgsConstructor
+        public class ManagerService {
+
+        private final AttendanceRepository
+        attendanceRepository;
+        private final UserRepository
+        userRepository;
+
+        // ── Get team attendance for a date ─────────────────────────
+
+        @Transactional(readOnly = true)
+        public ListAttendance&gt; getTeamAttendance(
+          String managerAdid, LocalDate date) {
+
+          User manager = userRepository
+          .findByAdid(managerAdid)
+          .orElseThrow(() -&gt;
+          new RuntimeException(
+          &quot;Manager not found: &quot;
+          + managerAdid));
+
+          log.info(&quot;Getting team attendance for &quot; +
+          &quot;manager: {} date: {}&quot;,
+          managerAdid, date);
+
+          return attendanceRepository
+          .findByDateAndManagerId(
+          date, manager.getId());
+          }
+
+          // ── Get all team members ───────────────────────────────────
+
+          @Transactional(readOnly = true)
+          public ListUser&gt; getTeamMembers(
+            String managerAdid) {
+
+            User manager = userRepository
+            .findByAdid(managerAdid)
+            .orElseThrow(() -&gt;
+            new RuntimeException(
+            &quot;Manager not found: &quot;
+            + managerAdid));
+
+            log.info(&quot;Getting team members for &quot; +
+            &quot;manager: {}&quot;, managerAdid);
+
+            return userRepository
+            .findByManagerId(manager.getId());
+            }
+
+            // ── Get team size ──────────────────────────────────────────
+
+            @Transactional(readOnly = true)
+            public long getTeamSize(String managerAdid) {
+
+            User manager = userRepository
+            .findByAdid(managerAdid)
+            .orElseThrow(() -&gt;
+            new RuntimeException(
+            &quot;Manager not found: &quot;
+            + managerAdid));
+
+            return userRepository
+            .countByManagerId(manager.getId());
+            }
+            }
+
+    --------------------------------------------
+    package com.example.app.controller;
+
+    import com.example.app.model.Attendance;
+    import com.example.app.model.AttendanceStatus;
+    import com.example.app.model.Correction;
+    import com.example.app.model.LeaveRequest;
+    import com.example.app.model.User;
+    import com.example.app.repository.UserRepository;
+    import com.example.app.service.CorrectionApprovalService;
+    import com.example.app.service.LeaveApprovalService;
+    import com.example.app.service.ManagerService;
+    import jakarta.servlet.http.HttpServletResponse;
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.format.annotation.DateTimeFormat;
+    import org.springframework.http.HttpHeaders;
+    import org.springframework.security.core.Authentication;
+    import org.springframework.stereotype.Controller;
+    import org.springframework.ui.Model;
+    import org.springframework.web.bind.annotation.*;
+    import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+    import java.time.LocalDate;
+    import java.util.List;
+
+    @Slf4j
+    @Controller
+    @RequestMapping(&quot;/manager&quot;)
+    public class ManagerDashboardController
+    extends BaseController {
+
+    private final ManagerService            managerService;
+    private final LeaveApprovalService      leaveApprovalService;
+    private final CorrectionApprovalService correctionApprovalService;
+
+    public ManagerDashboardController(
+    UserRepository userRepository,
+    ManagerService managerService,
+    LeaveApprovalService leaveApprovalService,
+    CorrectionApprovalService
+    correctionApprovalService) {
+    super(userRepository);
+    this.managerService            = managerService;
+    this.leaveApprovalService      = leaveApprovalService;
+    this.correctionApprovalService = correctionApprovalService;
+    }
+
+    // ── Manager Dashboard ──────────────────────────────────────
+
+    @GetMapping(&quot;/dashboard&quot;)
+    public String managerDashboard(
+    Authentication authentication,
+    Model model,
+    HttpServletResponse response) {
+
+    response.setHeader(HttpHeaders.CACHE_CONTROL,
+    &quot;no-cache, no-store, must-revalidate&quot;);
+
+    String adid = authentication.getName();
+    loadUserToModel(authentication, model);
+    model.addAttribute(&quot;activePage&quot;, &quot;dashboard&quot;);
+
+    // Pending counts for sidebar badges
+    long pendingLeaves =
+    leaveApprovalService
+    .getPendingLeaveCount(adid);
+    long pendingCorrections =
+    correctionApprovalService
+    .getPendingCorrectionCount(adid);
+
+    model.addAttribute(&quot;pendingLeaves&quot;,
+    pendingLeaves);
+    model.addAttribute(&quot;pendingCorrections&quot;,
+    pendingCorrections);
+
+    // Today&#x27;s team attendance
+    ListAttendance&gt; teamToday =
+    managerService.getTeamAttendance(
+    adid, LocalDate.now());
+
+    long presentCount = teamToday.stream()
+    .filter(a -&gt; a.getStatus()
+    == AttendanceStatus.PRESENT
+    || a.getStatus()
+    == AttendanceStatus.LATE
+    || a.getStatus()
+    == AttendanceStatus.HALF_DAY)
+    .count();
+
+    long absentCount = teamToday.stream()
+    .filter(a -&gt; a.getStatus()
+    == AttendanceStatus.ABSENT)
+    .count();
+
+    long onLeaveCount = teamToday.stream()
+    .filter(a -&gt; a.getStatus()
+    == AttendanceStatus.ON_LEAVE)
+    .count();
+
+    // Team size
+    long teamSize = managerService
+    .getTeamSize(adid);
+
+    // Recent pending leaves for dashboard
+    ListLeaveRequest&gt; recentLeaves =
+      leaveApprovalService
+      .getPendingLeaves(adid);
+
+      model.addAttribute(&quot;teamToday&quot;,    teamToday);
+      model.addAttribute(&quot;presentCount&quot;, presentCount);
+      model.addAttribute(&quot;absentCount&quot;,  absentCount);
+      model.addAttribute(&quot;onLeaveCount&quot;, onLeaveCount);
+      model.addAttribute(&quot;teamSize&quot;,     teamSize);
+      model.addAttribute(&quot;recentLeaves&quot;, recentLeaves);
+      model.addAttribute(&quot;todayDate&quot;,    LocalDate.now());
+
+      return &quot;manager/dashboard&quot;;
+      }
+
+      // ── Team Attendance ────────────────────────────────────────
+
+      @GetMapping(&quot;/team-attendance&quot;)
+      public String teamAttendance(
+      @RequestParam(value = &quot;date&quot;,
+      required = false)
+      @DateTimeFormat(iso =
+      DateTimeFormat.ISO.DATE)
+      LocalDate date,
+      Authentication authentication,
+      Model model) {
+
+      if (date == null) date = LocalDate.now();
+
+      String adid = authentication.getName();
+      loadUserToModel(authentication, model);
+      model.addAttribute(&quot;activePage&quot;,
+      &quot;team-attendance&quot;);
+
+      ListAttendance&gt; teamAttendance =
+        managerService.getTeamAttendance(
+        adid, date);
+
+        // Stats
+        long presentCount = teamAttendance.stream()
+        .filter(a -&gt; a.getStatus()
+        == AttendanceStatus.PRESENT
+        || a.getStatus()
+        == AttendanceStatus.LATE
+        || a.getStatus()
+        == AttendanceStatus.HALF_DAY)
+        .count();
+
+        long absentCount = teamAttendance.stream()
+        .filter(a -&gt; a.getStatus()
+        == AttendanceStatus.ABSENT)
+        .count();
+
+        long lateCount = teamAttendance.stream()
+        .filter(a -&gt; a.getStatus()
+        == AttendanceStatus.LATE)
+        .count();
+
+        long onLeaveCount = teamAttendance.stream()
+        .filter(a -&gt; a.getStatus()
+        == AttendanceStatus.ON_LEAVE)
+        .count();
+
+        long pendingLeaves =
+        leaveApprovalService
+        .getPendingLeaveCount(adid);
+        long pendingCorrections =
+        correctionApprovalService
+        .getPendingCorrectionCount(adid);
+
+        model.addAttribute(&quot;teamAttendance&quot;,
+        teamAttendance);
+        model.addAttribute(&quot;selectedDate&quot;,   date);
+        model.addAttribute(&quot;presentCount&quot;,   presentCount);
+        model.addAttribute(&quot;absentCount&quot;,    absentCount);
+        model.addAttribute(&quot;lateCount&quot;,      lateCount);
+        model.addAttribute(&quot;onLeaveCount&quot;,   onLeaveCount);
+        model.addAttribute(&quot;pendingLeaves&quot;,
+        pendingLeaves);
+        model.addAttribute(&quot;pendingCorrections&quot;,
+        pendingCorrections);
+
+        return &quot;manager/team-attendance&quot;;
+        }
+
+        // ── Leave Approvals ────────────────────────────────────────
+
+        @GetMapping(&quot;/leave-approvals&quot;)
+        public String leaveApprovals(
+        Authentication authentication,
+        Model model) {
+
+        String adid = authentication.getName();
+        loadUserToModel(authentication, model);
+        model.addAttribute(&quot;activePage&quot;,
+        &quot;leave-approvals&quot;);
+
+        ListLeaveRequest&gt; pendingLeaves =
+          leaveApprovalService
+          .getPendingLeaves(adid);
+
+          long pendingLeaveCount =
+          leaveApprovalService
+          .getPendingLeaveCount(adid);
+          long pendingCorrections =
+          correctionApprovalService
+          .getPendingCorrectionCount(adid);
+
+          model.addAttribute(&quot;pendingLeaves&quot;,
+          pendingLeaves);
+          model.addAttribute(&quot;pendingLeaveCount&quot;,
+          pendingLeaveCount);
+          model.addAttribute(&quot;pendingCorrections&quot;,
+          pendingCorrections);
+
+          return &quot;manager/leave-approvals&quot;;
+          }
+
+          @PostMapping(&quot;/leaves/approve/{id}&quot;)
+          public String approveLeave(
+          @PathVariable Long id,
+          Authentication authentication,
+          RedirectAttributes redirectAttributes) {
+
+          String adid = authentication.getName();
+          String result = leaveApprovalService
+          .approveLeave(adid, id);
+
+          if (result.startsWith(&quot;success:&quot;)) {
+          redirectAttributes.addFlashAttribute(
+          &quot;successMessage&quot;,
+          result.substring(8));
+          } else {
+          redirectAttributes.addFlashAttribute(
+          &quot;errorMessage&quot;,
+          result.substring(6));
+          }
+
+          return &quot;redirect:/manager/leave-approvals&quot;;
+          }
+
+          @PostMapping(&quot;/leaves/reject/{id}&quot;)
+          public String rejectLeave(
+          @PathVariable Long id,
+          @RequestParam String rejectionReason,
+          Authentication authentication,
+          RedirectAttributes redirectAttributes) {
+
+          String adid = authentication.getName();
+          String result = leaveApprovalService
+          .rejectLeave(adid, id,
+          rejectionReason);
+
+          if (result.startsWith(&quot;success:&quot;)) {
+          redirectAttributes.addFlashAttribute(
+          &quot;successMessage&quot;,
+          result.substring(8));
+          } else {
+          redirectAttributes.addFlashAttribute(
+          &quot;errorMessage&quot;,
+          result.substring(6));
+          }
+
+          return &quot;redirect:/manager/leave-approvals&quot;;
+          }
+
+          // ── Correction Approvals ───────────────────────────────────
+
+          @GetMapping(&quot;/correction-approvals&quot;)
+          public String correctionApprovals(
+          Authentication authentication,
+          Model model) {
+
+          String adid = authentication.getName();
+          loadUserToModel(authentication, model);
+          model.addAttribute(&quot;activePage&quot;,
+          &quot;correction-approvals&quot;);
+
+          ListCorrection&gt; pendingCorrections =
+            correctionApprovalService
+            .getPendingCorrections(adid);
+
+            long pendingLeaves =
+            leaveApprovalService
+            .getPendingLeaveCount(adid);
+            long pendingCorrectionCount =
+            correctionApprovalService
+            .getPendingCorrectionCount(adid);
+
+            model.addAttribute(&quot;pendingCorrections&quot;,
+            pendingCorrections);
+            model.addAttribute(&quot;pendingLeaves&quot;,
+            pendingLeaves);
+            model.addAttribute(&quot;pendingCorrectionCount&quot;,
+            pendingCorrectionCount);
+
+            return &quot;manager/correction-approvals&quot;;
+            }
+
+            @PostMapping(&quot;/corrections/approve/{id}&quot;)
+            public String approveCorrection(
+            @PathVariable Long id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+            String adid = authentication.getName();
+            String result = correctionApprovalService
+            .approveCorrection(adid, id);
+
+            if (result.startsWith(&quot;success:&quot;)) {
+            redirectAttributes.addFlashAttribute(
+            &quot;successMessage&quot;,
+            result.substring(8));
+            } else {
+            redirectAttributes.addFlashAttribute(
+            &quot;errorMessage&quot;,
+            result.substring(6));
+            }
+
+            return &quot;redirect:/manager/correction-approvals&quot;;
+            }
+
+            @PostMapping(&quot;/corrections/reject/{id}&quot;)
+            public String rejectCorrection(
+            @PathVariable Long id,
+            @RequestParam String reason,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+            String adid = authentication.getName();
+            String result = correctionApprovalService
+            .rejectCorrection(adid, id, reason);
+
+            if (result.startsWith(&quot;success:&quot;)) {
+            redirectAttributes.addFlashAttribute(
+            &quot;successMessage&quot;,
+            result.substring(8));
+            } else {
+            redirectAttributes.addFlashAttribute(
+            &quot;errorMessage&quot;,
+            result.substring(6));
+            }
+
+            return &quot;redirect:/manager/correction-approvals&quot;;
+            }
+            }
+
+    ------------------------------------------------------------
+
+    &lt;pre&gt;
+  &lt;!DOCTYPE html&gt;
+&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;VendorTrack — Leave Approvals&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/dashboard.css}&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/pages.css}&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/leave-approvals.css}&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;app-layout&quot;&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;div th:replace=&quot;~{fragments/sidebar :: sidebar}&quot;&gt;&lt;/div&gt;
+
+  &lt;!-- Main Content --&gt;
+    &lt;main class=&quot;main-content&quot;&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class=&quot;top-bar&quot;&gt;
+            &lt;div&gt;
+                &lt;h1 class=&quot;page-title&quot;&gt;Leave Approvals&lt;/h1&gt;
+                &lt;p class=&quot;page-subtitle&quot;&gt;
+                    Review and action leave requests
+                &lt;/p&gt;
+            &lt;/div&gt;
+          &lt;!-- Pending count badge --&gt;
+            &lt;div class=&quot;pending-count-badge&quot;
+                 th:if=&quot;${pendingLeaveCount &gt; 0}&quot;&gt;
+                &lt;i class=&quot;ti ti-clock&quot;&gt;&lt;/i&gt;
+                &lt;span th:text=&quot;${pendingLeaveCount}
+                               + &#x27; pending&#x27;&quot;&gt;
+                    3 pending
+                &lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+      &lt;!-- Success/Error messages --&gt;
+        &lt;div th:if=&quot;${successMessage}&quot;
+             class=&quot;alert-success-bar&quot;&gt;
+            &lt;i class=&quot;ti ti-circle-check&quot;&gt;&lt;/i&gt;
+            &lt;span th:text=&quot;${successMessage}&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div th:if=&quot;${errorMessage}&quot;
+             class=&quot;alert-error-bar&quot;&gt;
+            &lt;i class=&quot;ti ti-alert-circle&quot;&gt;&lt;/i&gt;
+            &lt;span th:text=&quot;${errorMessage}&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+      &lt;!-- Leave Approvals Table --&gt;
+        &lt;div class=&quot;page-card&quot;&gt;
+            &lt;div class=&quot;page-card-header&quot;&gt;
+                &lt;div class=&quot;page-card-header-left&quot;&gt;
+                    &lt;i class=&quot;ti ti-calendar-event&quot;&gt;&lt;/i&gt;
+                    &lt;p class=&quot;card-title&quot;&gt;
+                        Pending Leave Requests
+                    &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+          &lt;!-- Empty state --&gt;
+            &lt;div th:if=&quot;${#lists.isEmpty(pendingLeaves)}&quot;
+                 class=&quot;att-empty&quot;&gt;
+                &lt;i class=&quot;ti ti-circle-check&quot;&gt;&lt;/i&gt;
+                &lt;p&gt;No pending leave requests&lt;/p&gt;
+            &lt;/div&gt;
+
+          &lt;!-- Table --&gt;
+            &lt;div th:if=&quot;${!#lists.isEmpty(pendingLeaves)}&quot;
+                 class=&quot;page-table-wrapper&quot;&gt;
+                &lt;table class=&quot;page-table&quot;&gt;
+                    &lt;thead&gt;
+                        &lt;tr&gt;
+                            &lt;th&gt;EMPLOYEE&lt;/th&gt;
+                            &lt;th&gt;TYPE&lt;/th&gt;
+                            &lt;th&gt;FROM&lt;/th&gt;
+                            &lt;th&gt;TO&lt;/th&gt;
+                            &lt;th&gt;DAYS&lt;/th&gt;
+                            &lt;th&gt;REASON&lt;/th&gt;
+                            &lt;th&gt;APPLIED&lt;/th&gt;
+                            &lt;th&gt;ACTION&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        &lt;tr th:each=&quot;leave : ${pendingLeaves}&quot;&gt;
+
+                            &lt;!-- Employee --&gt;
+                            &lt;td&gt;
+                                &lt;div class=&quot;emp-cell&quot;&gt;
+                                    &lt;div class=&quot;user-avatar-sm&quot;
+                                         th:text=&quot;${#strings
+                                                   .toUpperCase(
+                                                   #strings
+                                                   .substring(
+                                                   leave.user
+                                                   .fullName,
+                                                   0, 2))}&quot;&gt;
+                                        AK
+                                    &lt;/div&gt;
+                                    &lt;div&gt;
+                                        &lt;p class=&quot;emp-name&quot;
+                                           th:text=&quot;${leave
+                                                    .user
+                                                    .fullName}&quot;&gt;
+                                            Arjun Kumar
+                                        &lt;/p&gt;
+                                        &lt;p class=&quot;emp-code&quot;
+                                           th:text=&quot;${leave
+                                                    .user
+                                                    .empCode}&quot;&gt;
+                                            EMP001
+                                        &lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+
+                          &lt;!-- Type --&gt;
+                            &lt;td&gt;
+                                &lt;span th:if=&quot;${leave.leaveType
+                                             .name() == &#x27;CL&#x27;}&quot;
+                                      class=&quot;leave-type-cl&quot;&gt;
+                                    CL
+                                &lt;/span&gt;
+                                &lt;span th:if=&quot;${leave.leaveType
+                                             .name() == &#x27;SL&#x27;}&quot;
+                                      class=&quot;leave-type-sl&quot;&gt;
+                                    SL
+                                &lt;/span&gt;
+                                &lt;span th:if=&quot;${leave.leaveType
+                                             .name() == &#x27;PL&#x27;}&quot;
+                                      class=&quot;leave-type-pl&quot;&gt;
+                                    PL
+                                &lt;/span&gt;
+                            &lt;/td&gt;
+
+                          &lt;!-- From --&gt;
+                            &lt;td th:text=&quot;${leave.startDate
+                                         .dayOfMonth + &#x27; &#x27;
+                                         + leave.startDate
+                                           .month.name()
+                                           .substring(0,3)
+                                         + &#x27; &#x27;
+                                         + leave.startDate
+                                           .year}&quot;&gt;
+                                20 May 2026
+                            &lt;/td&gt;
+
+                          &lt;!-- To --&gt;
+                            &lt;td th:text=&quot;${leave.endDate
+                                         .dayOfMonth + &#x27; &#x27;
+                                         + leave.endDate
+                                           .month.name()
+                                           .substring(0,3)
+                                         + &#x27; &#x27;
+                                         + leave.endDate
+                                           .year}&quot;&gt;
+                                21 May 2026
+                            &lt;/td&gt;
+
+                          &lt;!-- Days --&gt;
+                            &lt;td th:text=&quot;${leave.totalDays}&quot;&gt;
+                                2
+                            &lt;/td&gt;
+
+                          &lt;!-- Reason --&gt;
+                            &lt;td th:text=&quot;${leave.reason}&quot;&gt;
+                                Personal work
+                            &lt;/td&gt;
+
+                          &lt;!-- Applied --&gt;
+                            &lt;td th:text=&quot;${leave.appliedAt
+                                         .dayOfMonth + &#x27; &#x27;
+                                         + leave.appliedAt
+                                           .month.name()
+                                           .substring(0,3)
+                                         + &#x27; &#x27;
+                                         + leave.appliedAt
+                                           .year}&quot;&gt;
+                                18 May 2026
+                            &lt;/td&gt;
+
+                          &lt;!-- Action --&gt;
+                            &lt;td&gt;
+                                &lt;div class=&quot;action-buttons&quot;&gt;
+                                    &lt;!-- Approve --&gt;
+                                    &lt;form th:action=&quot;@{
+                                          /manager/leaves
+                                          /approve/{id}
+                                          (id=${leave.id})}&quot;
+                                          method=&quot;post&quot;&gt;
+                                        &lt;button type=&quot;submit&quot;
+                                                class=&quot;approve-btn&quot;&gt;
+                                            Approve
+                                        &lt;/button&gt;
+                                    &lt;/form&gt;
+                                  &lt;!-- Reject --&gt;
+                                    &lt;button class=&quot;reject-btn&quot;
+                                            th:onclick=&quot;&#x27;openRejectModal(&#x27;
+                                                       + ${leave.id}
+                                                       + &#x27;)&#x27;&quot;&gt;
+                                        Reject
+                                    &lt;/button&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+
+                        &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;!-- Reject Modal --&gt;
+&lt;div class=&quot;modal-overlay&quot; id=&quot;rejectModal&quot;&gt;
+    &lt;div class=&quot;modal-card&quot; style=&quot;width:380px;&quot;&gt;
+        &lt;div class=&quot;modal-header&quot;&gt;
+            &lt;div&gt;
+                &lt;p class=&quot;modal-title&quot;&gt;Reject Leave&lt;/p&gt;
+                &lt;p class=&quot;modal-subtitle&quot;&gt;
+                    Please provide a reason
+                &lt;/p&gt;
+            &lt;/div&gt;
+            &lt;button class=&quot;modal-close&quot;
+                    onclick=&quot;closeRejectModal()&quot;&gt;
+                &lt;i class=&quot;ti ti-x&quot;&gt;&lt;/i&gt;
+            &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;modal-body&quot;&gt;
+            &lt;form id=&quot;rejectForm&quot;
+                  method=&quot;post&quot;&gt;
+                &lt;div class=&quot;form-group&quot;&gt;
+                    &lt;label class=&quot;form-label&quot;&gt;
+                        Rejection Reason
+                    &lt;/label&gt;
+                    &lt;textarea name=&quot;rejectionReason&quot;
+                              class=&quot;form-textarea&quot;
+                              rows=&quot;3&quot;
+                              placeholder=&quot;Enter reason&quot;
+                              required&gt;&lt;/textarea&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;modal-actions&quot;&gt;
+                    &lt;button type=&quot;button&quot;
+                            class=&quot;btn-secondary&quot;
+                            onclick=&quot;closeRejectModal()&quot;&gt;
+                        Cancel
+                    &lt;/button&gt;
+                    &lt;button type=&quot;submit&quot;
+                            class=&quot;btn-danger&quot;&gt;
+                        Reject
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+&lt;script th:src=&quot;@{/js/leave-approvals.js}&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;/pre&gt;
+
+  function openRejectModal(leaveId) {
+  document.getElementById(&#x27;rejectForm&#x27;)
+  .action = &#x27;/manager/leaves/reject/&#x27;
+  + leaveId;
+  document.getElementById(&#x27;rejectModal&#x27;)
+  .style.display = &#x27;flex&#x27;;
+  }
+
+  function closeRejectModal() {
+  document.getElementById(&#x27;rejectModal&#x27;)
+  .style.display = &#x27;none&#x27;;
+  }
+
+  // Close on overlay click
+  document.getElementById(&#x27;rejectModal&#x27;)
+  .addEventListener(&#x27;click&#x27;, function(e) {
+  if (e.target === this) closeRejectModal();
+  });
+
+  // Auto hide messages
+  window.onload = function() {
+  const successMsg = document.querySelector(
+  &#x27;.alert-success-bar&#x27;);
+  if (successMsg) {
+  setTimeout(() =&gt; {
+  successMsg.style.transition =
+  &#x27;opacity 0.5s&#x27;;
+  successMsg.style.opacity = &#x27;0&#x27;;
+  setTimeout(() =&gt;
+  successMsg.remove(), 500);
+  }, 4000);
+  }
+
+  const errorMsg = document.querySelector(
+  &#x27;.alert-error-bar&#x27;);
+  if (errorMsg) {
+  setTimeout(() =&gt; {
+  errorMsg.style.transition =
+  &#x27;opacity 0.5s&#x27;;
+  errorMsg.style.opacity = &#x27;0&#x27;;
+  setTimeout(() =&gt;
+  errorMsg.remove(), 500);
+  }, 5000);
+  }
+  };
+
+  &lt;pre&gt;
+    &lt;!DOCTYPE html&gt;
+&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;VendorTrack — Correction Approvals&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/dashboard.css}&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/pages.css}&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          th:href=&quot;@{/css/correction-approvals.css}&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;app-layout&quot;&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;div th:replace=&quot;~{fragments/sidebar :: sidebar}&quot;&gt;&lt;/div&gt;
+
+  &lt;!-- Main Content --&gt;
+    &lt;main class=&quot;main-content&quot;&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class=&quot;top-bar&quot;&gt;
+            &lt;div&gt;
+                &lt;h1 class=&quot;page-title&quot;&gt;
+                    Correction Approvals
+                &lt;/h1&gt;
+                &lt;p class=&quot;page-subtitle&quot;&gt;
+                    Review and action correction requests
+                &lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;pending-count-badge&quot;
+                 th:if=&quot;${pendingCorrectionCount &gt; 0}&quot;&gt;
+                &lt;i class=&quot;ti ti-clock&quot;&gt;&lt;/i&gt;
+                &lt;span th:text=&quot;${pendingCorrectionCount}
+                               + &#x27; pending&#x27;&quot;&gt;
+                    2 pending
+                &lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+      &lt;!-- Success/Error messages --&gt;
+        &lt;div th:if=&quot;${successMessage}&quot;
+             class=&quot;alert-success-bar&quot;&gt;
+            &lt;i class=&quot;ti ti-circle-check&quot;&gt;&lt;/i&gt;
+            &lt;span th:text=&quot;${successMessage}&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div th:if=&quot;${errorMessage}&quot;
+             class=&quot;alert-error-bar&quot;&gt;
+            &lt;i class=&quot;ti ti-alert-circle&quot;&gt;&lt;/i&gt;
+            &lt;span th:text=&quot;${errorMessage}&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+      &lt;!-- Corrections Table --&gt;
+        &lt;div class=&quot;page-card&quot;&gt;
+            &lt;div class=&quot;page-card-header&quot;&gt;
+                &lt;div class=&quot;page-card-header-left&quot;&gt;
+                    &lt;i class=&quot;ti ti-edit&quot;&gt;&lt;/i&gt;
+                    &lt;p class=&quot;card-title&quot;&gt;
+                        Pending Corrections
+                    &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+          &lt;!-- Empty state --&gt;
+            &lt;div th:if=&quot;${#lists.isEmpty(
+                         pendingCorrections)}&quot;
+                 class=&quot;att-empty&quot;&gt;
+                &lt;i class=&quot;ti ti-circle-check&quot;&gt;&lt;/i&gt;
+                &lt;p&gt;No pending correction requests&lt;/p&gt;
+            &lt;/div&gt;
+
+          &lt;!-- Table --&gt;
+            &lt;div th:if=&quot;${!#lists.isEmpty(
+                         pendingCorrections)}&quot;
+                 class=&quot;page-table-wrapper&quot;&gt;
+                &lt;table class=&quot;page-table&quot;&gt;
+                    &lt;thead&gt;
+                        &lt;tr&gt;
+                            &lt;th&gt;EMPLOYEE&lt;/th&gt;
+                            &lt;th&gt;DATE&lt;/th&gt;
+                            &lt;th&gt;TYPE&lt;/th&gt;
+                            &lt;th&gt;REQ IN&lt;/th&gt;
+                            &lt;th&gt;REQ OUT&lt;/th&gt;
+                            &lt;th&gt;REASON&lt;/th&gt;
+                            &lt;th&gt;RAISED ON&lt;/th&gt;
+                            &lt;th&gt;ACTION&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        &lt;tr th:each=&quot;correction :
+                                     ${pendingCorrections}&quot;&gt;
+
+                            &lt;!-- Employee --&gt;
+                            &lt;td&gt;
+                                &lt;div class=&quot;emp-cell&quot;&gt;
+                                    &lt;div class=&quot;user-avatar-sm&quot;
+                                         th:text=&quot;${#strings
+                                                   .toUpperCase(
+                                                   #strings
+                                                   .substring(
+                                                   correction
+                                                   .user
+                                                   .fullName,
+                                                   0, 2))}&quot;&gt;
+                                        AK
+                                    &lt;/div&gt;
+                                    &lt;div&gt;
+                                        &lt;p class=&quot;emp-name&quot;
+                                           th:text=&quot;${correction
+                                                    .user
+                                                    .fullName}&quot;&gt;
+                                            Arjun Kumar
+                                        &lt;/p&gt;
+                                        &lt;p class=&quot;emp-code&quot;
+                                           th:text=&quot;${correction
+                                                    .user
+                                                    .empCode}&quot;&gt;
+                                            EMP001
+                                        &lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+
+                          &lt;!-- Date --&gt;
+                            &lt;td th:text=&quot;${correction
+                                         .correctionDate
+                                         .dayOfMonth + &#x27; &#x27;
+                                         + correction
+                                           .correctionDate
+                                           .month.name()
+                                           .substring(0,3)
+                                         + &#x27; &#x27;
+                                         + correction
+                                           .correctionDate
+                                           .year}&quot;&gt;
+                                12 May 2026
+                            &lt;/td&gt;
+
+                          &lt;!-- Type --&gt;
+                            &lt;td th:text=&quot;${#strings.replace(
+                                          correction
+                                          .correctionType
+                                          .name(),
+                                          &#x27;_&#x27;, &#x27; &#x27;)}&quot;&gt;
+                                Missed Clock Out
+                            &lt;/td&gt;
+
+                          &lt;!-- Req Clock In --&gt;
+                            &lt;td th:text=&quot;${correction
+                                         .requestedClockIn
+                                         != null
+                                         ? correction
+                                           .requestedClockIn
+                                           .toLocalTime()
+                                           .toString()
+                                         : &#x27;--:--&#x27;}&quot;&gt;
+                                09:12 AM
+                            &lt;/td&gt;
+
+                          &lt;!-- Req Clock Out --&gt;
+                            &lt;td th:text=&quot;${correction
+                                         .requestedClockOut
+                                         != null
+                                         ? correction
+                                           .requestedClockOut
+                                           .toLocalTime()
+                                           .toString()
+                                         : &#x27;--:--&#x27;}&quot;&gt;
+                                06:30 PM
+                            &lt;/td&gt;
+
+                          &lt;!-- Reason --&gt;
+                            &lt;td th:text=&quot;${correction
+                                         .reason}&quot;&gt;
+                                Forgot to clock out
+                            &lt;/td&gt;
+
+                          &lt;!-- Raised on --&gt;
+                            &lt;td th:text=&quot;${correction
+                                         .raisedAt
+                                         .dayOfMonth + &#x27; &#x27;
+                                         + correction
+                                           .raisedAt
+                                           .month.name()
+                                           .substring(0,3)
+                                         + &#x27; &#x27;
+                                         + correction
+                                           .raisedAt
+                                           .year}&quot;&gt;
+                                18 May 2026
+                            &lt;/td&gt;
+
+                          &lt;!-- Action --&gt;
+                            &lt;td&gt;
+                                &lt;div class=&quot;action-buttons&quot;&gt;
+                                    &lt;!-- Approve --&gt;
+                                    &lt;form th:action=&quot;@{
+                                          /manager
+                                          /corrections
+                                          /approve/{id}
+                                          (id=${correction
+                                          .id})}&quot;
+                                          method=&quot;post&quot;&gt;
+                                        &lt;button
+                                                type=&quot;submit&quot;
+                                                class=&quot;approve-btn&quot;&gt;
+                                            Approve
+                                        &lt;/button&gt;
+                                    &lt;/form&gt;
+                                  &lt;!-- Reject --&gt;
+                                    &lt;button
+                                            class=&quot;reject-btn&quot;
+                                            th:onclick=&quot;&#x27;openRejectModal(&#x27;
+                                                   + ${correction.id}
+                                                   + &#x27;)&#x27;&quot;&gt;
+                                        Reject
+                                    &lt;/button&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+
+                        &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;!-- Reject Modal --&gt;
+&lt;div class=&quot;modal-overlay&quot; id=&quot;rejectModal&quot;&gt;
+    &lt;div class=&quot;modal-card&quot; style=&quot;width:380px;&quot;&gt;
+        &lt;div class=&quot;modal-header&quot;&gt;
+            &lt;div&gt;
+                &lt;p class=&quot;modal-title&quot;&gt;
+                    Reject Correction
+                &lt;/p&gt;
+                &lt;p class=&quot;modal-subtitle&quot;&gt;
+                    Please provide a reason
+                &lt;/p&gt;
+            &lt;/div&gt;
+            &lt;button class=&quot;modal-close&quot;
+                    onclick=&quot;closeRejectModal()&quot;&gt;
+                &lt;i class=&quot;ti ti-x&quot;&gt;&lt;/i&gt;
+            &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;modal-body&quot;&gt;
+            &lt;form id=&quot;rejectForm&quot; method=&quot;post&quot;&gt;
+                &lt;div class=&quot;form-group&quot;&gt;
+                    &lt;label class=&quot;form-label&quot;&gt;
+                        Rejection Reason
+                    &lt;/label&gt;
+                    &lt;textarea name=&quot;reason&quot;
+                              class=&quot;form-textarea&quot;
+                              rows=&quot;3&quot;
+                              placeholder=&quot;Enter reason&quot;
+                              required&gt;&lt;/textarea&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;modal-actions&quot;&gt;
+                    &lt;button type=&quot;button&quot;
+                            class=&quot;btn-secondary&quot;
+                            onclick=&quot;closeRejectModal()&quot;&gt;
+                        Cancel
+                    &lt;/button&gt;
+                    &lt;button type=&quot;submit&quot;
+                            class=&quot;btn-danger&quot;&gt;
+                        Reject
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+&lt;script th:src=&quot;@{/js/correction-approvals.js}&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+  &lt;/pre&gt;
+      &lt;/p&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>

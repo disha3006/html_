@@ -3,28 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Code Viewer</title>
+  <title>Combined Code Viewer</title>
   <style>
-    body {
-        background:#1e1e1e;
-        color:#d4d4d4;
-        font-family:Consolas, Monaco, monospace;
-        margin:0;
-        padding:20px;
-    }
-    pre {
-        background:#252526;
-        padding:20px;
-        border-radius:8px;
-        white-space:pre-wrap;
-        word-wrap:break-word;
-        overflow:auto;
-        line-height:1.5;
-    }
+    body{background:#1e1e1e;color:#d4d4d4;font-family:Consolas,monospace;padding:20px;}
+    pre{background:#252526;padding:20px;border-radius:8px;white-space:pre-wrap;overflow:auto;}
   </style>
 </head>
 <body>
-<pre>&lt;!DOCTYPE html&gt;
+<pre>
+
+================ Pasted text.txt ================
+
+&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
   &lt;meta charset=&quot;UTF-8&quot;&gt;
@@ -1444,6 +1434,294 @@
 &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-</pre>
+
+================ Pasted text(1).txt ================
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;VendorTrack — Manager Dashboard&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot;
+          href=&quot;https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/dashboard.css}&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/pages.css}&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/manager-dashboard.css}&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;app-layout&quot;&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;div th:replace=&quot;~{fragments/sidebar :: sidebar}&quot;&gt;&lt;/div&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class=&quot;main-content&quot;&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class=&quot;top-bar&quot;&gt;
+            &lt;div&gt;
+                &lt;h1 class=&quot;page-title&quot;&gt;
+                    Good morning,
+                    &lt;span th:text=&quot;${#strings
+                                   .substringBefore(
+                                   fullName, &#x27; &#x27;)}&quot;&gt;
+                        Priya
+                    &lt;/span&gt;!
+                &lt;/h1&gt;
+                &lt;p class=&quot;page-subtitle&quot;
+                   th:text=&quot;${todayDate}&quot;&gt;
+                    Monday, 18 May 2026
+                &lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Stats --&gt;
+        &lt;div class=&quot;stats-grid&quot;&gt;
+            &lt;div class=&quot;stat-card&quot;&gt;
+                &lt;div class=&quot;stat-card-top&quot;&gt;
+                    &lt;p class=&quot;stat-label&quot;&gt;
+                        PRESENT TODAY
+                    &lt;/p&gt;
+                    &lt;div class=&quot;stat-icon stat-icon-green&quot;&gt;
+                        &lt;i class=&quot;ti ti-users&quot;&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class=&quot;stat-value&quot;
+                   th:text=&quot;${presentCount}&quot;&gt;8&lt;/p&gt;
+                &lt;p class=&quot;stat-sub&quot;&gt;
+                    of
+                    &lt;span th:text=&quot;${teamSize}&quot;&gt;10&lt;/span&gt;
+                    team members
+                &lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;stat-card&quot;&gt;
+                &lt;div class=&quot;stat-card-top&quot;&gt;
+                    &lt;p class=&quot;stat-label&quot;&gt;ABSENT TODAY&lt;/p&gt;
+                    &lt;div class=&quot;stat-icon stat-icon-red&quot;&gt;
+                        &lt;i class=&quot;ti ti-user-off&quot;&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class=&quot;stat-value stat-value-red&quot;
+                   th:text=&quot;${absentCount}&quot;&gt;2&lt;/p&gt;
+                &lt;p class=&quot;stat-sub&quot;&gt;team members&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;stat-card&quot;&gt;
+                &lt;div class=&quot;stat-card-top&quot;&gt;
+                    &lt;p class=&quot;stat-label&quot;&gt;
+                        PENDING LEAVES
+                    &lt;/p&gt;
+                    &lt;div class=&quot;stat-icon stat-icon-yellow&quot;&gt;
+                        &lt;i class=&quot;ti ti-calendar-event&quot;&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class=&quot;stat-value stat-value-yellow&quot;
+                   th:text=&quot;${pendingLeaves}&quot;&gt;3&lt;/p&gt;
+                &lt;p class=&quot;stat-sub&quot;&gt;awaiting approval&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;stat-card&quot;&gt;
+                &lt;div class=&quot;stat-card-top&quot;&gt;
+                    &lt;p class=&quot;stat-label&quot;&gt;
+                        PENDING CORRECTIONS
+                    &lt;/p&gt;
+                    &lt;div class=&quot;stat-icon stat-icon-blue&quot;&gt;
+                        &lt;i class=&quot;ti ti-edit&quot;&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class=&quot;stat-value&quot;
+                   th:text=&quot;${pendingCorrections}&quot;&gt;2&lt;/p&gt;
+                &lt;p class=&quot;stat-sub&quot;&gt;awaiting review&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Bottom row --&gt;
+        &lt;div class=&quot;bottom-grid&quot;&gt;
+
+            &lt;!-- Team attendance today --&gt;
+            &lt;div class=&quot;card&quot;&gt;
+                &lt;div class=&quot;card-header&quot;&gt;
+                    &lt;div class=&quot;card-header-left&quot;&gt;
+                        &lt;i class=&quot;ti ti-users&quot;&gt;&lt;/i&gt;
+                        &lt;p class=&quot;card-title&quot;&gt;
+                            Team Today
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;a href=&quot;/manager/team-attendance&quot;
+                       class=&quot;card-link&quot;&gt;
+                        View all →
+                    &lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;card-body&quot;&gt;
+
+                    &lt;!-- Empty state --&gt;
+                    &lt;div th:if=&quot;${#lists.isEmpty(
+                                 teamToday)}&quot;&gt;
+                        &lt;p class=&quot;no-data&quot;&gt;
+                            No attendance records today
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+
+                    &lt;!-- Team list --&gt;
+                    &lt;div th:each=&quot;att : ${teamToday}&quot;
+                         class=&quot;list-item&quot;&gt;
+                        &lt;div class=&quot;list-item-left&quot;&gt;
+                            &lt;div class=&quot;user-avatar-sm&quot;
+                                 th:text=&quot;${#strings
+                                           .toUpperCase(
+                                           #strings
+                                           .substring(
+                                           att.user
+                                           .fullName,
+                                           0, 2))}&quot;&gt;
+                                AK
+                            &lt;/div&gt;
+                            &lt;div&gt;
+                                &lt;p class=&quot;list-item-title&quot;
+                                   th:text=&quot;${att.user
+                                            .fullName}&quot;&gt;
+                                    Arjun Kumar
+                                &lt;/p&gt;
+                                &lt;p class=&quot;list-item-sub&quot;
+                                   th:text=&quot;${att.clockIn
+                                            != null
+                                            ? &#x27;Clocked in at &#x27;
+                                            + att.clockIn
+                                              .toLocalTime()
+                                              .toString()
+                                            : &#x27;Not clocked in&#x27;}&quot;&gt;
+                                    Clocked in at 09:12
+                                &lt;/p&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;span th:if=&quot;${att.status.name()
+                                     == &#x27;PRESENT&#x27;}&quot;
+                              class=&quot;badge-present&quot;&gt;
+                            Present
+                        &lt;/span&gt;
+                        &lt;span th:if=&quot;${att.status.name()
+                                     == &#x27;LATE&#x27;}&quot;
+                              class=&quot;badge-late&quot;&gt;
+                            Late
+                        &lt;/span&gt;
+                        &lt;span th:if=&quot;${att.status.name()
+                                     == &#x27;ABSENT&#x27;}&quot;
+                              class=&quot;badge-absent&quot;&gt;
+                            Absent
+                        &lt;/span&gt;
+                        &lt;span th:if=&quot;${att.status.name()
+                                     == &#x27;HALF_DAY&#x27;}&quot;
+                              class=&quot;badge-halfday&quot;&gt;
+                            Half Day
+                        &lt;/span&gt;
+                        &lt;span th:if=&quot;${att.status.name()
+                                     == &#x27;ON_LEAVE&#x27;}&quot;
+                              class=&quot;badge-onleave&quot;&gt;
+                            On Leave
+                        &lt;/span&gt;
+                    &lt;/div&gt;
+
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Pending leave approvals --&gt;
+            &lt;div class=&quot;card&quot;&gt;
+                &lt;div class=&quot;card-header&quot;&gt;
+                    &lt;div class=&quot;card-header-left&quot;&gt;
+                        &lt;i class=&quot;ti ti-calendar-event&quot;&gt;&lt;/i&gt;
+                        &lt;p class=&quot;card-title&quot;&gt;
+                            Pending Leaves
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;a href=&quot;/manager/leave-approvals&quot;
+                       class=&quot;card-link&quot;&gt;
+                        View all →
+                    &lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;card-body&quot;&gt;
+
+                    &lt;!-- Empty state --&gt;
+                    &lt;div th:if=&quot;${#lists.isEmpty(
+                                 recentLeaves)}&quot;&gt;
+                        &lt;p class=&quot;no-data&quot;&gt;
+                            No pending leave requests
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+
+                    &lt;!-- Leave list --&gt;
+                    &lt;div th:each=&quot;leave : ${recentLeaves}&quot;
+                         class=&quot;list-item&quot;&gt;
+                        &lt;div class=&quot;list-item-left&quot;&gt;
+                            &lt;div class=&quot;date-badge&quot;&gt;
+                                &lt;span class=&quot;date-day&quot;
+                                      th:text=&quot;${leave
+                                               .startDate
+                                               .dayOfMonth}&quot;&gt;
+                                    20
+                                &lt;/span&gt;
+                                &lt;span class=&quot;date-month&quot;
+                                      th:text=&quot;${leave
+                                               .startDate
+                                               .month.name()
+                                               .substring(
+                                               0,3)}&quot;&gt;
+                                    MAY
+                                &lt;/span&gt;
+                            &lt;/div&gt;
+                            &lt;div&gt;
+                                &lt;p class=&quot;list-item-title&quot;
+                                   th:text=&quot;${leave.user
+                                            .fullName
+                                            + &#x27; · &#x27;
+                                            + leave
+                                              .leaveType
+                                              .name()}&quot;&gt;
+                                    Arjun Kumar · CL
+                                &lt;/p&gt;
+                                &lt;p class=&quot;list-item-sub&quot;
+                                   th:text=&quot;${leave
+                                            .totalDays
+                                            + &#x27; day(s) · &#x27;
+                                            + leave
+                                              .startDate
+                                              .dayOfMonth
+                                            + &#x27; &#x27;
+                                            + leave
+                                              .startDate
+                                              .month.name()
+                                              .substring(
+                                              0,3)
+                                            + &#x27; – &#x27;
+                                            + leave
+                                              .endDate
+                                              .dayOfMonth
+                                            + &#x27; &#x27;
+                                            + leave
+                                              .endDate
+                                              .month.name()
+                                              .substring(
+                                              0,3)}&quot;&gt;
+                                    2 day(s) · May 20–21
+                                &lt;/p&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;span class=&quot;badge-pending&quot;&gt;
+                            Pending
+                        &lt;/span&gt;
+                    &lt;/div&gt;
+
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
 </body>
 </html>

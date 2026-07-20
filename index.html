@@ -1,306 +1,817 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combined Code Viewer</title>
+    <title>VendorTrack — Source Code Viewer</title>
     <style>
-        body{
-            background:#1e1e1e;
-            color:#d4d4d4;
-            font-family:Consolas,Monaco,monospace;
-            padding:20px;
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          background: #1e1e2e;
+          color: #cdd6f4;
         }
-        pre{
-            background:#252526;
-            padding:20px;
-            border-radius:8px;
-            white-space:pre-wrap;
-            overflow:auto;
-            line-height:1.5;
+        header {
+          padding: 16px 24px;
+          background: #181825;
+          border-bottom: 1px solid #313244;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        header h1 {
+          font-size: 15px;
+          margin: 0;
+          color: #cdd6f4;
+          font-weight: 600;
+        }
+        header span {
+          font-size: 12px;
+          color: #a6adc8;
+        }
+        pre {
+          margin: 0;
+          padding: 24px;
+          overflow-x: auto;
+          font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+          font-size: 13px;
+          line-height: 1.55;
+          white-space: pre;
+        }
+        code {
+          color: #cdd6f4;
+        }
+        .line-wrap pre {
+          white-space: pre-wrap;
+          word-break: break-word;
         }
     </style>
 </head>
 <body>
-<pre>
-
-================ Pasted text(2).txt ================
-
-&lt;!DOCTYPE html&gt;
-&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+<header>
+    <h1>frontend.txt — HTML source (displayed as plain text)</h1>
+    <span id="lineCount"></span>
+</header>
+<pre><code id="src">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
 &lt;head&gt;
-    &lt;meta charset=&quot;UTF-8&quot;&gt;
-    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-    &lt;title&gt;VendorTrack — Manager Dashboard&lt;/title&gt;
-    &lt;link rel=&quot;stylesheet&quot;
-          href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot;
-          href=&quot;https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/dashboard.css}&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/pages.css}&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot; th:href=&quot;@{/css/manager-dashboard.css}&quot;&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — User Management&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/admin-users.css}"&gt;
 &lt;/head&gt;
 &lt;body&gt;
 
-&lt;div class=&quot;app-layout&quot;&gt;
+&lt;div class="app-layout"&gt;
 
     &lt;!-- Sidebar --&gt;
-    &lt;div th:replace=&quot;~{fragments/sidebar :: sidebar}&quot;&gt;&lt;/div&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(#strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;&lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
 
     &lt;!-- Main Content --&gt;
-    &lt;main class=&quot;main-content&quot;&gt;
+    &lt;main class="main-content"&gt;
 
         &lt;!-- Top bar --&gt;
-        &lt;div class=&quot;top-bar&quot;&gt;
+        &lt;div class="top-bar"&gt;
             &lt;div&gt;
-                &lt;h1 class=&quot;page-title&quot;&gt;
-                    Good morning,
-                    &lt;span th:text=&quot;${#strings
-                                   .substringBefore(
-                                   fullName, &#x27; &#x27;)}&quot;&gt;
-                        Priya
-                    &lt;/span&gt;!
+                &lt;h1 class="page-title"&gt;User Management&lt;/h1&gt;
+                &lt;p class="page-subtitle"&gt;Add, edit or remove system users&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;a href="/admin/users/add" class="action-btn"&gt;
+                &lt;i class="ti ti-user-plus"&gt;&lt;/i&gt; Add User
+            &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Alerts --&gt;
+        &lt;div th:if="${successMessage}" class="alert-success-bar"&gt;
+            &lt;i class="ti ti-circle-check"&gt;&lt;/i&gt;
+            &lt;span th:text="${successMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div th:if="${errorMessage}" class="alert-error-bar"&gt;
+            &lt;i class="ti ti-alert-circle"&gt;&lt;/i&gt;
+            &lt;span th:text="${errorMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Filter bar --&gt;
+        &lt;div class="filter-bar"&gt;
+            &lt;div class="filter-bar-left"&gt;
+                &lt;a href="/admin/users"
+                   th:classappend="${filterRole == null} ? 'filter-btn-active'"
+                   class="filter-btn"&gt;All&lt;/a&gt;
+                &lt;a href="/admin/users?role=ADMIN"
+                   th:classappend="${filterRole == 'ADMIN'} ? 'filter-btn-active'"
+                   class="filter-btn"&gt;Admin&lt;/a&gt;
+                &lt;a href="/admin/users?role=MANAGER"
+                   th:classappend="${filterRole == 'MANAGER'} ? 'filter-btn-active'"
+                   class="filter-btn"&gt;Manager&lt;/a&gt;
+                &lt;a href="/admin/users?role=EMPLOYEE"
+                   th:classappend="${filterRole == 'EMPLOYEE'} ? 'filter-btn-active'"
+                   class="filter-btn"&gt;Employee&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;input type="text" id="userSearch" class="search-input"
+                   placeholder="Search by name, ADID or code..."
+                   onkeyup="filterTable()"/&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Table --&gt;
+        &lt;div class="page-card"&gt;
+            &lt;div class="page-card-header"&gt;
+                &lt;div class="page-card-header-left"&gt;
+                    &lt;i class="ti ti-users"&gt;&lt;/i&gt;
+                    &lt;p class="card-title"&gt;
+                        All Users
+                        &lt;span class="user-count-badge"
+                              th:text="${#lists.size(users)}"&gt;0&lt;/span&gt;
+                    &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div th:if="${#lists.isEmpty(users)}" class="att-empty"&gt;
+                &lt;i class="ti ti-user-off"&gt;&lt;/i&gt;
+                &lt;p&gt;No users found&lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;div th:if="${!#lists.isEmpty(users)}" class="page-table-wrapper"&gt;
+                &lt;table class="page-table" id="usersTable"&gt;
+                    &lt;thead&gt;
+                        &lt;tr&gt;
+                            &lt;th&gt;USER&lt;/th&gt;
+                            &lt;th&gt;ADID&lt;/th&gt;
+                            &lt;th&gt;EMP CODE&lt;/th&gt;
+                            &lt;th&gt;ROLE&lt;/th&gt;
+                            &lt;th&gt;ROLE SKILL&lt;/th&gt;
+                            &lt;th&gt;VENDOR&lt;/th&gt;
+                            &lt;th&gt;MANAGER&lt;/th&gt;
+                            &lt;th&gt;SHIFT&lt;/th&gt;
+                            &lt;th&gt;ACTIONS&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        &lt;tr th:each="user : ${users}"&gt;
+                            &lt;td&gt;
+                                &lt;div class="emp-cell"&gt;
+                                    &lt;div class="user-avatar-sm"
+                                         th:text="${#strings.toUpperCase(
+                                                   #strings.substring(user.fullName, 0, 2))}"&gt;AK&lt;/div&gt;
+                                    &lt;div&gt;
+                                        &lt;p class="emp-name" th:text="${user.fullName}"&gt;Arjun Kumar&lt;/p&gt;
+                                        &lt;p class="emp-code" th:text="${user.email}"&gt;arjun@hdfc.com&lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+                            &lt;td th:text="${user.adid}"&gt;arjun.kumar&lt;/td&gt;
+                            &lt;td th:text="${user.empCode}"&gt;EMP001&lt;/td&gt;
+                            &lt;td&gt;
+                                &lt;span th:if="${user.role.name() == 'ADMIN'}"
+                                      class="role-admin"&gt;Admin&lt;/span&gt;
+                                &lt;span th:if="${user.role.name() == 'MANAGER'}"
+                                      class="role-manager"&gt;Manager&lt;/span&gt;
+                                &lt;span th:if="${user.role.name() == 'EMPLOYEE'}"
+                                      class="role-employee"&gt;Employee&lt;/span&gt;
+                            &lt;/td&gt;
+                            &lt;td th:text="${user.roleSkill != null ? user.roleSkill : '—'}"&gt;
+                                Java Developer
+                            &lt;/td&gt;
+                            &lt;td th:text="${user.vendor != null ? user.vendor.name : '—'}"&gt;
+                                TCS
+                            &lt;/td&gt;
+                            &lt;td th:text="${user.manager != null ? user.manager.fullName : '—'}"&gt;
+                                Priya Mehta
+                            &lt;/td&gt;
+                            &lt;td th:text="${user.shift != null ? user.shift.shiftName : '—'}"&gt;
+                                Morning
+                            &lt;/td&gt;
+                            &lt;td&gt;
+                                &lt;div class="action-buttons"&gt;
+                                    &lt;a th:href="@{/admin/users/edit/{id}(id=${user.id})}"
+                                       class="edit-btn"&gt;
+                                        &lt;i class="ti ti-edit" style="font-size:12px;"&gt;&lt;/i&gt; Edit
+                                    &lt;/a&gt;
+                                    &lt;button class="danger-btn"
+                                            th:onclick="'confirmDelete('
+                                                        + ${user.id} + ', \''
+                                                        + ${user.fullName} + '\')'"&gt;
+                                        &lt;i class="ti ti-trash" style="font-size:12px;"&gt;&lt;/i&gt;
+                                    &lt;/button&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;!-- Delete Confirm Modal --&gt;
+&lt;div class="modal-overlay" id="deleteModal"&gt;
+    &lt;div class="modal-card" style="width:360px;"&gt;
+        &lt;div class="modal-header"&gt;
+            &lt;div&gt;
+                &lt;p class="modal-title"&gt;Delete User&lt;/p&gt;
+                &lt;p class="modal-subtitle"&gt;This action cannot be undone&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;button class="modal-close" onclick="closeDeleteModal()"&gt;
+                &lt;i class="ti ti-x"&gt;&lt;/i&gt;
+            &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class="modal-body"&gt;
+            &lt;p style="font-size:13px; color:#4A5568; margin-bottom:16px;"&gt;
+                Are you sure you want to delete
+                &lt;strong id="deleteUserName"&gt;&lt;/strong&gt;?
+                All their records will be affected.
+            &lt;/p&gt;
+            &lt;form id="deleteForm" method="post"&gt;
+                &lt;div class="modal-actions"&gt;
+                    &lt;button type="button" class="btn-secondary"
+                            onclick="closeDeleteModal()"&gt;Cancel&lt;/button&gt;
+                    &lt;button type="submit" class="btn-danger"&gt;Delete&lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;script th:src="@{/js/admin-users.js}"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title th:text="${formMode == 'add'} ? 'VendorTrack — Add User' : 'VendorTrack — Edit User'"&gt;
+        VendorTrack — User Form
+    &lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/admin-users.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(#strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;&lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard" class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users" class="nav-item active"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors" class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts" class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays" class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports" class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"
+                    th:text="${formMode == 'add'} ? 'Add New User' : 'Edit User'"&gt;
+                    Add New User
                 &lt;/h1&gt;
-                &lt;p class=&quot;page-subtitle&quot;
-                   th:text=&quot;${todayDate}&quot;&gt;
-                    Monday, 18 May 2026
+                &lt;p class="page-subtitle"&gt;
+                    &lt;a href="/admin/users"
+                       style="color:#A11D2E; text-decoration:none;"&gt;
+                        ← Back to users
+                    &lt;/a&gt;
                 &lt;/p&gt;
             &lt;/div&gt;
         &lt;/div&gt;
 
-        &lt;!-- Stats --&gt;
-        &lt;div class=&quot;stats-grid&quot;&gt;
-            &lt;div class=&quot;stat-card&quot;&gt;
-                &lt;div class=&quot;stat-card-top&quot;&gt;
-                    &lt;p class=&quot;stat-label&quot;&gt;
-                        PRESENT TODAY
+        &lt;!-- Form Card --&gt;
+        &lt;div class="page-card"&gt;
+            &lt;div class="page-card-header"&gt;
+                &lt;div class="page-card-header-left"&gt;
+                    &lt;i class="ti ti-user-plus"&gt;&lt;/i&gt;
+                    &lt;p class="card-title"
+                       th:text="${formMode == 'add'} ? 'User Details' : 'Edit User Details'"&gt;
+                        User Details
                     &lt;/p&gt;
-                    &lt;div class=&quot;stat-icon stat-icon-green&quot;&gt;
-                        &lt;i class=&quot;ti ti-users&quot;&gt;&lt;/i&gt;
-                    &lt;/div&gt;
                 &lt;/div&gt;
-                &lt;p class=&quot;stat-value&quot;
-                   th:text=&quot;${presentCount}&quot;&gt;8&lt;/p&gt;
-                &lt;p class=&quot;stat-sub&quot;&gt;
-                    of
-                    &lt;span th:text=&quot;${teamSize}&quot;&gt;10&lt;/span&gt;
-                    team members
-                &lt;/p&gt;
             &lt;/div&gt;
-            &lt;div class=&quot;stat-card&quot;&gt;
-                &lt;div class=&quot;stat-card-top&quot;&gt;
-                    &lt;p class=&quot;stat-label&quot;&gt;ABSENT TODAY&lt;/p&gt;
-                    &lt;div class=&quot;stat-icon stat-icon-red&quot;&gt;
-                        &lt;i class=&quot;ti ti-user-off&quot;&gt;&lt;/i&gt;
+
+            &lt;div style="padding:20px 24px;"&gt;
+                &lt;form th:action="${formMode == 'add'}
+                                 ? @{/admin/users/add}
+                                 : @{/admin/users/edit/{id}(id=${user.id})}"
+                      method="post"&gt;
+
+                    &lt;!-- Row 1: Full Name + Email --&gt;
+                    &lt;div style="display:grid; grid-template-columns:1fr 1fr;
+                                gap:16px; margin-bottom:16px;"&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;Full Name&lt;/label&gt;
+                            &lt;input type="text" name="fullName"
+                                   class="form-input-field"
+                                   th:value="${user.fullName}"
+                                   placeholder="e.g. Arjun Kumar" required/&gt;
+                        &lt;/div&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;Email&lt;/label&gt;
+                            &lt;input type="email" name="email"
+                                   class="form-input-field"
+                                   th:value="${user.email}"
+                                   placeholder="e.g. arjun@hdfc.com" required/&gt;
+                        &lt;/div&gt;
                     &lt;/div&gt;
-                &lt;/div&gt;
-                &lt;p class=&quot;stat-value stat-value-red&quot;
-                   th:text=&quot;${absentCount}&quot;&gt;2&lt;/p&gt;
-                &lt;p class=&quot;stat-sub&quot;&gt;team members&lt;/p&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;stat-card&quot;&gt;
-                &lt;div class=&quot;stat-card-top&quot;&gt;
-                    &lt;p class=&quot;stat-label&quot;&gt;
-                        PENDING LEAVES
-                    &lt;/p&gt;
-                    &lt;div class=&quot;stat-icon stat-icon-yellow&quot;&gt;
-                        &lt;i class=&quot;ti ti-calendar-event&quot;&gt;&lt;/i&gt;
+
+                    &lt;!-- Row 2: ADID + Emp Code --&gt;
+                    &lt;div style="display:grid; grid-template-columns:1fr 1fr;
+                                gap:16px; margin-bottom:16px;"&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;ADID&lt;/label&gt;
+                            &lt;input type="text" name="adid"
+                                   class="form-input-field"
+                                   th:value="${user.adid}"
+                                   placeholder="e.g. arjun.kumar" required/&gt;
+                        &lt;/div&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;Employee Code&lt;/label&gt;
+                            &lt;input type="text" name="empCode"
+                                   class="form-input-field"
+                                   th:value="${user.empCode}"
+                                   placeholder="e.g. EMP004" required/&gt;
+                        &lt;/div&gt;
                     &lt;/div&gt;
-                &lt;/div&gt;
-                &lt;p class=&quot;stat-value stat-value-yellow&quot;
-                   th:text=&quot;${pendingLeaves}&quot;&gt;3&lt;/p&gt;
-                &lt;p class=&quot;stat-sub&quot;&gt;awaiting approval&lt;/p&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;stat-card&quot;&gt;
-                &lt;div class=&quot;stat-card-top&quot;&gt;
-                    &lt;p class=&quot;stat-label&quot;&gt;
-                        PENDING CORRECTIONS
-                    &lt;/p&gt;
-                    &lt;div class=&quot;stat-icon stat-icon-blue&quot;&gt;
-                        &lt;i class=&quot;ti ti-edit&quot;&gt;&lt;/i&gt;
+
+                    &lt;!-- Row 3: Role + Role Skill --&gt;
+                    &lt;div style="display:grid; grid-template-columns:1fr 1fr;
+                                gap:16px; margin-bottom:16px;"&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;Role&lt;/label&gt;
+                            &lt;select name="role" class="form-select-field" required&gt;
+                                &lt;option value=""&gt;— Select Role —&lt;/option&gt;
+                                &lt;option th:each="r : ${roles}"
+                                        th:value="${r.name()}"
+                                        th:text="${r.name()}"
+                                        th:selected="${user.role != null
+                                                       and user.role == r}"&gt;
+                                    EMPLOYEE
+                                &lt;/option&gt;
+                            &lt;/select&gt;
+                        &lt;/div&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;
+                                Role Skill
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;input type="text" name="roleSkill"
+                                   class="form-input-field"
+                                   th:value="${user.roleSkill}"
+                                   placeholder="e.g. Java Developer, QA Engineer"/&gt;
+                        &lt;/div&gt;
                     &lt;/div&gt;
-                &lt;/div&gt;
-                &lt;p class=&quot;stat-value&quot;
-                   th:text=&quot;${pendingCorrections}&quot;&gt;2&lt;/p&gt;
-                &lt;p class=&quot;stat-sub&quot;&gt;awaiting review&lt;/p&gt;
+
+                    &lt;!-- Row 4: Vendor + Manager --&gt;
+                    &lt;div style="display:grid; grid-template-columns:1fr 1fr;
+                                gap:16px; margin-bottom:16px;"&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;
+                                Vendor
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;select name="vendorId" class="form-select-field"&gt;
+                                &lt;option value=""&gt;— No Vendor —&lt;/option&gt;
+                                &lt;option th:each="v : ${vendors}"
+                                        th:value="${v.id}"
+                                        th:text="${v.name}"
+                                        th:selected="${user.vendor != null
+                                                       and user.vendor.id == v.id}"&gt;
+                                    TCS
+                                &lt;/option&gt;
+                            &lt;/select&gt;
+                        &lt;/div&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;
+                                Reporting Manager
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;select name="managerId" class="form-select-field"&gt;
+                                &lt;option value=""&gt;— No Manager —&lt;/option&gt;
+                                &lt;option th:each="m : ${managers}"
+                                        th:value="${m.id}"
+                                        th:text="${m.fullName + ' (' + m.empCode + ')'}"
+                                        th:selected="${user.manager != null
+                                                       and user.manager.id == m.id}"&gt;
+                                    Priya Mehta
+                                &lt;/option&gt;
+                            &lt;/select&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;!-- Row 5: Shift + Project --&gt;
+                    &lt;div style="display:grid; grid-template-columns:1fr 1fr;
+                                gap:16px; margin-bottom:24px;"&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;
+                                Shift
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;select name="shiftId" class="form-select-field"&gt;
+                                &lt;option value=""&gt;— No Shift —&lt;/option&gt;
+                                &lt;option th:each="s : ${shifts}"
+                                        th:value="${s.id}"
+                                        th:text="${s.shiftName}"
+                                        th:selected="${user.shift != null
+                                                       and user.shift.id == s.id}"&gt;
+                                    Morning
+                                &lt;/option&gt;
+                            &lt;/select&gt;
+                        &lt;/div&gt;
+                        &lt;div class="form-group" style="margin-bottom:0;"&gt;
+                            &lt;label class="form-label"&gt;
+                                Project
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;select name="projectId" class="form-select-field"&gt;
+                                &lt;option value=""&gt;— No Project —&lt;/option&gt;
+                                &lt;option th:each="p : ${projects}"
+                                        th:value="${p.id}"
+                                        th:text="${p.projectName}"
+                                        th:selected="${user.project != null
+                                                       and user.project.id == p.id}"&gt;
+                                    Core Banking
+                                &lt;/option&gt;
+                            &lt;/select&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;!-- Actions --&gt;
+                    &lt;div style="display:flex; gap:10px; padding-top:8px;
+                                border-top:1px solid #EEF0F3;"&gt;
+                        &lt;button type="submit" class="action-btn"&gt;
+                            &lt;i class="ti ti-check"&gt;&lt;/i&gt;
+                            &lt;span th:text="${formMode == 'add'}
+                                           ? 'Create User' : 'Save Changes'"&gt;
+                                Create User
+                            &lt;/span&gt;
+                        &lt;/button&gt;
+                        &lt;a href="/admin/users" class="action-btn-outline"&gt;
+                            Cancel
+                        &lt;/a&gt;
+                    &lt;/div&gt;
+
+                &lt;/form&gt;
             &lt;/div&gt;
         &lt;/div&gt;
 
-        &lt;!-- Bottom row --&gt;
-        &lt;div class=&quot;bottom-grid&quot;&gt;
+    &lt;/main&gt;
+&lt;/div&gt;
 
-            &lt;!-- Team attendance today --&gt;
-            &lt;div class=&quot;card&quot;&gt;
-                &lt;div class=&quot;card-header&quot;&gt;
-                    &lt;div class=&quot;card-header-left&quot;&gt;
-                        &lt;i class=&quot;ti ti-users&quot;&gt;&lt;/i&gt;
-                        &lt;p class=&quot;card-title&quot;&gt;
-                            Team Today
-                        &lt;/p&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — Admin Dashboard&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(#strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;&lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"&gt;
+                    Welcome, &lt;span th:text="${#strings.substringBefore(fullName, ' ')}"&gt;Admin&lt;/span&gt;
+                &lt;/h1&gt;
+                &lt;p class="page-subtitle"
+                   th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMM yyyy')}"&gt;
+                    Monday, 13 Jul 2026
+                &lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Stats Row 1 — Users --&gt;
+        &lt;div class="stats-grid-5"&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;TOTAL USERS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-blue"&gt;
+                        &lt;i class="ti ti-users"&gt;&lt;/i&gt;
                     &lt;/div&gt;
-                    &lt;a href=&quot;/manager/team-attendance&quot;
-                       class=&quot;card-link&quot;&gt;
-                        View all →
-                    &lt;/a&gt;
                 &lt;/div&gt;
-                &lt;div class=&quot;card-body&quot;&gt;
+                &lt;p class="stat-value" th:text="${totalUsers}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;in the system&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;ACTIVE USERS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-green"&gt;
+                        &lt;i class="ti ti-user-check"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${activeUsers}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;accounts enabled&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;MANAGERS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-blue"&gt;
+                        &lt;i class="ti ti-user-star"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${totalManagers}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;in the system&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;EMPLOYEES&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-green"&gt;
+                        &lt;i class="ti ti-user"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${totalEmployees}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;in the system&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;VENDORS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-yellow"&gt;
+                        &lt;i class="ti ti-building"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${totalVendors}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;registered&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
 
-                    &lt;!-- Empty state --&gt;
-                    &lt;div th:if=&quot;${#lists.isEmpty(
-                                 teamToday)}&quot;&gt;
-                        &lt;p class=&quot;no-data&quot;&gt;
-                            No attendance records today
+        &lt;!-- Quick Actions --&gt;
+        &lt;div class="card"&gt;
+            &lt;div class="card-header"&gt;
+                &lt;div class="card-header-left"&gt;
+                    &lt;i class="ti ti-bolt"&gt;&lt;/i&gt;
+                    &lt;p class="card-title"&gt;Quick Actions&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="card-body" style="display:grid;
+                 grid-template-columns:repeat(4,1fr); gap:10px;"&gt;
+
+                &lt;a href="/admin/users/add" class="quick-action-item"&gt;
+                    &lt;i class="ti ti-user-plus"&gt;&lt;/i&gt;
+                    &lt;div&gt;
+                        &lt;p style="font-size:13px; font-weight:500;
+                                  margin:0 0 2px;"&gt;Add User&lt;/p&gt;
+                        &lt;p style="font-size:11px; color:#718096; margin:0;"&gt;
+                            Create a new account
                         &lt;/p&gt;
                     &lt;/div&gt;
+                &lt;/a&gt;
 
-                    &lt;!-- Team list --&gt;
-                    &lt;div th:each=&quot;att : ${teamToday}&quot;
-                         class=&quot;list-item&quot;&gt;
-                        &lt;div class=&quot;list-item-left&quot;&gt;
-                            &lt;div class=&quot;user-avatar-sm&quot;
-                                 th:text=&quot;${#strings
-                                           .toUpperCase(
-                                           #strings
-                                           .substring(
-                                           att.user
-                                           .fullName,
-                                           0, 2))}&quot;&gt;
-                                AK
-                            &lt;/div&gt;
+                &lt;a href="/admin/vendors" class="quick-action-item"&gt;
+                    &lt;i class="ti ti-building-plus"&gt;&lt;/i&gt;
+                    &lt;div&gt;
+                        &lt;p style="font-size:13px; font-weight:500;
+                                  margin:0 0 2px;"&gt;Manage Vendors&lt;/p&gt;
+                        &lt;p style="font-size:11px; color:#718096; margin:0;"&gt;
+                            Add or edit vendors
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/a&gt;
+
+                &lt;a href="/admin/holidays" class="quick-action-item"&gt;
+                    &lt;i class="ti ti-calendar-plus"&gt;&lt;/i&gt;
+                    &lt;div&gt;
+                        &lt;p style="font-size:13px; font-weight:500;
+                                  margin:0 0 2px;"&gt;Add Holiday&lt;/p&gt;
+                        &lt;p style="font-size:11px; color:#718096; margin:0;"&gt;
+                            Manage bank holidays
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/a&gt;
+
+                &lt;a href="/admin/reports" class="quick-action-item"&gt;
+                    &lt;i class="ti ti-file-spreadsheet"&gt;&lt;/i&gt;
+                    &lt;div&gt;
+                        &lt;p style="font-size:13px; font-weight:500;
+                                  margin:0 0 2px;"&gt;Export Reports&lt;/p&gt;
+                        &lt;p style="font-size:11px; color:#718096; margin:0;"&gt;
+                            Download attendance CSV
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/a&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Bottom Grid — Recent Users + Vendors --&gt;
+        &lt;div class="bottom-grid"&gt;
+
+            &lt;!-- Recent Users --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-users"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Recent Users&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;a href="/admin/users" class="card-link"&gt;View all →&lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div th:each="user : ${recentUsers}" class="list-item"&gt;
+                        &lt;div class="list-item-left"&gt;
+                            &lt;div class="user-avatar-sm"
+                                 th:text="${#strings.toUpperCase(
+                                           #strings.substring(user.fullName, 0, 2))}"&gt;AK&lt;/div&gt;
                             &lt;div&gt;
-                                &lt;p class=&quot;list-item-title&quot;
-                                   th:text=&quot;${att.user
-                                            .fullName}&quot;&gt;
-                                    Arjun Kumar
-                                &lt;/p&gt;
-                                &lt;p class=&quot;list-item-sub&quot;
-                                   th:text=&quot;${att.clockIn
-                                            != null
-                                            ? &#x27;Clocked in at &#x27;
-                                            + att.clockIn
-                                              .toLocalTime()
-                                              .toString()
-                                            : &#x27;Not clocked in&#x27;}&quot;&gt;
-                                    Clocked in at 09:12
+                                &lt;p class="list-item-title"
+                                   th:text="${user.fullName}"&gt;Arjun Kumar&lt;/p&gt;
+                                &lt;p class="list-item-sub"
+                                   th:text="${user.empCode + ' · ' + user.role.name()}"&gt;
+                                    EMP001 · EMPLOYEE
                                 &lt;/p&gt;
                             &lt;/div&gt;
                         &lt;/div&gt;
-                        &lt;span th:if=&quot;${att.status.name()
-                                     == &#x27;PRESENT&#x27;}&quot;
-                              class=&quot;badge-present&quot;&gt;
-                            Present
-                        &lt;/span&gt;
-                        &lt;span th:if=&quot;${att.status.name()
-                                     == &#x27;LATE&#x27;}&quot;
-                              class=&quot;badge-late&quot;&gt;
-                            Late
-                        &lt;/span&gt;
-                        &lt;span th:if=&quot;${att.status.name()
-                                     == &#x27;ABSENT&#x27;}&quot;
-                              class=&quot;badge-absent&quot;&gt;
-                            Absent
-                        &lt;/span&gt;
-                        &lt;span th:if=&quot;${att.status.name()
-                                     == &#x27;HALF_DAY&#x27;}&quot;
-                              class=&quot;badge-halfday&quot;&gt;
-                            Half Day
-                        &lt;/span&gt;
-                        &lt;span th:if=&quot;${att.status.name()
-                                     == &#x27;ON_LEAVE&#x27;}&quot;
-                              class=&quot;badge-onleave&quot;&gt;
-                            On Leave
-                        &lt;/span&gt;
+                        &lt;span th:if="${user.role.name() == 'ADMIN'}"
+                              class="role-admin"&gt;Admin&lt;/span&gt;
+                        &lt;span th:if="${user.role.name() == 'MANAGER'}"
+                              class="role-manager"&gt;Manager&lt;/span&gt;
+                        &lt;span th:if="${user.role.name() == 'EMPLOYEE'}"
+                              class="role-employee"&gt;Employee&lt;/span&gt;
                     &lt;/div&gt;
-
                 &lt;/div&gt;
             &lt;/div&gt;
 
-            &lt;!-- Pending leave approvals --&gt;
-            &lt;div class=&quot;card&quot;&gt;
-                &lt;div class=&quot;card-header&quot;&gt;
-                    &lt;div class=&quot;card-header-left&quot;&gt;
-                        &lt;i class=&quot;ti ti-calendar-event&quot;&gt;&lt;/i&gt;
-                        &lt;p class=&quot;card-title&quot;&gt;
-                            Pending Leaves
-                        &lt;/p&gt;
+            &lt;!-- Vendor Summary --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-building"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Vendors&lt;/p&gt;
                     &lt;/div&gt;
-                    &lt;a href=&quot;/manager/leave-approvals&quot;
-                       class=&quot;card-link&quot;&gt;
-                        View all →
-                    &lt;/a&gt;
+                    &lt;a href="/admin/vendors" class="card-link"&gt;View all →&lt;/a&gt;
                 &lt;/div&gt;
-                &lt;div class=&quot;card-body&quot;&gt;
-
-                    &lt;!-- Empty state --&gt;
-                    &lt;div th:if=&quot;${#lists.isEmpty(
-                                 recentLeaves)}&quot;&gt;
-                        &lt;p class=&quot;no-data&quot;&gt;
-                            No pending leave requests
-                        &lt;/p&gt;
-                    &lt;/div&gt;
-
-                    &lt;!-- Leave list --&gt;
-                    &lt;div th:each=&quot;leave : ${recentLeaves}&quot;
-                         class=&quot;list-item&quot;&gt;
-                        &lt;div class=&quot;list-item-left&quot;&gt;
-                            &lt;div class=&quot;date-badge&quot;&gt;
-                                &lt;span class=&quot;date-day&quot;
-                                      th:text=&quot;${leave
-                                               .startDate
-                                               .dayOfMonth}&quot;&gt;
-                                    20
-                                &lt;/span&gt;
-                                &lt;span class=&quot;date-month&quot;
-                                      th:text=&quot;${leave
-                                               .startDate
-                                               .month.name()
-                                               .substring(
-                                               0,3)}&quot;&gt;
-                                    MAY
-                                &lt;/span&gt;
-                            &lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div th:each="vendor : ${vendors}" class="list-item"&gt;
+                        &lt;div class="list-item-left"&gt;
+                            &lt;div class="user-avatar-sm"
+                                 th:text="${#strings.toUpperCase(
+                                           #strings.substring(vendor.name, 0, 2))}"&gt;TC&lt;/div&gt;
                             &lt;div&gt;
-                                &lt;p class=&quot;list-item-title&quot;
-                                   th:text=&quot;${leave.user
-                                            .fullName
-                                            + &#x27; · &#x27;
-                                            + leave
-                                              .leaveType
-                                              .name()}&quot;&gt;
-                                    Arjun Kumar · CL
-                                &lt;/p&gt;
-                                &lt;p class=&quot;list-item-sub&quot;
-                                   th:text=&quot;${leave
-                                            .totalDays
-                                            + &#x27; day(s) · &#x27;
-                                            + leave
-                                              .startDate
-                                              .dayOfMonth
-                                            + &#x27; &#x27;
-                                            + leave
-                                              .startDate
-                                              .month.name()
-                                              .substring(
-                                              0,3)
-                                            + &#x27; – &#x27;
-                                            + leave
-                                              .endDate
-                                              .dayOfMonth
-                                            + &#x27; &#x27;
-                                            + leave
-                                              .endDate
-                                              .month.name()
-                                              .substring(
-                                              0,3)}&quot;&gt;
-                                    2 day(s) · May 20–21
+                                &lt;p class="list-item-title"
+                                   th:text="${vendor.name}"&gt;TCS&lt;/p&gt;
+                                &lt;p class="list-item-sub"
+                                   th:text="${vendor.email != null
+                                             ? vendor.email : 'No email'}"&gt;
+                                    tcs@vendor.com
                                 &lt;/p&gt;
                             &lt;/div&gt;
                         &lt;/div&gt;
-                        &lt;span class=&quot;badge-pending&quot;&gt;
-                            Pending
-                        &lt;/span&gt;
                     &lt;/div&gt;
-
+                    &lt;div th:if="${#lists.isEmpty(vendors)}" class="no-data"&gt;
+                        No vendors added yet
+                    &lt;/div&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
 
@@ -309,1149 +820,1084 @@
     &lt;/main&gt;
 &lt;/div&gt;
 
-&lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 
-================ Pasted text(3).txt ================
-
-/* ── Reset &amp; Base ─────────────────────────────────────────────── */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: &#x27;Segoe UI&#x27;, system-ui, sans-serif;
-    background-color: #FDF8F6;
-    min-height: 100vh;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-/* ── App Layout ───────────────────────────────────────────────── */
-
-.app-layout {
-    display: flex;
-    min-height: 100vh;
-}
-
-/* ── Sidebar ──────────────────────────────────────────────────── */
-
-.sidebar {
-    width: 210px;
-    background-color: #292524;
-    border-right: 1px solid #44403C;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 10;
-}
-
-.sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 18px 16px;
-    border-bottom: 1px solid #44403C;
-}
-
-.hdfc-logo {
-    height: 28px;
-    width: auto;
-    object-fit: contain;
-}
-
-.sidebar-divider {
-    width: 1px;
-    height: 24px;
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.sidebar-app-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: white;
-    letter-spacing: 0.3px;
-}
-
-/* ── Sidebar User ─────────────────────────────────────────────── */
-
-.sidebar-user {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    border-bottom: 1px solid #44403C;
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #E31837, #FF6B6B);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 11px;
-    font-weight: 600;
-    color: white;
-}
-
-.user-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: white;
-    margin: 0 0 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.user-info {
-    min-width: 0;
-}
-
-.user-meta {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.45);
-    margin: 0;
-}
-
-/* ── Sidebar Nav ──────────────────────────────────────────────── */
-
-.sidebar-nav {
-    padding: 12px 10px;
-    flex: 1;
-    overflow-y: auto;
-}
-
-.nav-section-label {
-    font-size: 10px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.3);
-    letter-spacing: 0.8px;
-    padding: 0 6px;
-    margin: 0 0 6px;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 10px;
-    border-radius: 10px;
-    margin-bottom: 2px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    transition: background-color 0.15s;
-    position: relative;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: white;
-}
-
-.nav-item.active {
-    background-color: rgba(253, 186, 116, 0.2);
-    color: #FED7AA;
-    font-weight: 600;
-}
-
-.nav-item i {
-    font-size: 16px;
-    flex-shrink: 0;
-}
-
-.nav-badge {
-    margin-left: auto;
-    background-color: #E31837;
-    color: white;
-    font-size: 9px;
-    font-weight: 600;
-    padding: 2px 5px;
-    border-radius: 10px;
-}
-
-/* ── Sidebar Footer ───────────────────────────────────────────── */
-
-.sidebar-footer {
-    padding: 10px;
-    border-top: 1px solid #44403C;
-}
-
-.logout-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.15s;
-    text-decoration: none;
-}
-
-.logout-btn:hover {
-    background-color: rgba(253, 186, 116, 0.15);
-    color: #FED7AA;
-}
-
-.logout-btn i {
-    font-size: 16px;
-}
-
-/* ── Main Content ─────────────────────────────────────────────── */
-
-.main-content {
-    margin-left: 210px;
-    flex: 1;
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-height: 100vh;
-}
-
-/* ── Top Bar ──────────────────────────────────────────────────── */
-
-.top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.page-title {
-    font-size: 17px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 3px;
-}
-
-.page-subtitle {
-    font-size: 12px;
-    color: #718096;
-    margin: 0;
-}
-
-.top-bar-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.network-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background-color: white;
-    border: 1px solid #E7D5CA;
-    border-radius: 10px;
-    padding: 7px 12px;
-    font-size: 11px;
-    color: #276749;
-    font-weight: 500;
-}
-
-.network-badge i {
-    font-size: 14px;
-}
-
-/* ── Clock Hero ───────────────────────────────────────────────── */
-
-.clock-hero {
-    background: linear-gradient(
-            135deg, #292524 0%, #44403C 100%);
-    border-radius: 16px;
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-}
-
-.clock-hero::before {
-    content: &#x27;&#x27;;
-    position: absolute;
-    top: -30px;
-    right: 100px;
-    width: 120px;
-    height: 120px;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 50%;
-}
-
-.clock-hero::after {
-    content: &#x27;&#x27;;
-    position: absolute;
-    bottom: -40px;
-    right: 20px;
-    width: 150px;
-    height: 150px;
-    background: rgba(227, 24, 55, 0.08);
-    border-radius: 50%;
-}
-
-.clock-hero-left {
-    position: relative;
-    z-index: 1;
-}
-
-.clock-hero-label {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 0.5px;
-    margin: 0 0 4px;
-}
-
-.clock-hero-status {
-    font-size: 20px;
-    font-weight: 500;
-    color: white;
-    margin: 0 0 6px;
-}
-
-.clock-hero-sub {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.clock-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: #FCA5A5;
-    flex-shrink: 0;
-}
-
-.clock-hero-sub span {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.clock-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #E31837;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    position: relative;
-    z-index: 1;
-    white-space: nowrap;
-    transition: background-color 0.2s;
-}
-
-.clock-btn:hover {
-    background-color: #C41230;
-}
-
-.clock-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.clock-btn i {
-    font-size: 16px;
-}
-
-/* ── Stats Grid ───────────────────────────────────────────────── */
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.stats-grid-5 {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.stat-card {
-    background-color: white;
-    border-radius: 14px;
-    padding: 16px 18px;
-    border: 1px solid #E7D5CA;
-}
-
-.stat-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.stat-label {
-    font-size: 11px;
-    color: #718096;
-    letter-spacing: 0.3px;
-    margin: 0;
-}
-
-.stat-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-}
-
-.stat-icon-green  { background-color: #F0FFF4; color: #276749; }
-.stat-icon-yellow { background-color: #FFFBEB; color: #B45309; }
-.stat-icon-blue   { background-color: #EBF8FF; color: #2B6CB0; }
-.stat-icon-red    { background-color: #FFF5F5; color: #C53030; }
-
-.stat-value {
-    font-size: 26px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 2px;
-}
-
-.stat-value-yellow { color: #B45309; }
-.stat-value-red    { color: #C53030; }
-
-.stat-sub {
-    font-size: 11px;
-    color: #718096;
-    margin: 0;
-}
-
-/* ── Bottom Grid ──────────────────────────────────────────────── */
-
-.bottom-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    flex: 1;
-}
-
-/* ── Card ─────────────────────────────────────────────────────── */
-
-.card {
-    background-color: white;
-    border-radius: 14px;
-    border: 1px solid #E7D5CA;
-    overflow: hidden;
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    border-bottom: 1px solid #F5EDE6;
-}
-
-.card-header-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #718096;
-    font-size: 16px;
-}
-
-.card-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0;
-}
-
-.card-link {
-    font-size: 11px;
-    color: #E31837;
-    font-weight: 500;
-}
-
-.card-link:hover {
-    color: #C41230;
-}
-
-.card-body {
-    padding: 12px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* ── List Item ────────────────────────────────────────────────── */
-
-.list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background-color: #FDF8F6;
-    border-radius: 10px;
-}
-
-.list-item-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.list-item-title {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1A202C;
-    margin: 0 0 2px;
-}
-
-.list-item-sub {
-    font-size: 11px;
-    color: #718096;
-    margin: 0;
-}
-
-/* ── Date Badge ───────────────────────────────────────────────── */
-
-.date-badge {
-    width: 34px;
-    height: 34px;
-    background-color: #FFF0F0;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.date-day {
-    font-size: 13px;
-    font-weight: 600;
-    color: #E31837;
-    line-height: 1;
-}
-
-.date-month {
-    font-size: 8px;
-    color: #E31837;
-    letter-spacing: 0.5px;
-}
-
-/* ── Status Badges ────────────────────────────────────────────── */
-
-.badge-pending {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FFFBEB;
-    color: #B45309;
-    border: 1px solid #FDE68A;
-    white-space: nowrap;
-}
-
-.badge-approved {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #F0FFF4;
-    color: #276749;
-    border: 1px solid #C6F6D5;
-    white-space: nowrap;
-}
-
-.badge-rejected {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background-color: #FFF5F5;
-    color: #C53030;
-    border: 1px solid #FED7D7;
-    white-space: nowrap;
-}
-
-.days-away {
-    font-size: 10px;
-    color: #718096;
-    background-color: #F5EDE6;
-    padding: 3px 8px;
-    border-radius: 20px;
-    white-space: nowrap;
-}
-
-/* ── No Data ──────────────────────────────────────────────────── */
-
-.no-data {
-    font-size: 12px;
-    color: #A0AEC0;
-    text-align: center;
-    padding: 16px 0;
-    margin: 0;
-}
-
-/* ── Modal ────────────────────────────────────────────────────── */
-
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(41, 37, 36, 0.7);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-card {
-    background-color: white;
-    border-radius: 20px;
-    width: 360px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-    background: linear-gradient(
-            135deg, #292524, #44403C);
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.modal-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: white;
-    margin: 0 0 2px;
-}
-
-.modal-subtitle {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-}
-
-.modal-close {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    cursor: pointer;
-    color: white;
-    font-size: 16px;
-    padding: 6px;
-    border-radius: 8px;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-/* ── Camera Preview ───────────────────────────────────────────── */
-
-.camera-preview {
-    background-color: #FDF8F6;
-    border-radius: 14px;
-    height: 190px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
-    border: 1px solid #E7D5CA;
-    position: relative;
-    overflow: hidden;
-}
-
-.camera-placeholder-icon {
-    width: 48px;
-    height: 48px;
-    background-color: #F5EDE6;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 8px;
-    font-size: 24px;
-    color: #A0AEC0;
-}
-
-#cameraPlaceholder {
-    text-align: center;
-}
-
-#cameraPlaceholder p {
-    font-size: 12px;
-    color: #718096;
-    margin: 0;
-}
-
-.face-guide-oval {
-    width: 100px;
-    height: 120px;
-    border: 2px solid rgba(227, 24, 55, 0.6);
-    border-radius: 50%;
-}
-
-/* ── IP Check ─────────────────────────────────────────────────── */
-
-.ip-check {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    background-color: #F0FFF4;
-    border-radius: 10px;
-    margin-bottom: 14px;
-    border: 1px solid #C6F6D5;
-    color: #276749;
-    font-size: 15px;
-}
-
-.ip-check-title {
-    font-size: 12px;
-    font-weight: 500;
-    color: #276749;
-    margin: 0 0 1px;
-}
-
-.ip-check-sub {
-    font-size: 10px;
-    color: #276749;
-    opacity: 0.8;
-    margin: 0;
-}
-
-/* ── Modal Actions ────────────────────────────────────────────── */
-
-.modal-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-}
-
-.btn-primary {
-    padding: 10px;
-    background-color: #E31837;
-    border: none;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: background-color 0.2s;
-}
-
-.btn-primary:hover {
-    background-color: #C41230;
-}
-
-.btn-secondary {
-    padding: 10px;
-    background-color: #F5EDE6;
-    border: 1px solid #E7D5CA;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    color: #44403C;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: background-color 0.2s;
-}
-
-.btn-secondary:hover {
-    background-color: #EDE0D8;
-}
-
-.w-100 {
-    width: 100%;
-}
-
-/* ── Preview Text ─────────────────────────────────────────────── */
-
-.preview-text {
-    font-size: 12px;
-    color: #718096;
-    text-align: center;
-    margin-bottom: 14px;
-}
-
-/* ── Success ──────────────────────────────────────────────────── */
-
-.success-icon {
-    width: 60px;
-    height: 60px;
-    background-color: #F0FFF4;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 12px;
-    font-size: 30px;
-    color: #276749;
-}
-
-.success-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: #1A202C;
-    text-align: center;
-    margin: 0 0 4px;
-}
-
-.success-time {
-    font-size: 13px;
-    color: #718096;
-    text-align: center;
-    margin: 0 0 4px;
-}
-
-.success-sub {
-    font-size: 11px;
-    color: #718096;
-    text-align: center;
-    margin: 0 0 16px;
-}
-
-/* ── Responsive ───────────────────────────────────────────────── */
-
-@media (max-width: 1200px) {
-    .stats-grid-5 {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 1024px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .stats-grid-5 {
-        grid-template-columns: repeat(2, 1fr);
-    }
-/* =====================================================
-   HDFC MIDNIGHT STEEL THEME
-   Add at end of dashboard.css
-===================================================== */
-
-body{
-    background:#E8EEF5 !important;
-}
-
-.sidebar{
-    background:#F8FAFC !important;
-    border-right:1px solid #D7E0EA !important;
-}
-
-.sidebar-logo{
-    border-bottom:1px solid #D7E0EA !important;
-}
-
-.sidebar-user{
-    background:#DCE4EF !important;
-    border-bottom:1px solid #CCD8E6 !important;
-}
-
-.user-avatar{
-    background:#D7263D !important;
-}
-
-.user-name{
-    color:#0B2447 !important;
-}
-
-.user-meta{
-    color:#6C7B90 !important;
-}
-
-.nav-item{
-    color:#4F6480 !important;
-    border-radius:14px !important;
-}
-
-.nav-item:hover{
-    background:#E7EDF5 !important;
-    color:#0F2557 !important;
-}
-
-.nav-item.active{
-    background:#D4DEE9 !important;
-    color:#0F2557 !important;
-    font-weight:600 !important;
-}
-
-.nav-badge{
-    background:#D7263D !important;
-}
-
-/* MAIN */
-
-.main-content{
-    background:#E8EEF5 !important;
-}
-
-/* HEADER */
-
-.top-bar{
-    background:#DCE4EF;
-    padding:20px 24px;
-    border-radius:22px 22px 0 0;
-}
-
-.page-title{
-    color:#0B2447 !important;
-    font-size:20px !important;
-    font-weight:600 !important;
-}
-
-.page-subtitle{
-    color:#6C7B90 !important;
-}
-
-.network-badge{
-    background:#F8FAFC !important;
-    border:1px solid #CBD6E2 !important;
-    border-radius:14px !important;
-    color:#0A6A39 !important;
-}
-
-/* HERO */
-
-.clock-hero{
-    background:#0F2557 !important;
-    border-radius:22px !important;
-    padding:30px !important;
-    box-shadow:0 8px 24px rgba(15,37,87,.15);
-}
-
-.clock-hero::before,
-.clock-hero::after{
-    display:none !important;
-}
-
-.clock-hero-label{
-    color:#C8D2E3 !important;
-    font-size:14px !important;
-    letter-spacing:.8px;
-}
-
-.clock-hero-status{
-    color:#FFF !important;
-    font-size:40px !important;
-    font-weight:700 !important;
-}
-
-.clock-hero-sub span{
-    color:#D3DDEC !important;
-}
-
-.clock-dot{
-    width:10px !important;
-    height:10px !important;
-    background:#76E39D !important;
-}
-
-.clock-btn{
-    background:#E31837 !important;
-    border-radius:16px !important;
-    padding:14px 34px !important;
-    font-size:18px !important;
-    font-weight:600 !important;
-}
-
-.clock-btn:hover{
-    background:#C8102E !important;
-}
-
-/* STATS */
-
-.stat-card{
-    background:#F9FBFD !important;
-    border:1px solid #D4DEE9 !important;
-    border-radius:18px !important;
-    box-shadow:0 2px 8px rgba(15,37,87,.04);
-}
-
-.stat-label{
-    color:#607089 !important;
-}
-
-.stat-value{
-    color:#0B2447 !important;
-    font-size:34px !important;
-}
-
-.stat-icon{
-    width:38px !important;
-    height:38px !important;
-    border-radius:12px !important;
-}
-
-.stat-icon-green{
-    background:#E7EEDC !important;
-    color:#52712C !important;
-}
-
-.stat-icon-yellow{
-    background:#F6E6CA !important;
-    color:#B06B00 !important;
-}
-
-.stat-icon-blue{
-    background:#DFE8F5 !important;
-    color:#2D5E9D !important;
-}
-
-.stat-icon-red{
-    background:#F7E6E6 !important;
-    color:#B53B3B !important;
-}
-
-/* CARDS */
-
-.card{
-    background:#F9FBFD !important;
-    border:1px solid #D4DEE9 !important;
-    border-radius:18px !important;
-}
-
-.card-header{
-    border-bottom:1px solid #E1E8F0 !important;
-}
-
-.card-title{
-    color:#0B2447 !important;
-    font-size:22px !important;
-}
-
-.card-link{
-    color:#E31837 !important;
-    font-weight:600 !important;
-}
-
-.list-item{
-    background:#EAF0F6 !important;
-    border-radius:14px !important;
-    padding:16px !important;
-}
-
-.list-item-title{
-    color:#0B2447 !important;
-    font-size:18px !important;
-}
-
-.list-item-sub{
-    color:#6D7C91 !important;
-}
-
-/* DATE BADGE */
-
-.date-badge{
-    background:#F5E8E8 !important;
-    width:54px !important;
-    height:54px !important;
-    border-radius:12px !important;
-}
-
-.date-day{
-    color:#D7263D !important;
-    font-size:24px !important;
-}
-
-.date-month{
-    color:#D7263D !important;
-    font-size:10px !important;
-}
-
-/* STATUS BADGES */
-
-.badge-pending{
-    background:#FFF3D6 !important;
-    border:1px solid #F1B95E !important;
-    color:#B36B00 !important;
-}
-
-.badge-approved{
-    background:#E8F4E4 !important;
-    border:1px solid #A9D28D !important;
-    color:#4E8A2D !important;
-}
-
-.badge-rejected{
-    background:#FCE8E8 !important;
-    border:1px solid #F3A3A3 !important;
-    color:#C43B3B !important;
-}
-
-.days-away{
-    background:transparent !important;
-    color:#55729A !important;
-    font-size:15px !important;
-}
-
-/* MODAL */
-
-.modal-header{
-    background:#0F2557 !important;
-}
-
-.btn-primary{
-    background:#E31837 !important;
-}
-
-.btn-primary:hover{
-    background:#C8102E !important;
-}
-
-.btn-secondary{
-    background:#F3F6FA !important;
-    border:1px solid #D4DEE9 !important;
-}
-    gi
-    @media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-    .main-content {
-        margin-left: 0;
-    }
-    .bottom-grid {
-        grid-template-columns: 1fr;
-    }
-}</pre>
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — Holidays&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(#strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;&lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"&gt;Holiday Management&lt;/h1&gt;
+                &lt;p class="page-subtitle"&gt;Manage bank holidays for the year&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Alerts --&gt;
+        &lt;div th:if="${successMessage}" class="alert-success-bar"&gt;
+            &lt;i class="ti ti-circle-check"&gt;&lt;/i&gt;
+            &lt;span th:text="${successMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div th:if="${errorMessage}" class="alert-error-bar"&gt;
+            &lt;i class="ti ti-alert-circle"&gt;&lt;/i&gt;
+            &lt;span th:text="${errorMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div class="bottom-grid"&gt;
+
+            &lt;!-- Add Holiday Form --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-calendar-plus"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Add Holiday&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" style="padding:16px;"&gt;
+                    &lt;form th:action="@{/admin/holidays/add}"
+                          method="post"&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;Holiday Name&lt;/label&gt;
+                            &lt;input type="text" name="holidayName"
+                                   class="form-input-field"
+                                   placeholder="e.g. Diwali"
+                                   required/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;Date&lt;/label&gt;
+                            &lt;input type="date" name="date"
+                                   class="form-input-field"
+                                   required/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;
+                                Description
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;input type="text" name="description"
+                                   class="form-input-field"
+                                   placeholder="e.g. National festival"/&gt;
+                        &lt;/div&gt;
+
+                        &lt;button type="submit" class="action-btn w-100"&gt;
+                            &lt;i class="ti ti-plus"&gt;&lt;/i&gt; Add Holiday
+                        &lt;/button&gt;
+
+                    &lt;/form&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Holiday List --&gt;
+            &lt;div class="page-card"&gt;
+                &lt;div class="page-card-header"&gt;
+                    &lt;div class="page-card-header-left"&gt;
+                        &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;All Holidays&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${#lists.isEmpty(holidays)}" class="att-empty"&gt;
+                    &lt;i class="ti ti-calendar-off"&gt;&lt;/i&gt;
+                    &lt;p&gt;No holidays added yet&lt;/p&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${!#lists.isEmpty(holidays)}"
+                     class="page-table-wrapper"&gt;
+                    &lt;table class="page-table"&gt;
+                        &lt;thead&gt;
+                            &lt;tr&gt;
+                                &lt;th&gt;DATE&lt;/th&gt;
+                                &lt;th&gt;HOLIDAY&lt;/th&gt;
+                                &lt;th&gt;DESCRIPTION&lt;/th&gt;
+                                &lt;th&gt;DAY&lt;/th&gt;
+                                &lt;th&gt;ACTION&lt;/th&gt;
+                            &lt;/tr&gt;
+                        &lt;/thead&gt;
+                        &lt;tbody&gt;
+                            &lt;tr th:each="holiday : ${holidays}"&gt;
+                                &lt;td&gt;
+                                    &lt;div class="date-badge"&gt;
+                                        &lt;span class="date-day"
+                                              th:text="${holiday.date.dayOfMonth}"&gt;15&lt;/span&gt;
+                                        &lt;span class="date-month"
+                                              th:text="${holiday.date.month
+                                                         .name().substring(0,3)}"&gt;AUG&lt;/span&gt;
+                                    &lt;/div&gt;
+                                &lt;/td&gt;
+                                &lt;td th:text="${holiday.holidayName}"&gt;
+                                    Independence Day
+                                &lt;/td&gt;
+                                &lt;td th:text="${holiday.description != null
+                                              ? holiday.description : '—'}"&gt;
+                                    National holiday
+                                &lt;/td&gt;
+                                &lt;td th:text="${holiday.date.dayOfWeek
+                                              .name().substring(0,3)}"&gt;
+                                    FRI
+                                &lt;/td&gt;
+                                &lt;td&gt;
+                                    &lt;form th:action="@{/admin/holidays/delete/{id}
+                                                      (id=${holiday.id})}"
+                                          method="post"&gt;
+                                        &lt;button type="submit"
+                                                class="danger-btn"
+                                                onclick="return confirm(
+                                                    'Delete this holiday?')"&gt;
+                                            &lt;i class="ti ti-trash"
+                                               style="font-size:12px;"&gt;&lt;/i&gt;
+                                            Delete
+                                        &lt;/button&gt;
+                                    &lt;/form&gt;
+                                &lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/tbody&gt;
+                    &lt;/table&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    // Auto-dismiss alerts
+    window.onload = function () {
+        const successMsg = document.querySelector('.alert-success-bar');
+        if (successMsg) {
+            setTimeout(() =&gt; {
+                successMsg.style.transition = 'opacity 0.5s';
+                successMsg.style.opacity = '0';
+                setTimeout(() =&gt; successMsg.remove(), 500);
+            }, 4000);
+        }
+        const errorMsg = document.querySelector('.alert-error-bar');
+        if (errorMsg) {
+            setTimeout(() =&gt; {
+                errorMsg.style.transition = 'opacity 0.5s';
+                errorMsg.style.opacity = '0';
+                setTimeout(() =&gt; errorMsg.remove(), 500);
+            }, 5000);
+        }
+    };
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — Vendors&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(
+                           #strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;
+                    &lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin
+                &lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"&gt;Vendor Management&lt;/h1&gt;
+                &lt;p class="page-subtitle"&gt;Add and manage vendor companies&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Alerts --&gt;
+        &lt;div th:if="${successMessage}" class="alert-success-bar"&gt;
+            &lt;i class="ti ti-circle-check"&gt;&lt;/i&gt;
+            &lt;span th:text="${successMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div th:if="${errorMessage}" class="alert-error-bar"&gt;
+            &lt;i class="ti ti-alert-circle"&gt;&lt;/i&gt;
+            &lt;span th:text="${errorMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div class="bottom-grid"&gt;
+
+            &lt;!-- Add Vendor Form --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-building-plus"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Add Vendor&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" style="padding:16px;"&gt;
+                    &lt;form th:action="@{/admin/vendors/add}" method="post"&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;Vendor Name&lt;/label&gt;
+                            &lt;input type="text" name="name"
+                                   class="form-input-field"
+                                   placeholder="e.g. TCS" required/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;
+                                Email
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;input type="email" name="email"
+                                   class="form-input-field"
+                                   placeholder="e.g. contact@tcs.com"/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;
+                                Phone
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;input type="text" name="phone"
+                                   class="form-input-field"
+                                   placeholder="e.g. 9876543210"/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;
+                                Address
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;input type="text" name="address"
+                                   class="form-input-field"
+                                   placeholder="e.g. Mumbai, Maharashtra"/&gt;
+                        &lt;/div&gt;
+
+                        &lt;button type="submit" class="action-btn w-100"&gt;
+                            &lt;i class="ti ti-plus"&gt;&lt;/i&gt; Add Vendor
+                        &lt;/button&gt;
+
+                    &lt;/form&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Vendor List --&gt;
+            &lt;div class="page-card"&gt;
+                &lt;div class="page-card-header"&gt;
+                    &lt;div class="page-card-header-left"&gt;
+                        &lt;i class="ti ti-building"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;All Vendors&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${#lists.isEmpty(vendors)}" class="att-empty"&gt;
+                    &lt;i class="ti ti-building-off"&gt;&lt;/i&gt;
+                    &lt;p&gt;No vendors added yet&lt;/p&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${!#lists.isEmpty(vendors)}"
+                     class="page-table-wrapper"&gt;
+                    &lt;table class="page-table"&gt;
+                        &lt;thead&gt;
+                            &lt;tr&gt;
+                                &lt;th&gt;VENDOR&lt;/th&gt;
+                                &lt;th&gt;EMAIL&lt;/th&gt;
+                                &lt;th&gt;PHONE&lt;/th&gt;
+                                &lt;th&gt;ADDRESS&lt;/th&gt;
+                                &lt;th&gt;EMPLOYEES&lt;/th&gt;
+                                &lt;th&gt;ACTIONS&lt;/th&gt;
+                            &lt;/tr&gt;
+                        &lt;/thead&gt;
+                        &lt;tbody&gt;
+                            &lt;tr th:each="vendor : ${vendors}"&gt;
+                                &lt;td&gt;
+                                    &lt;div class="emp-cell"&gt;
+                                        &lt;div class="user-avatar-sm"
+                                             th:text="${#strings.toUpperCase(
+                                                       #strings.substring(
+                                                       vendor.name, 0, 2))}"&gt;TC&lt;/div&gt;
+                                        &lt;p class="emp-name"
+                                           th:text="${vendor.name}"&gt;TCS&lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/td&gt;
+                                &lt;td th:text="${vendor.email != null
+                                              ? vendor.email : '—'}"&gt;
+                                    contact@tcs.com
+                                &lt;/td&gt;
+                                &lt;td th:text="${vendor.phone != null
+                                              ? vendor.phone : '—'}"&gt;
+                                    9876543210
+                                &lt;/td&gt;
+                                &lt;td th:text="${vendor.address != null
+                                              ? vendor.address : '—'}"&gt;
+                                    Mumbai
+                                &lt;/td&gt;
+                                &lt;td&gt;
+                                    &lt;span class="user-count-badge"
+                                          th:text="${vendor.employeeCount != null
+                                                     ? vendor.employeeCount : 0}"&gt;
+                                        0
+                                    &lt;/span&gt;
+                                &lt;/td&gt;
+                                &lt;td&gt;
+                                    &lt;div class="action-buttons"&gt;
+                                        &lt;a th:href="@{/admin/vendors/edit/{id}
+                                                      (id=${vendor.id})}"
+                                           class="edit-btn"&gt;
+                                            &lt;i class="ti ti-edit"
+                                               style="font-size:12px;"&gt;&lt;/i&gt; Edit
+                                        &lt;/a&gt;
+                                        &lt;form th:action="@{/admin/vendors/delete/{id}
+                                                          (id=${vendor.id})}"
+                                              method="post"
+                                              style="display:inline;"&gt;
+                                            &lt;button type="submit"
+                                                    class="danger-btn"
+                                                    onclick="return confirm(
+                                                        'Delete this vendor?')"&gt;
+                                                &lt;i class="ti ti-trash"
+                                                   style="font-size:12px;"&gt;&lt;/i&gt;
+                                            &lt;/button&gt;
+                                        &lt;/form&gt;
+                                    &lt;/div&gt;
+                                &lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/tbody&gt;
+                    &lt;/table&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    window.onload = function () {
+        const s = document.querySelector('.alert-success-bar');
+        if (s) setTimeout(() =&gt; { s.style.opacity = '0'; setTimeout(() =&gt; s.remove(), 500); }, 4000);
+        const e = document.querySelector('.alert-error-bar');
+        if (e) setTimeout(() =&gt; { e.style.opacity = '0'; setTimeout(() =&gt; e.remove(), 500); }, 5000);
+    };
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — Master Data&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(
+                           #strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;
+                    &lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin
+                &lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"&gt;Master Data&lt;/h1&gt;
+                &lt;p class="page-subtitle"&gt;Manage shifts and projects&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Alerts --&gt;
+        &lt;div th:if="${successMessage}" class="alert-success-bar"&gt;
+            &lt;i class="ti ti-circle-check"&gt;&lt;/i&gt;
+            &lt;span th:text="${successMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div th:if="${errorMessage}" class="alert-error-bar"&gt;
+            &lt;i class="ti ti-alert-circle"&gt;&lt;/i&gt;
+            &lt;span th:text="${errorMessage}"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Top row: Add forms --&gt;
+        &lt;div class="bottom-grid"&gt;
+
+            &lt;!-- Add Shift --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-clock-plus"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Add Shift&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" style="padding:16px;"&gt;
+                    &lt;form th:action="@{/admin/shifts/add}" method="post"&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;Shift Name&lt;/label&gt;
+                            &lt;input type="text" name="shiftName"
+                                   class="form-input-field"
+                                   placeholder="e.g. Morning" required/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;Start Time&lt;/label&gt;
+                            &lt;input type="time" name="startTime"
+                                   class="form-input-field" required/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;End Time&lt;/label&gt;
+                            &lt;input type="time" name="endTime"
+                                   class="form-input-field" required/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;
+                                Grace Period (minutes)
+                            &lt;/label&gt;
+                            &lt;input type="number" name="gracePeriodMinutes"
+                                   class="form-input-field"
+                                   placeholder="e.g. 15" min="0"/&gt;
+                        &lt;/div&gt;
+
+                        &lt;button type="submit" class="action-btn w-100"&gt;
+                            &lt;i class="ti ti-plus"&gt;&lt;/i&gt; Add Shift
+                        &lt;/button&gt;
+
+                    &lt;/form&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Add Project --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-folder-plus"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Add Project&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" style="padding:16px;"&gt;
+                    &lt;form th:action="@{/admin/projects/add}" method="post"&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;Project Name&lt;/label&gt;
+                            &lt;input type="text" name="projectName"
+                                   class="form-input-field"
+                                   placeholder="e.g. Core Banking"
+                                   required/&gt;
+                        &lt;/div&gt;
+
+                        &lt;div class="form-group"&gt;
+                            &lt;label class="form-label"&gt;
+                                Description
+                                &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                            &lt;/label&gt;
+                            &lt;input type="text" name="description"
+                                   class="form-input-field"
+                                   placeholder="e.g. HDFC Core Banking System"/&gt;
+                        &lt;/div&gt;
+
+                        &lt;button type="submit" class="action-btn w-100"&gt;
+                            &lt;i class="ti ti-plus"&gt;&lt;/i&gt; Add Project
+                        &lt;/button&gt;
+
+                    &lt;/form&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+
+        &lt;!-- Bottom row: Lists --&gt;
+        &lt;div class="bottom-grid"&gt;
+
+            &lt;!-- Shifts List --&gt;
+            &lt;div class="page-card"&gt;
+                &lt;div class="page-card-header"&gt;
+                    &lt;div class="page-card-header-left"&gt;
+                        &lt;i class="ti ti-clock"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;All Shifts&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${#lists.isEmpty(shifts)}" class="att-empty"&gt;
+                    &lt;i class="ti ti-clock-off"&gt;&lt;/i&gt;
+                    &lt;p&gt;No shifts added yet&lt;/p&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${!#lists.isEmpty(shifts)}"
+                     class="page-table-wrapper"&gt;
+                    &lt;table class="page-table"&gt;
+                        &lt;thead&gt;
+                            &lt;tr&gt;
+                                &lt;th&gt;SHIFT NAME&lt;/th&gt;
+                                &lt;th&gt;START&lt;/th&gt;
+                                &lt;th&gt;END&lt;/th&gt;
+                                &lt;th&gt;GRACE&lt;/th&gt;
+                                &lt;th&gt;ACTION&lt;/th&gt;
+                            &lt;/tr&gt;
+                        &lt;/thead&gt;
+                        &lt;tbody&gt;
+                            &lt;tr th:each="shift : ${shifts}"&gt;
+                                &lt;td th:text="${shift.shiftName}"&gt;Morning&lt;/td&gt;
+                                &lt;td th:text="${shift.startTime}"&gt;09:00&lt;/td&gt;
+                                &lt;td th:text="${shift.endTime}"&gt;18:00&lt;/td&gt;
+                                &lt;td th:text="${shift.gracePeriodMinutes
+                                              != null
+                                              ? shift.gracePeriodMinutes
+                                                + ' min' : '—'}"&gt;
+                                    15 min
+                                &lt;/td&gt;
+                                &lt;td&gt;
+                                    &lt;form th:action="@{/admin/shifts/delete/{id}
+                                                      (id=${shift.id})}"
+                                          method="post"&gt;
+                                        &lt;button type="submit"
+                                                class="danger-btn"
+                                                onclick="return confirm(
+                                                    'Delete this shift?')"&gt;
+                                            &lt;i class="ti ti-trash"
+                                               style="font-size:12px;"&gt;&lt;/i&gt;
+                                        &lt;/button&gt;
+                                    &lt;/form&gt;
+                                &lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/tbody&gt;
+                    &lt;/table&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Projects List --&gt;
+            &lt;div class="page-card"&gt;
+                &lt;div class="page-card-header"&gt;
+                    &lt;div class="page-card-header-left"&gt;
+                        &lt;i class="ti ti-folder"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;All Projects&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${#lists.isEmpty(projects)}" class="att-empty"&gt;
+                    &lt;i class="ti ti-folder-off"&gt;&lt;/i&gt;
+                    &lt;p&gt;No projects added yet&lt;/p&gt;
+                &lt;/div&gt;
+
+                &lt;div th:if="${!#lists.isEmpty(projects)}"
+                     class="page-table-wrapper"&gt;
+                    &lt;table class="page-table"&gt;
+                        &lt;thead&gt;
+                            &lt;tr&gt;
+                                &lt;th&gt;PROJECT NAME&lt;/th&gt;
+                                &lt;th&gt;DESCRIPTION&lt;/th&gt;
+                                &lt;th&gt;ACTION&lt;/th&gt;
+                            &lt;/tr&gt;
+                        &lt;/thead&gt;
+                        &lt;tbody&gt;
+                            &lt;tr th:each="project : ${projects}"&gt;
+                                &lt;td th:text="${project.projectName}"&gt;
+                                    Core Banking
+                                &lt;/td&gt;
+                                &lt;td th:text="${project.description != null
+                                              ? project.description : '—'}"&gt;
+                                    HDFC Core Banking System
+                                &lt;/td&gt;
+                                &lt;td&gt;
+                                    &lt;form th:action="@{/admin/projects/delete/{id}
+                                                      (id=${project.id})}"
+                                          method="post"&gt;
+                                        &lt;button type="submit"
+                                                class="danger-btn"
+                                                onclick="return confirm(
+                                                    'Delete this project?')"&gt;
+                                            &lt;i class="ti ti-trash"
+                                               style="font-size:12px;"&gt;&lt;/i&gt;
+                                        &lt;/button&gt;
+                                    &lt;/form&gt;
+                                &lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/tbody&gt;
+                    &lt;/table&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    window.onload = function () {
+        const s = document.querySelector('.alert-success-bar');
+        if (s) setTimeout(() =&gt; {
+            s.style.transition = 'opacity 0.5s';
+            s.style.opacity = '0';
+            setTimeout(() =&gt; s.remove(), 500);
+        }, 4000);
+        const e = document.querySelector('.alert-error-bar');
+        if (e) setTimeout(() =&gt; {
+            e.style.transition = 'opacity 0.5s';
+            e.style.opacity = '0';
+            setTimeout(() =&gt; e.remove(), 500);
+        }, 5000);
+    };
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — Reports&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(
+                           #strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;
+                    &lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin
+                &lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'"
+               class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"&gt;Attendance Reports&lt;/h1&gt;
+                &lt;p class="page-subtitle"&gt;System-wide attendance data&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;a th:href="@{/admin/reports/export(
+                          month=${selectedMonth},
+                          vendorId=${selectedVendorId})}"
+               class="action-btn"&gt;
+                &lt;i class="ti ti-file-spreadsheet"&gt;&lt;/i&gt; Export CSV
+            &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Filter bar --&gt;
+        &lt;form th:action="@{/admin/reports}" method="get"
+              style="display:flex; gap:10px; align-items:center;"&gt;
+
+            &lt;div&gt;
+                &lt;label class="form-label" style="font-size:11px;"&gt;Month&lt;/label&gt;
+                &lt;input type="month" name="month"
+                       class="att-select"
+                       th:value="${selectedMonth}"/&gt;
+            &lt;/div&gt;
+
+            &lt;div&gt;
+                &lt;label class="form-label" style="font-size:11px;"&gt;Vendor&lt;/label&gt;
+                &lt;select name="vendorId" class="att-select"&gt;
+                    &lt;option value=""&gt;All Vendors&lt;/option&gt;
+                    &lt;option th:each="v : ${vendors}"
+                            th:value="${v.id}"
+                            th:text="${v.name}"
+                            th:selected="${selectedVendorId != null
+                                           and selectedVendorId == v.id}"&gt;
+                        TCS
+                    &lt;/option&gt;
+                &lt;/select&gt;
+            &lt;/div&gt;
+
+            &lt;div style="margin-top:18px;"&gt;
+                &lt;button type="submit" class="att-filter-btn"&gt;
+                    Filter
+                &lt;/button&gt;
+            &lt;/div&gt;
+
+        &lt;/form&gt;
+
+        &lt;!-- Summary Stats --&gt;
+        &lt;div class="stats-grid"&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;PRESENT&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-green"&gt;
+                        &lt;i class="ti ti-circle-check"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${presentCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;LATE&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-yellow"&gt;
+                        &lt;i class="ti ti-clock-exclamation"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value stat-value-yellow"
+                   th:text="${lateCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;ABSENT&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-red"&gt;
+                        &lt;i class="ti ti-circle-x"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value stat-value-red"
+                   th:text="${absentCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;ON LEAVE&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-blue"&gt;
+                        &lt;i class="ti ti-beach"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${onLeaveCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Table --&gt;
+        &lt;div class="page-card"&gt;
+            &lt;div class="page-card-header"&gt;
+                &lt;div class="page-card-header-left"&gt;
+                    &lt;i class="ti ti-table"&gt;&lt;/i&gt;
+                    &lt;p class="card-title"&gt;
+                        Attendance Records
+                        &lt;span class="user-count-badge"
+                              th:text="${#lists.size(records)}"&gt;0&lt;/span&gt;
+                    &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div th:if="${#lists.isEmpty(records)}" class="att-empty"&gt;
+                &lt;i class="ti ti-calendar-off"&gt;&lt;/i&gt;
+                &lt;p&gt;No records found for this period&lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;div th:if="${!#lists.isEmpty(records)}"
+                 class="page-table-wrapper"&gt;
+                &lt;table class="page-table"&gt;
+                    &lt;thead&gt;
+                        &lt;tr&gt;
+                            &lt;th&gt;EMPLOYEE&lt;/th&gt;
+                            &lt;th&gt;VENDOR&lt;/th&gt;
+                            &lt;th&gt;DATE&lt;/th&gt;
+                            &lt;th&gt;CHECK IN&lt;/th&gt;
+                            &lt;th&gt;CHECK OUT&lt;/th&gt;
+                            &lt;th&gt;HOURS&lt;/th&gt;
+                            &lt;th&gt;STATUS&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        &lt;tr th:each="att : ${records}"&gt;
+                            &lt;td&gt;
+                                &lt;div class="emp-cell"&gt;
+                                    &lt;div class="user-avatar-sm"
+                                         th:text="${#strings.toUpperCase(
+                                                   #strings.substring(
+                                                   att.user.fullName,
+                                                   0, 2))}"&gt;AK&lt;/div&gt;
+                                    &lt;div&gt;
+                                        &lt;p class="emp-name"
+                                           th:text="${att.user.fullName}"&gt;
+                                            Arjun Kumar
+                                        &lt;/p&gt;
+                                        &lt;p class="emp-code"
+                                           th:text="${att.user.empCode}"&gt;
+                                            EMP001
+                                        &lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+                            &lt;td th:text="${att.user.vendor != null
+                                          ? att.user.vendor.name : '—'}"&gt;
+                                TCS
+                            &lt;/td&gt;
+                            &lt;td th:text="${att.date}"&gt;2026-06-15&lt;/td&gt;
+                            &lt;td th:text="${att.checkIn != null
+                                          ? #strings.substring(
+                                            att.checkIn.toString(),
+                                            11, 16) : '—'}"&gt;
+                                09:12
+                            &lt;/td&gt;
+                            &lt;td th:text="${att.checkOut != null
+                                          ? #strings.substring(
+                                            att.checkOut.toString(),
+                                            11, 16) : '—'}"&gt;
+                                18:30
+                            &lt;/td&gt;
+                            &lt;td th:text="${att.totalHours != null
+                                          ? att.totalHours + ' hrs' : '0'}"&gt;
+                                9.3 hrs
+                            &lt;/td&gt;
+                            &lt;td&gt;
+                                &lt;span th:if="${att.status.name() == 'PRESENT'}"
+                                      class="badge-approved"&gt;Present&lt;/span&gt;
+                                &lt;span th:if="${att.status.name() == 'LATE'}"
+                                      class="badge-pending"&gt;Late&lt;/span&gt;
+                                &lt;span th:if="${att.status.name() == 'ABSENT'}"
+                                      class="badge-rejected"&gt;Absent&lt;/span&gt;
+                                &lt;span th:if="${att.status.name() == 'HALF_DAY'}"
+                                      class="badge-pending"&gt;Half Day&lt;/span&gt;
+                                &lt;span th:if="${att.status.name() == 'ON_LEAVE'}"
+                                      class="days-away"&gt;On Leave&lt;/span&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<script>
+    const src = document.getElementById('src').textContent;
+    const lines = src.split('\n').length;
+    document.getElementById('lineCount').textContent = lines + ' lines';
+</script>
 </body>
 </html>

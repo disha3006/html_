@@ -1,59 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VendorTrack — Source Code Viewer</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          background: #1e1e2e;
-          color: #cdd6f4;
-        }
-        header {
-          padding: 16px 24px;
-          background: #181825;
-          border-bottom: 1px solid #313244;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        header h1 {
-          font-size: 15px;
-          margin: 0;
-          color: #cdd6f4;
-          font-weight: 600;
-        }
-        header span {
-          font-size: 12px;
-          color: #a6adc8;
-        }
-        pre {
-          margin: 0;
-          padding: 24px;
-          overflow-x: auto;
-          font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-          font-size: 13px;
-          line-height: 1.55;
-          white-space: pre;
-        }
-        code {
-          color: #cdd6f4;
-        }
-        .line-wrap pre {
-          white-space: pre-wrap;
-          word-break: break-word;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VendorTrack — Source Code Viewer</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #1e1e2e;
+    color: #cdd6f4;
+  }
+  header {
+    padding: 16px 24px;
+    background: #181825;
+    border-bottom: 1px solid #313244;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header h1 {
+    font-size: 15px;
+    margin: 0;
+    color: #cdd6f4;
+    font-weight: 600;
+  }
+  header span#lineCount {
+    font-size: 12px;
+    color: #a6adc8;
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: #181825;
+    padding: 0 24px;
+    border-bottom: 1px solid #313244;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: #a6adc8;
+    padding: 10px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+  }
+  .tab-btn:hover {
+    color: #cdd6f4;
+  }
+  .tab-btn.active {
+    color: #89b4fa;
+    border-bottom-color: #89b4fa;
+  }
+  .tab-panel {
+    display: none;
+  }
+  .tab-panel.active {
+    display: block;
+  }
+  pre {
+    margin: 0;
+    padding: 24px;
+    overflow-x: auto;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre;
+  }
+  code {
+    color: #cdd6f4;
+  }
+</style>
 </head>
 <body>
 <header>
-    <h1>frontend.txt — HTML source (displayed as plain text)</h1>
-    <span id="lineCount"></span>
+  <h1 id="pageTitle">frontend.txt (User Management) — HTML source (displayed as plain text)</h1>
+  <span id="lineCount"></span>
 </header>
-<pre><code id="src">&lt;!DOCTYPE html&gt;
+<div class="tabs">
+  <button class="tab-btn active" data-tab="users" data-title="frontend.txt (User Management) — HTML source (displayed as plain text)">User Management</button>
+  <button class="tab-btn" data-tab="dashboard" data-title="dashboard.txt (Admin Dashboard) — HTML source (displayed as plain text)">Admin Dashboard</button>
+  <button class="tab-btn" data-tab="reports" data-title="reports.txt (Reports: controller + template, updated) — source (displayed as plain text)">Reports</button>
+</div>
+
+<div class="tab-panel active" id="panel-users">
+  <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html xmlns:th="http://www.thymeleaf.org"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
@@ -1893,11 +1929,960 @@
 &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
+</div>
+<div class="tab-panel" id="panel-dashboard">
+  <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — Admin Dashboard&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(#strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;&lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"&gt;
+                    Welcome, &lt;span th:text="${#strings.substringBefore(fullName, ' ')}"&gt;Admin&lt;/span&gt;
+                &lt;/h1&gt;
+                &lt;p class="page-subtitle"
+                   th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMM yyyy')}"&gt;
+                    Monday, 13 Jul 2026
+                &lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Stats Row --&gt;
+        &lt;div class="stats-grid-5"&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;TOTAL USERS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-blue"&gt;
+                        &lt;i class="ti ti-users"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${totalUsers}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;in the system&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;ACTIVE USERS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-green"&gt;
+                        &lt;i class="ti ti-user-check"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${activeUsers}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;accounts enabled&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;MANAGERS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-blue"&gt;
+                        &lt;i class="ti ti-user-star"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${totalManagers}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;in the system&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;EMPLOYEES&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-green"&gt;
+                        &lt;i class="ti ti-user"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${totalEmployees}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;in the system&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;VENDORS&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-yellow"&gt;
+                        &lt;i class="ti ti-building"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${totalVendors}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;registered&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Quick Actions --&gt;
+        &lt;div class="card"&gt;
+            &lt;div class="card-header"&gt;
+                &lt;div class="card-header-left"&gt;
+                    &lt;i class="ti ti-bolt"&gt;&lt;/i&gt;
+                    &lt;p class="card-title"&gt;Quick Actions&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="card-body"&gt;
+                &lt;div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;"&gt;
+                    &lt;a href="/admin/users/add" class="quick-action-item"&gt;
+                        &lt;i class="ti ti-user-plus"&gt;&lt;/i&gt;
+                        &lt;div&gt;
+                            &lt;p class="list-item-title" style="margin:0 0 2px;"&gt;Add User&lt;/p&gt;
+                            &lt;p class="list-item-sub" style="margin:0;"&gt;Create a new account&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/a&gt;
+                    &lt;a href="/admin/vendors" class="quick-action-item"&gt;
+                        &lt;i class="ti ti-building-plus"&gt;&lt;/i&gt;
+                        &lt;div&gt;
+                            &lt;p class="list-item-title" style="margin:0 0 2px;"&gt;Manage Vendors&lt;/p&gt;
+                            &lt;p class="list-item-sub" style="margin:0;"&gt;Add or edit vendors&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/a&gt;
+                    &lt;a href="/admin/holidays" class="quick-action-item"&gt;
+                        &lt;i class="ti ti-calendar-plus"&gt;&lt;/i&gt;
+                        &lt;div&gt;
+                            &lt;p class="list-item-title" style="margin:0 0 2px;"&gt;Add Holiday&lt;/p&gt;
+                            &lt;p class="list-item-sub" style="margin:0;"&gt;Manage bank holidays&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/a&gt;
+                    &lt;a href="/admin/reports" class="quick-action-item"&gt;
+                        &lt;i class="ti ti-file-spreadsheet"&gt;&lt;/i&gt;
+                        &lt;div&gt;
+                            &lt;p class="list-item-title" style="margin:0 0 2px;"&gt;Export Reports&lt;/p&gt;
+                            &lt;p class="list-item-sub" style="margin:0;"&gt;Download attendance CSV&lt;/p&gt;
+                        &lt;/div&gt;
+                    &lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Bottom Grid --&gt;
+        &lt;div class="bottom-grid"&gt;
+
+            &lt;!-- Recent Users --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-users"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Recent Users&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;a href="/admin/users" class="card-link"&gt;View all →&lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div th:if="${#lists.isEmpty(recentUsers)}" class="no-data"&gt;
+                        No users found
+                    &lt;/div&gt;
+                    &lt;div th:each="user : ${recentUsers}" class="list-item"&gt;
+                        &lt;div class="list-item-left"&gt;
+                            &lt;div class="user-avatar-sm"
+                                 th:text="${#strings.toUpperCase(
+                                           #strings.substring(user.fullName, 0, 2))}"&gt;AK&lt;/div&gt;
+                            &lt;div&gt;
+                                &lt;p class="list-item-title" th:text="${user.fullName}"&gt;Arjun Kumar&lt;/p&gt;
+                                &lt;p class="list-item-sub"
+                                   th:text="${user.empCode + ' · ' + user.role.name()}"&gt;
+                                    EMP001 · EMPLOYEE
+                                &lt;/p&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;span th:if="${user.role.name() == 'ADMIN'}"    class="role-admin"&gt;Admin&lt;/span&gt;
+                        &lt;span th:if="${user.role.name() == 'MANAGER'}"  class="role-manager"&gt;Manager&lt;/span&gt;
+                        &lt;span th:if="${user.role.name() == 'EMPLOYEE'}" class="role-employee"&gt;Employee&lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Vendors --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-building"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Vendors&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;a href="/admin/vendors" class="card-link"&gt;View all →&lt;/a&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body"&gt;
+                    &lt;div th:if="${#lists.isEmpty(vendors)}" class="no-data"&gt;
+                        No vendors added yet
+                    &lt;/div&gt;
+                    &lt;div th:each="vendor : ${vendors}" class="list-item"&gt;
+                        &lt;div class="list-item-left"&gt;
+                            &lt;div class="user-avatar-sm"
+                                 th:text="${#strings.toUpperCase(
+                                           #strings.substring(vendor.name, 0, 2))}"&gt;TC&lt;/div&gt;
+                            &lt;div&gt;
+                                &lt;p class="list-item-title" th:text="${vendor.name}"&gt;TCS&lt;/p&gt;
+                                &lt;p class="list-item-sub"
+                                   th:text="${vendor.email != null ? vendor.email : 'No email'}"&gt;
+                                    tcs@vendor.com
+                                &lt;/p&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;span class="user-count-badge"
+                              th:text="${vendor.employeeCount != null
+                                         ? vendor.employeeCount + ' emp' : '0 emp'}"&gt;
+                            0 emp
+                        &lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</div>
+<div class="tab-panel" id="panel-reports">
+  <pre><code>// ── inject at top ───────────────────────────────────────────────
+private final A_AdminReportService adminReportService;
+
+// ── add to constructor ──────────────────────────────────────────
+// (add adminReportService parameter and assignment)
+
+// ── Reports Page ────────────────────────────────────────────────
+
+@GetMapping("/reports")
+public String reports(
+@RequestParam(required = false) String month,
+@RequestParam(required = false) Long vendorId,
+Authentication authentication,
+Model model) {
+
+loadUserToModel(authentication, model);
+model.addAttribute("activePage", "reports");
+
+YearMonth selectedMonth = (month != null &amp;&amp; !month.isBlank())
+? YearMonth.parse(month)
+: YearMonth.now();
+
+List&lt;Attendance&gt; records = (vendorId != null)
+    ? adminReportService.getMonthlyAttendanceByVendor(
+    selectedMonth, vendorId)
+    : adminReportService.getMonthlyAttendance(
+    selectedMonth);
+
+    model.addAttribute("records",       records);
+    model.addAttribute("selectedMonth", selectedMonth.toString());
+    model.addAttribute("selectedVendorId", vendorId);
+    model.addAttribute("vendors",
+    adminReportService.getAllVendors());
+
+    model.addAttribute("presentCount",
+    adminReportService.countByStatus(
+    selectedMonth, AttendanceStatus.PRESENT));
+    model.addAttribute("lateCount",
+    adminReportService.countByStatus(
+    selectedMonth, AttendanceStatus.LATE));
+    model.addAttribute("absentCount",
+    adminReportService.countByStatus(
+    selectedMonth, AttendanceStatus.ABSENT));
+    model.addAttribute("onLeaveCount",
+    adminReportService.countByStatus(
+    selectedMonth, AttendanceStatus.ON_LEAVE));
+
+    return "admin/reports";
+    }
+
+    // ── Export CSV ──────────────────────────────────────────────────
+
+    @GetMapping("/reports/export")
+    public void exportCsv(
+    @RequestParam(required = false) String month,
+    @RequestParam(required = false) Long vendorId,
+    HttpServletResponse response) throws IOException {
+
+    YearMonth selectedMonth = (month != null &amp;&amp; !month.isBlank())
+    ? YearMonth.parse(month)
+    : YearMonth.now();
+
+    List&lt;Attendance&gt; records = (vendorId != null)
+        ? adminReportService.getMonthlyAttendanceByVendor(
+        selectedMonth, vendorId)
+        : adminReportService.getMonthlyAttendance(
+        selectedMonth);
+
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition",
+        "attachment; filename=attendance-"
+        + selectedMonth + ".csv");
+
+        PrintWriter writer = response.getWriter();
+        writer.println(
+        "Employee Name,Emp Code,Department,"
+        + "Vendor,Date,Check In,Check Out,"
+        + "Total Hours,Status");
+
+        for (Attendance att : records) {
+        writer.println(
+        escape(att.getUser().getFullName()) + ","
+        + escape(att.getUser().getEmpCode()) + ","
+        + escape(att.getUser().getDepartment() != null
+        ? att.getUser().getDepartment() : "—") + ","
+        + escape(att.getUser().getVendor() != null
+        ? att.getUser().getVendor().getName() : "—") + ","
+        + att.getDate() + ","
+        + (att.getCheckIn() != null
+        ? String.format("%02d:%02d",
+        att.getCheckIn().getHour(),
+        att.getCheckIn().getMinute())
+        : "—") + ","
+        + (att.getCheckOut() != null
+        ? String.format("%02d:%02d",
+        att.getCheckOut().getHour(),
+        att.getCheckOut().getMinute())
+        : "—") + ","
+        + (att.getTotalHours() != null
+        ? att.getTotalHours() : "0") + ","
+        + att.getStatus().name()
+        );
+        }
+        writer.flush();
+        }
+
+        // ── Export Monthly Excel ────────────────────────────────────────
+
+        @GetMapping("/reports/export-monthly")
+        public void exportMonthlyExcel(
+        @RequestParam(required = false) String month,
+        HttpServletResponse response) throws IOException {
+
+        YearMonth yearMonth = (month != null &amp;&amp; !month.isBlank())
+        ? YearMonth.parse(month)
+        : YearMonth.now();
+
+        List&lt;Attendance&gt; allAttendance =
+            adminReportService.getMonthlyAttendance(yearMonth);
+
+            response.setContentType(
+            "application/vnd.openxmlformats-officedocument"
+            + ".spreadsheetml.sheet");
+            response.setHeader("Content-Disposition",
+            "attachment; filename=monthly-roster-"
+            + yearMonth + ".xlsx");
+
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+
+            List&lt;String&gt; departments = List.of(
+                "Middleware", "Automation",
+                "OpenSource", "OpenShift");
+
+                for (String dept : departments) {
+
+                List&lt;com.hdfcbank.tracker.model.User&gt; deptTeam =
+                    adminReportService
+                    .getEmployeesByDepartment(dept);
+
+                    Sheet sheet = workbook.createSheet(dept);
+
+                    // ── Header style ────────────────────────────
+                    XSSFCellStyle headerStyle =
+                    workbook.createCellStyle();
+                    headerStyle.setFillForegroundColor(
+                    new XSSFColor(new byte[]{
+                    (byte)14,(byte)27,(byte)46},
+                    null));
+                    headerStyle.setFillPattern(
+                    FillPatternType.SOLID_FOREGROUND);
+                    XSSFFont headerFont = workbook.createFont();
+                    headerFont.setColor(new XSSFColor(new byte[]{
+                    (byte)228,(byte)233,(byte)240}, null));
+                    headerFont.setBold(true);
+                    headerStyle.setFont(headerFont);
+
+                    // ── Header row ──────────────────────────────
+                    Row header = sheet.createRow(0);
+                    Cell dateCell = header.createCell(0);
+                    dateCell.setCellValue("DATE");
+                    dateCell.setCellStyle(headerStyle);
+                    sheet.setColumnWidth(0, 5000);
+
+                    for (int i = 0; i &lt; deptTeam.size(); i++) {
+                    Cell empCell = header.createCell(i + 1);
+                    empCell.setCellValue(
+                    deptTeam.get(i).getFullName()
+                    + " (" + deptTeam.get(i).getEmpCode()
+                    + ")");
+                    empCell.setCellStyle(headerStyle);
+                    sheet.setColumnWidth(i + 1, 4500);
+                    }
+
+                    // ── Cell styles ─────────────────────────────
+                    XSSFCellStyle presentStyle =
+                    workbook.createCellStyle();
+                    presentStyle.setFillForegroundColor(
+                    new XSSFColor(new byte[]{
+                    (byte)225,(byte)236,(byte)228},
+                    null));
+                    presentStyle.setFillPattern(
+                    FillPatternType.SOLID_FOREGROUND);
+
+                    XSSFCellStyle lateStyle =
+                    workbook.createCellStyle();
+                    lateStyle.setFillForegroundColor(
+                    new XSSFColor(new byte[]{
+                    (byte)234,(byte)226,(byte)208},
+                    null));
+                    lateStyle.setFillPattern(
+                    FillPatternType.SOLID_FOREGROUND);
+
+                    XSSFCellStyle absentStyle =
+                    workbook.createCellStyle();
+                    absentStyle.setFillForegroundColor(
+                    new XSSFColor(new byte[]{
+                    (byte)240,(byte)220,(byte)222},
+                    null));
+                    absentStyle.setFillPattern(
+                    FillPatternType.SOLID_FOREGROUND);
+
+                    XSSFCellStyle weekendStyle =
+                    workbook.createCellStyle();
+                    weekendStyle.setFillForegroundColor(
+                    new XSSFColor(new byte[]{
+                    (byte)220,(byte)220,(byte)220},
+                    null));
+                    weekendStyle.setFillPattern(
+                    FillPatternType.SOLID_FOREGROUND);
+
+                    XSSFCellStyle leaveStyle =
+                    workbook.createCellStyle();
+                    leaveStyle.setFillForegroundColor(
+                    new XSSFColor(new byte[]{
+                    (byte)222,(byte)229,(byte)239},
+                    null));
+                    leaveStyle.setFillPattern(
+                    FillPatternType.SOLID_FOREGROUND);
+
+                    XSSFCellStyle wfhStyle =
+                    workbook.createCellStyle();
+                    wfhStyle.setFillForegroundColor(
+                    new XSSFColor(new byte[]{
+                    (byte)220,(byte)235,(byte)220},
+                    null));
+                    wfhStyle.setFillPattern(
+                    FillPatternType.SOLID_FOREGROUND);
+
+                    // ── Data rows ───────────────────────────────
+                    int rowNum = 1;
+                    for (int day = 1;
+                    day &lt;= yearMonth.lengthOfMonth(); day++) {
+
+                    LocalDate date = yearMonth.atDay(day);
+                    boolean isWeekend =
+                    date.getDayOfWeek() == DayOfWeek.SATURDAY
+                    || date.getDayOfWeek() == DayOfWeek.SUNDAY;
+
+                    Row row = sheet.createRow(rowNum++);
+
+                    Cell dc = row.createCell(0);
+                    dc.setCellValue(
+                    date.getDayOfMonth() + " "
+                    + date.getMonth().name().substring(0, 3)
+                    + " ("
+                    + date.getDayOfWeek().name()
+                    .substring(0, 3) + ")");
+                    if (isWeekend)
+                    dc.setCellStyle(weekendStyle);
+
+                    for (int i = 0; i &lt; deptTeam.size(); i++) {
+                    com.hdfcbank.tracker.model.User emp =
+                    deptTeam.get(i);
+                    LocalDate finalDate = date;
+                    Cell cell = row.createCell(i + 1);
+
+                    if (isWeekend) {
+                    cell.setCellValue("Week Off");
+                    cell.setCellStyle(weekendStyle);
+                    continue;
+                    }
+
+                    String status = allAttendance.stream()
+                    .filter(a -&gt;
+                    a.getUser().getId()
+                    .equals(emp.getId())
+                    &amp;&amp; a.getDate()
+                    .equals(finalDate))
+                    .findFirst()
+                    .map(a -&gt; a.getStatus().name()
+                    .replace("_", " "))
+                    .orElse("ABSENT");
+
+                    cell.setCellValue(status);
+
+                    switch (status) {
+                    case "PRESENT" -&gt;
+                    cell.setCellStyle(presentStyle);
+                    case "LATE" -&gt;
+                    cell.setCellStyle(lateStyle);
+                    case "ABSENT" -&gt;
+                    cell.setCellStyle(absentStyle);
+                    case "ON LEAVE" -&gt;
+                    cell.setCellStyle(leaveStyle);
+                    case "WFH" -&gt;
+                    cell.setCellStyle(wfhStyle);
+                    default -&gt;
+                    cell.setCellStyle(absentStyle);
+                    }
+                    }
+                    }
+
+                    if (deptTeam.isEmpty()) {
+                    Row emptyRow = sheet.createRow(1);
+                    emptyRow.createCell(0).setCellValue(
+                    "No employees in this department");
+                    }
+                    }
+
+                    workbook.write(response.getOutputStream());
+                    }
+                    }
+
+                    // ── CSV escape helper ───────────────────────────────────────────
+
+                    private String escape(String value) {
+                    if (value == null) return "";
+                    if (value.contains(",") || value.contains("\""))
+                    return "\"" + value.replace("\"", "\"\"") + "\"";
+                    return value;
+                    }
+
+
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;VendorTrack — Reports&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/dashboard.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/pages.css}"&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/admin-users.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class="app-layout"&gt;
+
+    &lt;!-- Sidebar --&gt;
+    &lt;aside class="sidebar"&gt;
+        &lt;div class="sidebar-logo"&gt;
+            &lt;img th:src="@{/images/hdfc-logo.png}" alt="HDFC Bank" class="hdfc-logo"/&gt;
+            &lt;div class="sidebar-divider"&gt;&lt;/div&gt;
+            &lt;span class="sidebar-app-name"&gt;VendorTrack&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class="sidebar-user"&gt;
+            &lt;div class="user-avatar"
+                 th:text="${#strings.toUpperCase(#strings.substring(fullName, 0, 2))}"&gt;AD&lt;/div&gt;
+            &lt;div class="user-info"&gt;
+                &lt;p class="user-name" th:text="${fullName}"&gt;Admin User&lt;/p&gt;
+                &lt;p class="user-meta"&gt;&lt;span th:text="${empCode}"&gt;ADM001&lt;/span&gt; · Admin&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;nav class="sidebar-nav"&gt;
+            &lt;p class="nav-section-label"&gt;MENU&lt;/p&gt;
+            &lt;a href="/admin/dashboard"
+               th:classappend="${activePage == 'dashboard'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-layout-dashboard"&gt;&lt;/i&gt;&lt;span&gt;Dashboard&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/users"
+               th:classappend="${activePage == 'users'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-users"&gt;&lt;/i&gt;&lt;span&gt;Users&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/vendors"
+               th:classappend="${activePage == 'vendors'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-building"&gt;&lt;/i&gt;&lt;span&gt;Vendors&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/shifts"
+               th:classappend="${activePage == 'shifts'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-clock"&gt;&lt;/i&gt;&lt;span&gt;Shifts&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/holidays"
+               th:classappend="${activePage == 'holidays'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-calendar"&gt;&lt;/i&gt;&lt;span&gt;Holidays&lt;/span&gt;
+            &lt;/a&gt;
+            &lt;a href="/admin/reports"
+               th:classappend="${activePage == 'reports'} ? 'active'" class="nav-item"&gt;
+                &lt;i class="ti ti-chart-bar"&gt;&lt;/i&gt;&lt;span&gt;Reports&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/nav&gt;
+        &lt;div class="sidebar-footer"&gt;
+            &lt;a href="/logout" class="logout-btn"&gt;
+                &lt;i class="ti ti-logout"&gt;&lt;/i&gt;&lt;span&gt;Logout&lt;/span&gt;
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="main-content"&gt;
+
+        &lt;!-- Top bar --&gt;
+        &lt;div class="top-bar"&gt;
+            &lt;div&gt;
+                &lt;h1 class="page-title"&gt;Reports&lt;/h1&gt;
+                &lt;p class="page-subtitle"&gt;System-wide attendance reports and exports&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Summary Stats --&gt;
+        &lt;div class="stats-grid"&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;PRESENT&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-green"&gt;
+                        &lt;i class="ti ti-circle-check"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${presentCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;LATE&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-yellow"&gt;
+                        &lt;i class="ti ti-clock-exclamation"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value stat-value-yellow"
+                   th:text="${lateCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;ABSENT&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-red"&gt;
+                        &lt;i class="ti ti-circle-x"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value stat-value-red"
+                   th:text="${absentCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="stat-card"&gt;
+                &lt;div class="stat-card-top"&gt;
+                    &lt;p class="stat-label"&gt;ON LEAVE&lt;/p&gt;
+                    &lt;div class="stat-icon stat-icon-blue"&gt;
+                        &lt;i class="ti ti-beach"&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;p class="stat-value" th:text="${onLeaveCount}"&gt;0&lt;/p&gt;
+                &lt;p class="stat-sub"&gt;records this month&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Export Section --&gt;
+        &lt;div class="bottom-grid"&gt;
+
+            &lt;!-- Daily CSV Export --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-file-text"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Daily Attendance Export&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" style="padding:16px;"&gt;
+                    &lt;p class="list-item-sub" style="margin-bottom:14px;"&gt;
+                        Export attendance records for a specific date range.
+                        Filter by vendor if needed.
+                    &lt;/p&gt;
+
+                    &lt;div class="form-group"&gt;
+                        &lt;label class="form-label"&gt;Month&lt;/label&gt;
+                        &lt;input type="month" id="csvMonth"
+                               class="form-input-field"
+                               th:value="${selectedMonth}"/&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="form-group"&gt;
+                        &lt;label class="form-label"&gt;
+                            Vendor &lt;span class="optional"&gt;(optional)&lt;/span&gt;
+                        &lt;/label&gt;
+                        &lt;select id="csvVendor" class="form-select-field"&gt;
+                            &lt;option value=""&gt;All Vendors&lt;/option&gt;
+                            &lt;option th:each="v : ${vendors}"
+                                    th:value="${v.id}"
+                                    th:text="${v.name}"
+                                    th:selected="${selectedVendorId != null
+                               and selectedVendorId == v.id}"&gt;
+                                TCS
+                            &lt;/option&gt;
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+
+                    &lt;div style="display:flex; gap:8px;"&gt;
+                        &lt;button class="action-btn" onclick="filterReports()"
+                                style="flex:1;"&gt;
+                            &lt;i class="ti ti-filter"&gt;&lt;/i&gt; Filter
+                        &lt;/button&gt;
+                        &lt;button class="action-btn-outline"
+                                onclick="exportCsv()"
+                                style="flex:1;"&gt;
+                            &lt;i class="ti ti-download"&gt;&lt;/i&gt; Export CSV
+                        &lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Monthly Excel Export --&gt;
+            &lt;div class="card"&gt;
+                &lt;div class="card-header"&gt;
+                    &lt;div class="card-header-left"&gt;
+                        &lt;i class="ti ti-file-spreadsheet"&gt;&lt;/i&gt;
+                        &lt;p class="card-title"&gt;Monthly Roster Export&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="card-body" style="padding:16px;"&gt;
+                    &lt;p class="list-item-sub" style="margin-bottom:14px;"&gt;
+                        Export full monthly attendance roster grouped by
+                        department (Middleware, Automation, OpenSource,
+                        OpenShift) — one sheet per department.
+                    &lt;/p&gt;
+
+                    &lt;div class="form-group"&gt;
+                        &lt;label class="form-label"&gt;Month&lt;/label&gt;
+                        &lt;input type="month" id="excelMonth"
+                               class="form-input-field"
+                               th:value="${selectedMonth}"/&gt;
+                    &lt;/div&gt;
+
+                    &lt;div style="margin-bottom:14px;
+            padding:12px; background:#EEF0F3;
+            border-radius:8px;"&gt;
+                        &lt;p style="font-size:12px; font-weight:500;
+              color:#1A202C; margin:0 0 4px;"&gt;
+                            Includes 4 sheets:
+                        &lt;/p&gt;
+                        &lt;p style="font-size:11px; color:#718096; margin:0;"&gt;
+                            Middleware · Automation ·
+                            OpenSource · OpenShift
+                        &lt;/p&gt;
+                    &lt;/div&gt;
+
+                    &lt;button class="action-btn w-100"
+                            onclick="exportMonthly()"&gt;
+                        &lt;i class="ti ti-file-spreadsheet"&gt;&lt;/i&gt;
+                        Download Monthly Roster
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+        &lt;/div&gt;
+
+        &lt;!-- Attendance Records Table --&gt;
+        &lt;div class="page-card"&gt;
+            &lt;div class="page-card-header"&gt;
+                &lt;div class="page-card-header-left"&gt;
+                    &lt;i class="ti ti-table"&gt;&lt;/i&gt;
+                    &lt;p class="card-title"&gt;
+                        Attendance Records
+                        &lt;span class="user-count-badge"
+                              th:text="${#lists.size(records)}"&gt;0&lt;/span&gt;
+                    &lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div th:if="${#lists.isEmpty(records)}" class="att-empty"&gt;
+                &lt;i class="ti ti-calendar-off"&gt;&lt;/i&gt;
+                &lt;p&gt;No records found for this period&lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;div th:if="${!#lists.isEmpty(records)}"
+                 class="page-table-wrapper"&gt;
+                &lt;table class="page-table"&gt;
+                    &lt;thead&gt;
+                    &lt;tr&gt;
+                        &lt;th&gt;EMPLOYEE&lt;/th&gt;
+                        &lt;th&gt;DEPARTMENT&lt;/th&gt;
+                        &lt;th&gt;VENDOR&lt;/th&gt;
+                        &lt;th&gt;DATE&lt;/th&gt;
+                        &lt;th&gt;CHECK IN&lt;/th&gt;
+                        &lt;th&gt;CHECK OUT&lt;/th&gt;
+                        &lt;th&gt;HOURS&lt;/th&gt;
+                        &lt;th&gt;STATUS&lt;/th&gt;
+                    &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                    &lt;tr th:each="att : ${records}"&gt;
+                        &lt;td&gt;
+                            &lt;div class="emp-cell"&gt;
+                                &lt;div class="user-avatar-sm"
+                                     th:text="${#strings.toUpperCase(
+                                           #strings.substring(
+                                           att.user.fullName, 0, 2))}"&gt;AK&lt;/div&gt;
+                                &lt;div&gt;
+                                    &lt;p class="emp-name"
+                                       th:text="${att.user.fullName}"&gt;
+                                        Arjun Kumar
+                                    &lt;/p&gt;
+                                    &lt;p class="emp-code"
+                                       th:text="${att.user.empCode}"&gt;
+                                        EMP001
+                                    &lt;/p&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/td&gt;
+                        &lt;td th:text="${att.user.department != null
+                      ? att.user.department : '—'}"&gt;
+                            Middleware
+                        &lt;/td&gt;
+                        &lt;td th:text="${att.user.vendor != null
+                      ? att.user.vendor.name : '—'}"&gt;
+                            TCS
+                        &lt;/td&gt;
+                        &lt;td th:text="${att.date}"&gt;2026-06-15&lt;/td&gt;
+                        &lt;td th:text="${att.checkIn != null
+                      ? #strings.substring(
+                        att.checkIn.toString(),
+                        11, 16) : '—'}"&gt;
+                            09:12
+                        &lt;/td&gt;
+                        &lt;td th:text="${att.checkOut != null
+                      ? #strings.substring(
+                        att.checkOut.toString(),
+                        11, 16) : '—'}"&gt;
+                            18:30
+                        &lt;/td&gt;
+                        &lt;td th:text="${att.totalHours != null
+                      ? att.totalHours + ' hrs' : '0'}"&gt;
+                            9.3 hrs
+                        &lt;/td&gt;
+                        &lt;td&gt;
+            &lt;span th:if="${att.status.name() == 'PRESENT'}"
+                  class="badge-approved"&gt;Present&lt;/span&gt;
+                            &lt;span th:if="${att.status.name() == 'LATE'}"
+                                  class="badge-pending"&gt;Late&lt;/span&gt;
+                            &lt;span th:if="${att.status.name() == 'ABSENT'}"
+                                  class="badge-rejected"&gt;Absent&lt;/span&gt;
+                            &lt;span th:if="${att.status.name() == 'HALF_DAY'}"
+                                  class="badge-pending"&gt;Half Day&lt;/span&gt;
+                            &lt;span th:if="${att.status.name() == 'ON_LEAVE'}"
+                                  class="days-away"&gt;On Leave&lt;/span&gt;
+                            &lt;span th:if="${att.status.name() == 'WFH'}"
+                                  class="badge-approved"&gt;WFH&lt;/span&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/main&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    function filterReports() {
+        const month = document.getElementById('csvMonth').value;
+        const vendorId = document.getElementById('csvVendor').value;
+        let url = '/admin/reports?month=' + month;
+        if (vendorId) url += '&amp;vendorId=' + vendorId;
+        window.location.href = url;
+    }
+    
+    function exportCsv() {
+        const month = document.getElementById('csvMonth').value;
+        const vendorId = document.getElementById('csvVendor').value;
+        let url = '/admin/reports/export?month=' + month;
+        if (vendorId) url += '&amp;vendorId=' + vendorId;
+        window.location.href = url;
+    }
+    
+    function exportMonthly() {
+        const month = document.getElementById('excelMonth').value;
+        window.location.href =
+                '/admin/reports/export-monthly?month=' + month;
+    }
+&lt;/script&gt;
+
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</div>
 
 <script>
-    const src = document.getElementById('src').textContent;
-    const lines = src.split('\n').length;
-    document.getElementById('lineCount').textContent = lines + ' lines';
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = {
+    users: document.getElementById('panel-users'),
+    dashboard: document.getElementById('panel-dashboard'),
+    reports: document.getElementById('panel-reports')
+  };
+  const titleEl = document.getElementById('pageTitle');
+  const lineCountEl = document.getElementById('lineCount');
+
+  function updateLineCount(panel) {
+    const text = panel.querySelector('code').textContent;
+    lineCountEl.textContent = text.split('\n').length + ' lines';
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.values(panels).forEach(p => p.classList.remove('active'));
+      const activePanel = panels[btn.dataset.tab];
+      activePanel.classList.add('active');
+      titleEl.textContent = btn.dataset.title;
+      updateLineCount(activePanel);
+    });
+  });
+
+  updateLineCount(panels.users);
 </script>
 </body>
 </html>

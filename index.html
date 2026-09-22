@@ -1,2221 +1,1684 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>VendorTrack — Source Code</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 30px;
-            background: #f5f6f8;
-            font-family: Arial, Helvetica, sans-serif;
-            color: #1a202c;
-        }
-
-        .code-page {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .page-header {
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            margin: 0 0 8px;
-            font-size: 26px;
-        }
-
-        .page-header p {
-            margin: 0;
-            color: #718096;
-            font-size: 14px;
-        }
-
-        .code-section {
-            background: white;
-            border: 1px solid #e2e5e9;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .code-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e5e9;
-        }
-
-        .code-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .code-type {
-            font-size: 11px;
-            color: #718096;
-            background: #edf0f3;
-            padding: 4px 8px;
-            border-radius: 5px;
-        }
-
-        .code-wrapper {
-            position: relative;
-            background: #1e1e1e;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 5;
-
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 5px;
-
-            padding: 6px 10px;
-            font-size: 11px;
-            cursor: pointer;
-        }
-
-        .copy-btn:hover {
-            background: #444;
-        }
-
-        .code-box {
-            width: 100%;
-            min-height: 300px;
-
-            padding: 20px;
-
-            background: #1e1e1e;
-            color: #d4d4d4;
-
-            border: none;
-            outline: none;
-            resize: vertical;
-
-            font-family: Consolas, Monaco, "Courier New", monospace;
-            font-size: 13px;
-            line-height: 1.6;
-
-            white-space: pre;
-            overflow: auto;
-        }
-    </style>
+    <title>Text</title>
 </head>
-
-
 <body>
-
-<div class="code-page">
-
-    <div class="page-header">
-        <h1>VendorTrack — Activity Source Code</h1>
-        <p>
-            HTML and CSS source code for the Activity pages.
-        </p>
-    </div>
-
-
-    <!-- =====================================================
-         FILE 1
-         ===================================================== -->
-
-    <div class="code-section">
-
-        <div class="code-header">
-
-            <span class="code-title">
-                activity-group.html
-            </span>
-
-            <span class="code-type">
-                HTML / Thymeleaf
-            </span>
-
-        </div>
-
-        <div class="code-wrapper">
-
-            <button class="copy-btn"
-                    onclick="copyCode('code1', this)">
-                Copy
-            </button>
-
-            <textarea id="code1"
-                      class="code-box"
-                      readonly>
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>VendorTrack — App Activities</title>
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-
-    <link rel="stylesheet"
-          th:href="@{/css/dashboard.css}">
-
-    <link rel="stylesheet"
-          th:href="@{/css/pages.css}">
-</head>
-
-<body>
-
-<div class="app-layout">
-
-    <!-- Sidebar -->
-
-    <aside class="sidebar">
-
-        <div class="sidebar-logo">
-
-            <img th:src="@{/images/hdfc-logo.png}"
-                 alt="HDFC"
-                 class="hdfc-logo"/>
-
-            <div class="sidebar-divider"></div>
-
-            <span class="sidebar-app-name">
-                VendorTrack
-            </span>
-
-        </div>
-
-
-        <div class="sidebar-user">
-
-            <div class="user-avatar"
-                 th:text="${#strings.toUpperCase(#strings.substring(fullName,0,2))}">
-                DJ
-            </div>
-
-            <div class="user-info">
-
-                <p class="user-name"
-                   th:text="${fullName}">
-                    Disha Jedhe
-                </p>
-
-                <p class="user-meta">
-                    <span th:text="${empCode}">
-                        EMP001
-                    </span>
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <nav class="sidebar-nav">
-
-            <p class="nav-section-label">
-                MENU
-            </p>
-
-            <a href="/dashboard"
-               class="nav-item">
-
-                <i class="ti ti-layout-dashboard"></i>
-
-                <span>
-                    Dashboard
-                </span>
-
-            </a>
-
-
-            <a href="/attendance"
-               class="nav-item">
-
-                <i class="ti ti-clock"></i>
-
-                <span>
-                    Attendance
-                </span>
-
-            </a>
-
-
-            <a href="/leave"
-               class="nav-item">
-
-                <i class="ti ti-calendar-event"></i>
-
-                <span>
-                    Leave
-                </span>
-
-            </a>
-
-
-            <a href="/activity"
-               class="nav-item active">
-
-                <i class="ti ti-list-check"></i>
-
-                <span>
-                    Activity
-                </span>
-
-            </a>
-
-
-            <a href="/notifications"
-               class="nav-item">
-
-                <i class="ti ti-bell"></i>
-
-                <span>
-                    Notifications
-                </span>
-
-            </a>
-
-
-            <a href="/holidays"
-               class="nav-item">
-
-                <i class="ti ti-calendar"></i>
-
-                <span>
-                    Holidays
-                </span>
-
-            </a>
-
-        </nav>
-
-
-        <div class="sidebar-footer">
-
-            <a href="/logout"
-               class="logout-btn">
-
-                <i class="ti ti-logout"></i>
-
-                <span>
-                    Logout
-                </span>
-
-            </a>
-
-        </div>
-
-    </aside>
-
-
-    <main class="main-content">
-
-
-        <!-- Top bar -->
-
-        <div class="top-bar">
-
-            <div>
-
-                <h1 class="page-title">
-                    Activity
-                </h1>
-
-                <p class="page-subtitle">
-                    Team and group activity overview
-                </p>
-
-            </div>
-
-
-            <div style="display:flex; gap:8px;">
-
-                <a href="/activity/my"
-                   class="action-btn-outline">
-
-                    <i class="ti ti-user"></i>
-
-                    My Activity
-
-                </a>
-
-
-                <a href="/activity/group/create"
-                   class="action-btn">
-
-                    <i class="ti ti-plus"></i>
-
-                    New Group Activity
-
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <!-- Tabs -->
-
-        <div class="tabs-bar">
-
-            <a href="/activity"
-               class="tab-item">
-
-                Individual Activities
-
-            </a>
-
-
-            <a href="/activity/group"
-               class="tab-item active">
-
-                App Activities
-
-            </a>
-
-        </div>
-
-
-        <!-- Alerts -->
-
-        <div th:if="${successMessage}"
-             class="alert-success-bar">
-
-            <i class="ti ti-circle-check"></i>
-
-            <span th:text="${successMessage}"></span>
-
-        </div>
-
-
-        <div th:if="${errorMessage}"
-             class="alert-error-bar">
-
-            <i class="ti ti-alert-circle"></i>
-
-            <span th:text="${errorMessage}"></span>
-
-        </div>
-
-
-        <!-- Filter -->
-
-        <form th:action="@{/activity/group}"
-              method="get"
-              style="
-                display:flex;
-                flex-wrap:wrap;
-                gap:10px;
-                align-items:flex-end;
-                margin-bottom:16px;
-              ">
-
-            <div>
-
-                <label class="form-label"
-                       style="font-size:11px;">
-                    App Name
-                </label>
-
-                <input type="text"
-                       name="appName"
-                       class="att-select"
-                       placeholder="Search app..."
-                       th:value="${filterAppName}"/>
-
-            </div>
-
-
-            <div>
-
-                <label class="form-label"
-                       style="font-size:11px;">
-                    Category
-                </label>
-
-                <select name="category"
-                        class="att-select">
-
-                    <option value="">
-                        All Categories
-                    </option>
-
-                    <option th:each="cat : ${categories}"
-                            th:value="${cat.name()}"
-                            th:text="${#strings.replace(cat.name(),'_',' ')}"
-                            th:selected="${filterCategory == cat.name()}">
-
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div>
-
-                <label class="form-label"
-                       style="font-size:11px;">
-                    Status
-                </label>
-
-                <select name="status"
-                        class="att-select">
-
-                    <option value="">
-                        All Status
-                    </option>
-
-                    <option th:each="s : ${statuses}"
-                            th:value="${s.name()}"
-                            th:text="${#strings.replace(s.name(),'_',' ')}"
-                            th:selected="${filterStatus == s.name()}">
-
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div>
-
-                <label class="form-label"
-                       style="font-size:11px;">
-                    Month
-                </label>
-
-                <select name="month"
-                        class="att-select">
-
-                    <option value="">
-                        All Months
-                    </option>
-
-                    <option value="1"
-                            th:selected="${filterMonth==1}">
-                        January
-                    </option>
-
-                    <option value="2"
-                            th:selected="${filterMonth==2}">
-                        February
-                    </option>
-
-                    <option value="3"
-                            th:selected="${filterMonth==3}">
-                        March
-                    </option>
-
-                    <option value="4"
-                            th:selected="${filterMonth==4}">
-                        April
-                    </option>
-
-                    <option value="5"
-                            th:selected="${filterMonth==5}">
-                        May
-                    </option>
-
-                    <option value="6"
-                            th:selected="${filterMonth==6}">
-                        June
-                    </option>
-
-                    <option value="7"
-                            th:selected="${filterMonth==7}">
-                        July
-                    </option>
-
-                    <option value="8"
-                            th:selected="${filterMonth==8}">
-                        August
-                    </option>
-
-                    <option value="9"
-                            th:selected="${filterMonth==9}">
-                        September
-                    </option>
-
-                    <option value="10"
-                            th:selected="${filterMonth==10}">
-                        October
-                    </option>
-
-                    <option value="11"
-                            th:selected="${filterMonth==11}">
-                        November
-                    </option>
-
-                    <option value="12"
-                            th:selected="${filterMonth==12}">
-                        December
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div>
-
-                <label class="form-label"
-                       style="font-size:11px;">
-                    Year
-                </label>
-
-                <input type="number"
-                       name="year"
-                       class="att-select"
-                       placeholder="e.g. 2026"
-                       style="width:90px;"
-                       th:value="${filterYear}"/>
-
-            </div>
-
-
-            <div style="display:flex; gap:6px;">
-
-                <button type="submit"
-                        class="att-filter-btn">
-
-                    Filter
-
-                </button>
-
-
-                <a href="/activity/group"
-                   class="att-filter-btn"
-                   style="
-                        background:#4A5568;
-                        text-decoration:none;
-                   ">
-
-                    Clear
-
-                </a>
-
-            </div>
-
-
-            <a th:href="@{/activity/group/export(
-                appName=${filterAppName},
-                category=${filterCategory},
-                status=${filterStatus},
-                month=${filterMonth},
-                year=${filterYear}
-            )}"
-               class="action-btn-outline"
-               style="margin-left:auto;">
-
-                <i class="ti ti-download"></i>
-
-                Export CSV
-
-            </a>
-
-        </form>
-
-
-        <!-- Table -->
-
-        <div class="page-card">
-
-            <div class="page-card-header">
-
-                <div class="page-card-header-left">
-
-                    <i class="ti ti-list-check"></i>
-
-                    <p class="card-title">
-
-                        All Group Activities
-
-                        <span class="user-count-badge"
-                              th:text="${#lists.size(activities)}">
-                            0
-                        </span>
-
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div th:if="${#lists.isEmpty(activities)}"
-                 class="att-empty">
-
-                <i class="ti ti-list-search"></i>
-
-                <p>
-                    No group activities found
-                </p>
-
-            </div>
-
-
-            <div th:if="${!#lists.isEmpty(activities)}"
-                 class="page-table-wrapper">
-
-                <table class="page-table">
-
-                    <thead>
-
-                    <tr>
-
-                        <th>APP NAME</th>
-                        <th>CATEGORY</th>
-                        <th>DESCRIPTION</th>
-                        <th>STATUS</th>
-                        <th>ETA</th>
-                        <th>STAGES</th>
-                        <th>CREATED BY</th>
-                        <th>ACTION</th>
-
-                    </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                    <tr th:each="act : ${activities}">
-
-                        <td style="font-weight:500;"
-                            th:text="${act.appName}">
+<pre>\&lt;!DOCTYPE html&gt;
+\&lt;html xmlns\:th=&quot;[http://www.thymeleaf.org](http://www.thymeleaf.org/)&quot;&gt;
+\&lt;head&gt;
+\&lt;meta charset=&quot;UTF-8&quot;&gt;
+\&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+\&lt;title&gt;VendorTrack — App Activities\&lt;/title&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css](https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/dashboard.css}&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/pages.css}&quot;&gt;
+\&lt;/head&gt;
+\&lt;body&gt;
+\&lt;div class=&quot;app-layout&quot;&gt;
+
+```
+\&lt;!-- Sidebar — copy from your existing pages and add Activity nav item --&gt;
+\&lt;aside class=&quot;sidebar&quot;&gt;
+    \&lt;div class=&quot;sidebar-logo&quot;&gt;
+        \&lt;img th\:src=&quot;@{/images/hdfc-logo.png}&quot; alt=&quot;HDFC&quot; class=&quot;hdfc-logo&quot;/&gt;
+        \&lt;div class=&quot;sidebar-divider&quot;&gt;\&lt;/div&gt;
+        \&lt;span class=&quot;sidebar-app-name&quot;&gt;VendorTrack\&lt;/span&gt;
+    \&lt;/div&gt;
+    \&lt;div class=&quot;sidebar-user&quot;&gt;
+        \&lt;div class=&quot;user-avatar&quot;
+             th\:text=&quot;${#strings.toUpperCase(#strings.substring(fullName,0,2))}&quot;&gt;DJ\&lt;/div&gt;
+        \&lt;div class=&quot;user-info&quot;&gt;
+            \&lt;p class=&quot;user-name&quot; th\:text=&quot;${fullName}&quot;&gt;Disha Jedhe\&lt;/p&gt;
+            \&lt;p class=&quot;user-meta&quot;&gt;\&lt;span th\:text=&quot;${empCode}&quot;&gt;EMP001\&lt;/span&gt;\&lt;/p&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+    \&lt;nav class=&quot;sidebar-nav&quot;&gt;
+        \&lt;p class=&quot;nav-section-label&quot;&gt;MENU\&lt;/p&gt;
+        \&lt;a href=&quot;/dashboard&quot; class=&quot;nav-item&quot;&gt;
+            \&lt;i class=&quot;ti ti-layout-dashboard&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Dashboard\&lt;/span&gt;
+        \&lt;/a&gt;
+        \&lt;a href=&quot;/attendance&quot; class=&quot;nav-item&quot;&gt;
+            \&lt;i class=&quot;ti ti-clock&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Attendance\&lt;/span&gt;
+        \&lt;/a&gt;
+        \&lt;a href=&quot;/leave&quot; class=&quot;nav-item&quot;&gt;
+            \&lt;i class=&quot;ti ti-calendar-event&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Leave\&lt;/span&gt;
+        \&lt;/a&gt;
+        \&lt;a href=&quot;/activity&quot; class=&quot;nav-item active&quot;&gt;
+            \&lt;i class=&quot;ti ti-list-check&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Activity\&lt;/span&gt;
+        \&lt;/a&gt;
+        \&lt;a href=&quot;/notifications&quot; class=&quot;nav-item&quot;&gt;
+            \&lt;i class=&quot;ti ti-bell&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Notifications\&lt;/span&gt;
+        \&lt;/a&gt;
+        \&lt;a href=&quot;/holidays&quot; class=&quot;nav-item&quot;&gt;
+            \&lt;i class=&quot;ti ti-calendar&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Holidays\&lt;/span&gt;
+        \&lt;/a&gt;
+    \&lt;/nav&gt;
+    \&lt;div class=&quot;sidebar-footer&quot;&gt;
+        \&lt;a href=&quot;/logout&quot; class=&quot;logout-btn&quot;&gt;
+            \&lt;i class=&quot;ti ti-logout&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Logout\&lt;/span&gt;
+        \&lt;/a&gt;
+    \&lt;/div&gt;
+\&lt;/aside&gt;
+
+\&lt;main class=&quot;main-content&quot;&gt;
+
+    \&lt;!-- Top bar --&gt;
+    \&lt;div class=&quot;top-bar&quot;&gt;
+        \&lt;div&gt;
+            \&lt;h1 class=&quot;page-title&quot;&gt;Activity\&lt;/h1&gt;
+            \&lt;p class=&quot;page-subtitle&quot;&gt;
+                Team and group activity overview
+            \&lt;/p&gt;
+        \&lt;/div&gt;
+        \&lt;div style=&quot;display\:flex; gap:8px;&quot;&gt;
+            \&lt;a href=&quot;/activity/my&quot; class=&quot;action-btn-outline&quot;&gt;
+                \&lt;i class=&quot;ti ti-user&quot;&gt;\&lt;/i&gt; My Activity
+            \&lt;/a&gt;
+            \&lt;a href=&quot;/activity/group/create&quot; class=&quot;action-btn&quot;&gt;
+                \&lt;i class=&quot;ti ti-plus&quot;&gt;\&lt;/i&gt; New Group Activity
+            \&lt;/a&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+
+    \&lt;!-- Tabs --&gt;
+    \&lt;div class=&quot;tabs-bar&quot;&gt;
+        \&lt;a href=&quot;/activity&quot;
+           class=&quot;tab-item&quot;&gt;
+            Individual Activities
+        \&lt;/a&gt;
+        \&lt;a href=&quot;/activity/group&quot;
+           class=&quot;tab-item active&quot;&gt;
+            App Activities
+        \&lt;/a&gt;
+    \&lt;/div&gt;
+
+    \&lt;!-- Alerts --&gt;
+    \&lt;div th\:if=&quot;${successMessage}&quot; class=&quot;alert-success-bar&quot;&gt;
+        \&lt;i class=&quot;ti ti-circle-check&quot;&gt;\&lt;/i&gt;
+        \&lt;span th\:text=&quot;${successMessage}&quot;&gt;\&lt;/span&gt;
+    \&lt;/div&gt;
+    \&lt;div th\:if=&quot;${errorMessage}&quot; class=&quot;alert-error-bar&quot;&gt;
+        \&lt;i class=&quot;ti ti-alert-circle&quot;&gt;\&lt;/i&gt;
+        \&lt;span th\:text=&quot;${errorMessage}&quot;&gt;\&lt;/span&gt;
+    \&lt;/div&gt;
+
+    \&lt;!-- Filter bar --&gt;
+    \&lt;form th\:action=&quot;@{/activity/group}&quot; method=&quot;get&quot;
+          style=&quot;display\:flex; flex-wrap\:wrap;
+                 gap:10px; align-items\:flex-end;
+                 margin-bottom:16px;&quot;&gt;
+
+        \&lt;div&gt;
+            \&lt;label class=&quot;form-label&quot;
+                   style=&quot;font-size:11px;&quot;&gt;App Name\&lt;/label&gt;
+            \&lt;input type=&quot;text&quot; name=&quot;appName&quot;
+                   class=&quot;att-select&quot;
+                   placeholder=&quot;Search app...&quot;
+                   th\:value=&quot;${filterAppName}&quot;/&gt;
+        \&lt;/div&gt;
+
+        \&lt;div&gt;
+            \&lt;label class=&quot;form-label&quot;
+                   style=&quot;font-size:11px;&quot;&gt;Category\&lt;/label&gt;
+            \&lt;select name=&quot;category&quot; class=&quot;att-select&quot;&gt;
+                \&lt;option value=&quot;&quot;&gt;All Categories\&lt;/option&gt;
+                \&lt;option th\:each=&quot;cat : ${categories}&quot;
+                        th\:value=&quot;${cat.name()}&quot;
+                        th\:text=&quot;${#strings.replace(
+                                   cat.name(),&#x27;\_&#x27;,&#x27; &#x27;)}&quot;
+                        th\:selected=&quot;${filterCategory
+                                      \== cat.name()}&quot;&gt;
+                \&lt;/option&gt;
+            \&lt;/select&gt;
+        \&lt;/div&gt;
+
+        \&lt;div&gt;
+            \&lt;label class=&quot;form-label&quot;
+                   style=&quot;font-size:11px;&quot;&gt;Status\&lt;/label&gt;
+            \&lt;select name=&quot;status&quot; class=&quot;att-select&quot;&gt;
+                \&lt;option value=&quot;&quot;&gt;All Status\&lt;/option&gt;
+                \&lt;option th\:each=&quot;s : ${statuses}&quot;
+                        th\:value=&quot;${s.name()}&quot;
+                        th\:text=&quot;${#strings.replace(
+                                   s.name(),&#x27;\_&#x27;,&#x27; &#x27;)}&quot;
+                        th\:selected=&quot;${filterStatus
+                                      \== s.name()}&quot;&gt;
+                \&lt;/option&gt;
+            \&lt;/select&gt;
+        \&lt;/div&gt;
+
+        \&lt;div&gt;
+            \&lt;label class=&quot;form-label&quot;
+                   style=&quot;font-size:11px;&quot;&gt;Month\&lt;/label&gt;
+            \&lt;select name=&quot;month&quot; class=&quot;att-select&quot;&gt;
+                \&lt;option value=&quot;&quot;&gt;All Months\&lt;/option&gt;
+                \&lt;option value=&quot;1&quot;  th\:selected=&quot;${filterMonth==1}&quot;&gt;January\&lt;/option&gt;
+                \&lt;option value=&quot;2&quot;  th\:selected=&quot;${filterMonth==2}&quot;&gt;February\&lt;/option&gt;
+                \&lt;option value=&quot;3&quot;  th\:selected=&quot;${filterMonth==3}&quot;&gt;March\&lt;/option&gt;
+                \&lt;option value=&quot;4&quot;  th\:selected=&quot;${filterMonth==4}&quot;&gt;April\&lt;/option&gt;
+                \&lt;option value=&quot;5&quot;  th\:selected=&quot;${filterMonth==5}&quot;&gt;May\&lt;/option&gt;
+                \&lt;option value=&quot;6&quot;  th\:selected=&quot;${filterMonth==6}&quot;&gt;June\&lt;/option&gt;
+                \&lt;option value=&quot;7&quot;  th\:selected=&quot;${filterMonth==7}&quot;&gt;July\&lt;/option&gt;
+                \&lt;option value=&quot;8&quot;  th\:selected=&quot;${filterMonth==8}&quot;&gt;August\&lt;/option&gt;
+                \&lt;option value=&quot;9&quot;  th\:selected=&quot;${filterMonth==9}&quot;&gt;September\&lt;/option&gt;
+                \&lt;option value=&quot;10&quot; th\:selected=&quot;${filterMonth==10}&quot;&gt;October\&lt;/option&gt;
+                \&lt;option value=&quot;11&quot; th\:selected=&quot;${filterMonth==11}&quot;&gt;November\&lt;/option&gt;
+                \&lt;option value=&quot;12&quot; th\:selected=&quot;${filterMonth==12}&quot;&gt;December\&lt;/option&gt;
+            \&lt;/select&gt;
+        \&lt;/div&gt;
+
+        \&lt;div&gt;
+            \&lt;label class=&quot;form-label&quot;
+                   style=&quot;font-size:11px;&quot;&gt;Year\&lt;/label&gt;
+            \&lt;input type=&quot;number&quot; name=&quot;year&quot;
+                   class=&quot;att-select&quot;
+                   placeholder=&quot;e.g. 2026&quot;
+                   style=&quot;width:90px;&quot;
+                   th\:value=&quot;${filterYear}&quot;/&gt;
+        \&lt;/div&gt;
+
+        \&lt;div style=&quot;display\:flex; gap:6px;&quot;&gt;
+            \&lt;button type=&quot;submit&quot; class=&quot;att-filter-btn&quot;&gt;
+                Filter
+            \&lt;/button&gt;
+            \&lt;a href=&quot;/activity/group&quot;
+               class=&quot;att-filter-btn&quot;
+               style=&quot;background:#4A5568;
+                      text-decoration\:none;&quot;&gt;
+                Clear
+            \&lt;/a&gt;
+        \&lt;/div&gt;
+
+        \&lt;!-- Export button — passes current filters --&gt;
+        \&lt;a th\:href=&quot;@{/activity/group/export(
+                      appName=${filterAppName},
+                      category=${filterCategory},
+                      status=${filterStatus},
+                      month=${filterMonth},
+                      year=${filterYear})}&quot;
+           class=&quot;action-btn-outline&quot;
+           style=&quot;margin-left\:auto;&quot;&gt;
+            \&lt;i class=&quot;ti ti-download&quot;&gt;\&lt;/i&gt; Export CSV
+        \&lt;/a&gt;
+    \&lt;/form&gt;
+
+    \&lt;!-- Table --&gt;
+    \&lt;div class=&quot;page-card&quot;&gt;
+        \&lt;div class=&quot;page-card-header&quot;&gt;
+            \&lt;div class=&quot;page-card-header-left&quot;&gt;
+                \&lt;i class=&quot;ti ti-list-check&quot;&gt;\&lt;/i&gt;
+                \&lt;p class=&quot;card-title&quot;&gt;
+                    All Group Activities
+                    \&lt;span class=&quot;user-count-badge&quot;
+                          th\:text=&quot;${#lists.size(activities)}&quot;&gt;
+                        0
+                    \&lt;/span&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+        \&lt;/div&gt;
+
+        \&lt;div th\:if=&quot;${#lists.isEmpty(activities)}&quot;
+             class=&quot;att-empty&quot;&gt;
+            \&lt;i class=&quot;ti ti-list-search&quot;&gt;\&lt;/i&gt;
+            \&lt;p&gt;No group activities found\&lt;/p&gt;
+        \&lt;/div&gt;
+
+        \&lt;div th\:if=&quot;${!#lists.isEmpty(activities)}&quot;
+             class=&quot;page-table-wrapper&quot;&gt;
+            \&lt;table class=&quot;page-table&quot;&gt;
+                \&lt;thead&gt;
+                    \&lt;tr&gt;
+                        \&lt;th&gt;APP NAME\&lt;/th&gt;
+                        \&lt;th&gt;CATEGORY\&lt;/th&gt;
+                        \&lt;th&gt;DESCRIPTION\&lt;/th&gt;
+                        \&lt;th&gt;STATUS\&lt;/th&gt;
+                        \&lt;th&gt;ETA\&lt;/th&gt;
+                        \&lt;th&gt;STAGES\&lt;/th&gt;
+                        \&lt;th&gt;CREATED BY\&lt;/th&gt;
+                        \&lt;th&gt;ACTION\&lt;/th&gt;
+                    \&lt;/tr&gt;
+                \&lt;/thead&gt;
+                \&lt;tbody&gt;
+                    \&lt;tr th\:each=&quot;act : ${activities}&quot;&gt;
+                        \&lt;td style=&quot;font-weight:500;&quot;
+                            th\:text=&quot;${act.appName}&quot;&gt;
                             VendorTrack Login
-                        </td>
-
-
-                        <td>
-
-                            <span th:if="${act.category.name() != 'OTHER'}"
-                                  th:text="${#strings.replace(
-                                    act.category.name(),
-                                    '_',
-                                    ' '
-                                  )}">
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;span th\:if=&quot;${act.category.name()
+                                          != &#x27;OTHER&#x27;}&quot;
+                                  th\:text=&quot;${#strings.replace(
+                                             act.category.name(),
+                                             &#x27;\_&#x27;,&#x27; &#x27;)}&quot;&gt;
                                 Development
-                            </span>
-
-
-                            <span th:if="${act.category.name() == 'OTHER'}"
-                                  th:text="${act.customCategory != null
-                                    ? act.customCategory
-                                    : 'Other'}">
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${act.category.name()
+                                          \== &#x27;OTHER&#x27;}&quot;
+                                  th\:text=&quot;${act.customCategory
+                                             != null
+                                             ? act.customCategory
+                                             : &#x27;Other&#x27;}&quot;&gt;
                                 Other
-                            </span>
-
-                        </td>
-
-
-                        <td style="
-                            max-width:200px;
-                            color:#718096;
-                            font-size:11px;
-                        "
-                        th:text="${act.description}">
-
+                            \&lt;/span&gt;
+                        \&lt;/td&gt;
+                        \&lt;td style=&quot;max-width:200px;
+                                   color:#718096;
+                                   font-size:11px;&quot;
+                            th\:text=&quot;${act.description}&quot;&gt;
                             Build login module
-
-                        </td>
-
-
-                        <td>
-
-                            <span th:if="${act.status.name() == 'IN_PROGRESS'}"
-                                  class="badge-pending">
-
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;span th\:if=&quot;${act.status.name()
+                                          \== &#x27;IN_PROGRESS&#x27;}&quot;
+                                  class=&quot;badge-pending&quot;&gt;
                                 In Progress
-
-                            </span>
-
-
-                            <span th:if="${act.status.name() == 'COMPLETED'}"
-                                  class="badge-approved">
-
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${act.status.name()
+                                          \== &#x27;COMPLETED&#x27;}&quot;
+                                  class=&quot;badge-approved&quot;&gt;
                                 Completed
-
-                            </span>
-
-
-                            <span th:if="${act.status.name() == 'BLOCKED'}"
-                                  class="badge-rejected">
-
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${act.status.name()
+                                          \== &#x27;BLOCKED&#x27;}&quot;
+                                  class=&quot;badge-rejected&quot;&gt;
                                 Blocked
-
-                            </span>
-
-                        </td>
-
-
-                        <td th:text="${act.eta != null
-                            ? act.eta
-                            : '—'}">
-
+                            \&lt;/span&gt;
+                        \&lt;/td&gt;
+                        \&lt;td th\:text=&quot;${act.eta != null
+                                      ? act.eta : &#x27;—&#x27;}&quot;&gt;
                             30 Jul 2026
-
-                        </td>
-
-
-                        <td>
-
-                            <div style="
-                                display:flex;
-                                gap:4px;
-                                align-items:center;
-                            ">
-
-                                <span th:each="m : ${act.members}"
-                                      th:title="${m.stageName + ': ' + m.stageStatus.name()}"
-                                      th:style="${m.stageStatus.name() == 'COMPLETED'}
-                                        ? 'width:8px;height:8px;border-radius:50%;background:#1F5C3A;display:inline-block;'
-                                        : (${m.stageStatus.name() == 'BLOCKED'}
-                                            ? 'width:8px;height:8px;border-radius:50%;background:#A11D2E;display:inline-block;'
-                                            : 'width:8px;height:8px;border-radius:50%;background:#D69E2E;display:inline-block;')">
-
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td th:text="${act.createdBy.fullName}">
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;!-- Stage progress dots --&gt;
+                            \&lt;div style=&quot;display\:flex;
+                                        gap:4px;
+                                        align-items\:center;&quot;&gt;
+                                \&lt;span
+                                    th\:each=&quot;m : ${act.members}&quot;
+                                    th\:title=&quot;${m.stageName
+                                               \+ &#x27;: &#x27;
+                                               \+ m.stageStatus
+                                                 .name()}&quot;
+                                    th\:style=&quot;${m.stageStatus
+                                               .name()
+                                               \== &#x27;COMPLETED&#x27;}
+                                              ? &#x27;width:8px;height:8px;border-radius:50%;background:#1F5C3A;display\:inline-block;&#x27;
+                                              : (${m.stageStatus
+                                                  .name()
+                                                  \== &#x27;BLOCKED&#x27;}
+                                                ? &#x27;width:8px;height:8px;border-radius:50%;background:#A11D2E;display\:inline-block;&#x27;
+                                                : &#x27;width:8px;height:8px;border-radius:50%;background:#D69E2E;display\:inline-block;&#x27;)&quot;&gt;
+                                \&lt;/span&gt;
+                            \&lt;/div&gt;
+                        \&lt;/td&gt;
+                        \&lt;td th\:text=&quot;${act.createdBy
+                                      .fullName}&quot;&gt;
                             Disha Jedhe
-                        </td>
-
-
-                        <td>
-
-                            <a th:href="@{/activity/group/{id}(id=${act.id})}"
-                               class="edit-btn">
-
-                                <i class="ti ti-eye"
-                                   style="font-size:12px;">
-                                </i>
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </main>
-
-</div>
-
-</body>
-</html>
-            </textarea>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================================================
-         FILE 2
-         ===================================================== -->
-
-    <div class="code-section">
-
-        <div class="code-header">
-
-            <span class="code-title">
-                activity-detail.html
-            </span>
-
-            <span class="code-type">
-                HTML / Thymeleaf
-            </span>
-
-        </div>
-
-
-        <div class="code-wrapper">
-
-            <button class="copy-btn"
-                    onclick="copyCode('code2', this)">
-                Copy
-            </button>
-
-
-            <textarea id="code2"
-                      class="code-box"
-                      readonly>
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>
-        VendorTrack — Activity Detail
-    </title>
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-
-    <link rel="stylesheet"
-          th:href="@{/css/dashboard.css}">
-
-    <link rel="stylesheet"
-          th:href="@{/css/pages.css}">
-
-    <link rel="stylesheet"
-          th:href="@{/css/group-activity.css}">
-
-</head>
-
-<body>
-
-<div class="app-layout">
-
-    <aside class="sidebar">
-
-        <div class="sidebar-logo">
-
-            <img th:src="@{/images/hdfc-logo.png}"
-                 alt="HDFC"
-                 class="hdfc-logo"/>
-
-            <div class="sidebar-divider"></div>
-
-            <span class="sidebar-app-name">
-                VendorTrack
-            </span>
-
-        </div>
-
-
-        <div class="sidebar-user">
-
-            <div class="user-avatar"
-                 th:text="${#strings.toUpperCase(
-                    #strings.substring(fullName,0,2)
-                 )}">
-                DJ
-            </div>
-
-            <div class="user-info">
-
-                <p class="user-name"
-                   th:text="${fullName}">
-                    Disha
-                </p>
-
-                <p class="user-meta"
-                   th:text="${empCode}">
-                    EMP001
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <nav class="sidebar-nav">
-
-            <p class="nav-section-label">
-                MENU
-            </p>
-
-            <a href="/dashboard"
-               class="nav-item">
-
-                <i class="ti ti-layout-dashboard"></i>
-
-                <span>
-                    Dashboard
-                </span>
-
-            </a>
-
-            <a href="/attendance"
-               class="nav-item">
-
-                <i class="ti ti-clock"></i>
-
-                <span>
-                    Attendance
-                </span>
-
-            </a>
-
-            <a href="/leave"
-               class="nav-item">
-
-                <i class="ti ti-calendar-event"></i>
-
-                <span>
-                    Leave
-                </span>
-
-            </a>
-
-            <a href="/activity"
-               class="nav-item active">
-
-                <i class="ti ti-list-check"></i>
-
-                <span>
-                    Activity
-                </span>
-
-            </a>
-
-            <a href="/notifications"
-               class="nav-item">
-
-                <i class="ti ti-bell"></i>
-
-                <span>
-                    Notifications
-                </span>
-
-            </a>
-
-            <a href="/holidays"
-               class="nav-item">
-
-                <i class="ti ti-calendar"></i>
-
-                <span>
-                    Holidays
-                </span>
-
-            </a>
-
-        </nav>
-
-
-        <div class="sidebar-footer">
-
-            <a href="/logout"
-               class="logout-btn">
-
-                <i class="ti ti-logout"></i>
-
-                <span>
-                    Logout
-                </span>
-
-            </a>
-
-        </div>
-
-    </aside>
-
-
-    <main class="main-content">
-
-        <div class="top-bar">
-
-            <div>
-
-                <p class="page-subtitle">
-
-                    <a href="/activity/group"
-                       style="
-                        color:#A11D2E;
-                        text-decoration:none;
-                       ">
-
-                        ← Back to App Activities
-
-                    </a>
-
-                </p>
-
-
-                <h1 class="page-title"
-                    th:text="${activity.appName}">
-
-                    VendorTrack Login
-
-                </h1>
-
-
-                <p class="page-subtitle"
-                   th:text="${activity.description}">
-
-                    Build login module
-
-                </p>
-
-            </div>
-
-
-            <div style="
-                display:flex;
-                gap:8px;
-                align-items:center;
-            ">
-
-                <span th:if="${activity.status.name() == 'IN_PROGRESS'}"
-                      class="badge-pending"
-                      style="
-                        font-size:12px;
-                        padding:5px 12px;
-                      ">
-
-                    In Progress
-
-                </span>
-
-
-                <span th:if="${activity.status.name() == 'COMPLETED'}"
-                      class="badge-approved"
-                      style="
-                        font-size:12px;
-                        padding:5px 12px;
-                      ">
-
-                    Completed
-
-                </span>
-
-
-                <span th:if="${activity.status.name() == 'BLOCKED'}"
-                      class="badge-rejected"
-                      style="
-                        font-size:12px;
-                        padding:5px 12px;
-                      ">
-
-                    Blocked
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <!-- Activity Details -->
-
-        <div class="page-card"
-             style="margin-bottom:16px;">
-
-            <div class="page-card-header">
-
-                <div class="page-card-header-left">
-
-                    <i class="ti ti-info-circle"></i>
-
-                    <p class="card-title">
-                        Activity Details
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div style="
-                padding:16px 20px;
-                display:grid;
-                grid-template-columns:repeat(4,1fr);
-                gap:16px;
-            ">
-
-                <div>
-
-                    <p style="
-                        font-size:10px;
-                        color:#718096;
-                        font-weight:500;
-                        letter-spacing:0.5px;
-                        margin-bottom:4px;
-                    ">
-                        CATEGORY
-                    </p>
-
-
-                    <p style="
-                        font-size:13px;
-                        font-weight:500;
-                        color:#1A202C;
-                    ">
-
-                        <span th:if="${activity.category.name() != 'OTHER'}"
-                              th:text="${#strings.replace(
-                                activity.category.name(),
-                                '_',
-                                ' '
-                              )}">
-                        </span>
-
-
-                        <span th:if="${activity.category.name() == 'OTHER'}"
-                              th:text="${activity.customCategory != null
-                                ? activity.customCategory
-                                : 'Other'}">
-                        </span>
-
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <p style="
-                        font-size:10px;
-                        color:#718096;
-                        font-weight:500;
-                        letter-spacing:0.5px;
-                        margin-bottom:4px;
-                    ">
-                        ETA
-                    </p>
-
-
-                    <p style="
-                        font-size:13px;
-                        font-weight:500;
-                        color:#1A202C;
-                    "
-                    th:text="${activity.eta != null
-                        ? activity.eta
-                        : '—'}">
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <p style="
-                        font-size:10px;
-                        color:#718096;
-                        font-weight:500;
-                        letter-spacing:0.5px;
-                        margin-bottom:4px;
-                    ">
-                        ACTUAL DATE
-                    </p>
-
-
-                    <p style="
-                        font-size:13px;
-                        font-weight:500;
-                        color:#1A202C;
-                    "
-                    th:text="${activity.actualDate != null
-                        ? activity.actualDate
-                        : '—'}">
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <p style="
-                        font-size:10px;
-                        color:#718096;
-                        font-weight:500;
-                        letter-spacing:0.5px;
-                        margin-bottom:4px;
-                    ">
-                        CREATED BY
-                    </p>
-
-
-                    <p style="
-                        font-size:13px;
-                        font-weight:500;
-                        color:#1A202C;
-                    "
-                    th:text="${activity.createdBy.fullName}">
-                    </p>
-
-                </div>
-
-
-                <div style="grid-column:1/-1;">
-
-                    <p style="
-                        font-size:10px;
-                        color:#718096;
-                        font-weight:500;
-                        letter-spacing:0.5px;
-                        margin-bottom:4px;
-                    ">
-                        REMARKS
-                    </p>
-
-
-                    <p style="
-                        font-size:13px;
-                        color:#4A5568;
-                    "
-                    th:text="${activity.remarks != null
-                        ? activity.remarks
-                        : '—'}">
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Stage Pipeline -->
-
-        <div class="page-card">
-
-            <div class="page-card-header">
-
-                <div class="page-card-header-left">
-
-                    <i class="ti ti-git-branch"></i>
-
-                    <p class="card-title">
-
-                        Stage Progress
-
-                        <span class="user-count-badge"
-                              th:text="${#lists.size(members)}">
-                            0
-                        </span>
-
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div th:if="${#lists.isEmpty(members)}"
-                 class="att-empty">
-
-                <i class="ti ti-users"></i>
-
-                <p>
-                    No members assigned
-                </p>
-
-            </div>
-
-
-            <div th:if="${!#lists.isEmpty(members)}"
-                 style="
-                    padding:20px;
-                    display:flex;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;a th\:href=&quot;@{/activity/group/{id}
+                                         (id=${act.id})}&quot;
+                               class=&quot;edit-btn&quot;&gt;
+                                \&lt;i class=&quot;ti ti-eye&quot;
+                                   style=&quot;font-size:12px;&quot;&gt;
+                                \&lt;/i&gt; View
+                            \&lt;/a&gt;
+                        \&lt;/td&gt;
+                    \&lt;/tr&gt;
+                \&lt;/tbody&gt;
+            \&lt;/table&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+
+\&lt;/main&gt;
+```
+
+\&lt;/div&gt;
+
+\&lt;script src=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js)&quot;&gt;\&lt;/script&gt;
+\&lt;script&gt;
+window\.onload = function() {
+const s = document.querySelector(&#x27;.alert-success-bar&#x27;);
+if (s) setTimeout(() =&gt; {
+s.style.transition = &#x27;opacity 0.5s&#x27;;
+s.style.opacity = &#x27;0&#x27;;
+setTimeout(() =&gt; s.remove(), 500);
+}, 4000);
+const e = document.querySelector(&#x27;.alert-error-bar&#x27;);
+if (e) setTimeout(() =&gt; {
+e.style.transition = &#x27;opacity 0.5s&#x27;;
+e.style.opacity = &#x27;0&#x27;;
+setTimeout(() =&gt; e.remove(), 500);
+}, 5000);
+};
+\&lt;/script&gt;
+\&lt;/body&gt;
+\&lt;/html&gt;
+
+\&lt;!DOCTYPE html&gt;
+\&lt;html xmlns\:th=&quot;[http://www.thymeleaf.org](http://www.thymeleaf.org/)&quot;&gt;
+\&lt;head&gt;
+\&lt;meta charset=&quot;UTF-8&quot;&gt;
+\&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+\&lt;title&gt;VendorTrack — Activity Detail\&lt;/title&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css](https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/dashboard.css}&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/pages.css}&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/group-activity.css}&quot;&gt;
+\&lt;/head&gt;
+\&lt;body&gt;
+\&lt;div class=&quot;app-layout&quot;&gt;
+
+```
+\&lt;aside class=&quot;sidebar&quot;&gt;
+    \&lt;!-- same sidebar as index.html --&gt;
+    \&lt;div class=&quot;sidebar-logo&quot;&gt;
+        \&lt;img th\:src=&quot;@{/images/hdfc-logo.png}&quot; alt=&quot;HDFC&quot; class=&quot;hdfc-logo&quot;/&gt;
+        \&lt;div class=&quot;sidebar-divider&quot;&gt;\&lt;/div&gt;
+        \&lt;span class=&quot;sidebar-app-name&quot;&gt;VendorTrack\&lt;/span&gt;
+    \&lt;/div&gt;
+    \&lt;div class=&quot;sidebar-user&quot;&gt;
+        \&lt;div class=&quot;user-avatar&quot;
+             th\:text=&quot;${#strings.toUpperCase(#strings.substring(fullName,0,2))}&quot;&gt;DJ\&lt;/div&gt;
+        \&lt;div class=&quot;user-info&quot;&gt;
+            \&lt;p class=&quot;user-name&quot; th\:text=&quot;${fullName}&quot;&gt;Disha\&lt;/p&gt;
+            \&lt;p class=&quot;user-meta&quot; th\:text=&quot;${empCode}&quot;&gt;EMP001\&lt;/p&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+    \&lt;nav class=&quot;sidebar-nav&quot;&gt;
+        \&lt;p class=&quot;nav-section-label&quot;&gt;MENU\&lt;/p&gt;
+        \&lt;a href=&quot;/dashboard&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-layout-dashboard&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Dashboard\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/attendance&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-clock&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Attendance\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/leave&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-calendar-event&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Leave\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/activity&quot; class=&quot;nav-item active&quot;&gt;\&lt;i class=&quot;ti ti-list-check&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Activity\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/notifications&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-bell&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Notifications\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/holidays&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-calendar&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Holidays\&lt;/span&gt;\&lt;/a&gt;
+    \&lt;/nav&gt;
+    \&lt;div class=&quot;sidebar-footer&quot;&gt;
+        \&lt;a href=&quot;/logout&quot; class=&quot;logout-btn&quot;&gt;\&lt;i class=&quot;ti ti-logout&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Logout\&lt;/span&gt;\&lt;/a&gt;
+    \&lt;/div&gt;
+\&lt;/aside&gt;
+
+\&lt;main class=&quot;main-content&quot;&gt;
+
+    \&lt;div class=&quot;top-bar&quot;&gt;
+        \&lt;div&gt;
+            \&lt;p class=&quot;page-subtitle&quot;&gt;
+                \&lt;a href=&quot;/activity/group&quot;
+                   style=&quot;color:#A11D2E;text-decoration\:none;&quot;&gt;
+                    ← Back to App Activities
+                \&lt;/a&gt;
+            \&lt;/p&gt;
+            \&lt;h1 class=&quot;page-title&quot;
+                th\:text=&quot;${activity.appName}&quot;&gt;
+                VendorTrack Login
+            \&lt;/h1&gt;
+            \&lt;p class=&quot;page-subtitle&quot;
+               th\:text=&quot;${activity.description}&quot;&gt;
+                Build login module
+            \&lt;/p&gt;
+        \&lt;/div&gt;
+        \&lt;div style=&quot;display\:flex; gap:8px; align-items\:center;&quot;&gt;
+            \&lt;span th\:if=&quot;${activity.status.name()
+                           \== &#x27;IN_PROGRESS&#x27;}&quot;
+                  class=&quot;badge-pending&quot;
+                  style=&quot;font-size:12px;padding:5px 12px;&quot;&gt;
+                In Progress
+            \&lt;/span&gt;
+            \&lt;span th\:if=&quot;${activity.status.name()
+                           \== &#x27;COMPLETED&#x27;}&quot;
+                  class=&quot;badge-approved&quot;
+                  style=&quot;font-size:12px;padding:5px 12px;&quot;&gt;
+                Completed
+            \&lt;/span&gt;
+            \&lt;span th\:if=&quot;${activity.status.name()
+                           \== &#x27;BLOCKED&#x27;}&quot;
+                  class=&quot;badge-rejected&quot;
+                  style=&quot;font-size:12px;padding:5px 12px;&quot;&gt;
+                Blocked
+            \&lt;/span&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+
+    \&lt;!-- Activity info card --&gt;
+    \&lt;div class=&quot;page-card&quot; style=&quot;margin-bottom:16px;&quot;&gt;
+        \&lt;div class=&quot;page-card-header&quot;&gt;
+            \&lt;div class=&quot;page-card-header-left&quot;&gt;
+                \&lt;i class=&quot;ti ti-info-circle&quot;&gt;\&lt;/i&gt;
+                \&lt;p class=&quot;card-title&quot;&gt;Activity Details\&lt;/p&gt;
+            \&lt;/div&gt;
+        \&lt;/div&gt;
+        \&lt;div style=&quot;padding:16px 20px;
+                    display\:grid;
+                    grid-template-columns:
+                        repeat(4,1fr);
+                    gap:16px;&quot;&gt;
+            \&lt;div&gt;
+                \&lt;p style=&quot;font-size:10px;color:#718096;
+                           font-weight:500;
+                           letter-spacing:0.5px;
+                           margin-bottom:4px;&quot;&gt;
+                    CATEGORY
+                \&lt;/p&gt;
+                \&lt;p style=&quot;font-size:13px;
+                           font-weight:500;
+                           color:#1A202C;&quot;&gt;
+                    \&lt;span th\:if=&quot;${activity.category.name()
+                                   != &#x27;OTHER&#x27;}&quot;
+                          th\:text=&quot;${#strings.replace(
+                                     activity.category.name(),
+                                     &#x27;\_&#x27;,&#x27; &#x27;)}&quot;&gt;
+                    \&lt;/span&gt;
+                    \&lt;span th\:if=&quot;${activity.category.name()
+                                   \== &#x27;OTHER&#x27;}&quot;
+                          th\:text=&quot;${activity.customCategory
+                                     != null
+                                     ? activity.customCategory
+                                     : &#x27;Other&#x27;}&quot;&gt;
+                    \&lt;/span&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+            \&lt;div&gt;
+                \&lt;p style=&quot;font-size:10px;color:#718096;
+                           font-weight:500;
+                           letter-spacing:0.5px;
+                           margin-bottom:4px;&quot;&gt;ETA\&lt;/p&gt;
+                \&lt;p style=&quot;font-size:13px;font-weight:500;
+                           color:#1A202C;&quot;
+                   th\:text=&quot;${activity.eta != null
+                              ? activity.eta : &#x27;—&#x27;}&quot;&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+            \&lt;div&gt;
+                \&lt;p style=&quot;font-size:10px;color:#718096;
+                           font-weight:500;
+                           letter-spacing:0.5px;
+                           margin-bottom:4px;&quot;&gt;
+                    ACTUAL DATE
+                \&lt;/p&gt;
+                \&lt;p style=&quot;font-size:13px;font-weight:500;
+                           color:#1A202C;&quot;
+                   th\:text=&quot;${activity.actualDate != null
+                              ? activity.actualDate : &#x27;—&#x27;}&quot;&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+            \&lt;div&gt;
+                \&lt;p style=&quot;font-size:10px;color:#718096;
+                           font-weight:500;
+                           letter-spacing:0.5px;
+                           margin-bottom:4px;&quot;&gt;
+                    CREATED BY
+                \&lt;/p&gt;
+                \&lt;p style=&quot;font-size:13px;font-weight:500;
+                           color:#1A202C;&quot;
+                   th\:text=&quot;${activity.createdBy.fullName}&quot;&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+            \&lt;div style=&quot;grid-column:1/-1;&quot;&gt;
+                \&lt;p style=&quot;font-size:10px;color:#718096;
+                           font-weight:500;
+                           letter-spacing:0.5px;
+                           margin-bottom:4px;&quot;&gt;
+                    REMARKS
+                \&lt;/p&gt;
+                \&lt;p style=&quot;font-size:13px;color:#4A5568;&quot;
+                   th\:text=&quot;${activity.remarks != null
+                              ? activity.remarks : &#x27;—&#x27;}&quot;&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+
+    \&lt;!-- Stage pipeline --&gt;
+    \&lt;div class=&quot;page-card&quot;&gt;
+        \&lt;div class=&quot;page-card-header&quot;&gt;
+            \&lt;div class=&quot;page-card-header-left&quot;&gt;
+                \&lt;i class=&quot;ti ti-git-branch&quot;&gt;\&lt;/i&gt;
+                \&lt;p class=&quot;card-title&quot;&gt;
+                    Stage Progress
+                    \&lt;span class=&quot;user-count-badge&quot;
+                          th\:text=&quot;${#lists.size(members)}&quot;&gt;
+                        0
+                    \&lt;/span&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+        \&lt;/div&gt;
+
+        \&lt;div th\:if=&quot;${#lists.isEmpty(members)}&quot;
+             class=&quot;att-empty&quot;&gt;
+            \&lt;i class=&quot;ti ti-users&quot;&gt;\&lt;/i&gt;
+            \&lt;p&gt;No members assigned\&lt;/p&gt;
+        \&lt;/div&gt;
+
+        \&lt;div th\:if=&quot;${!#lists.isEmpty(members)}&quot;
+             style=&quot;padding:20px;
+                    display\:flex;
                     gap:16px;
-                    overflow-x:auto;
-                 ">
+                    overflow-x\:auto;&quot;&gt;
 
+            \&lt;div th\:each=&quot;m,iter : ${members}&quot;
+                 th\:class=&quot;${m.stageStatus.name()
+                             \== &#x27;COMPLETED&#x27;}
+                            ? &#x27;stage-card-completed&#x27;
+                            : (${m.stageStatus.name()
+                                \== &#x27;BLOCKED&#x27;}
+                              ? &#x27;stage-card-blocked&#x27;
+                              : (${m.assignmentStatus.name()
+                                  \== &#x27;PENDING&#x27;}
+                                ? &#x27;stage-card-pending&#x27;
+                                : &#x27;stage-card-inprogress&#x27;))&quot;
+                 style=&quot;min-width:200px; flex:1;&quot;&gt;
 
-                <div th:each="m,iter : ${members}"
+                \&lt;!-- Stage number --&gt;
+                \&lt;div class=&quot;stage-number&quot;
+                     th\:text=&quot;${iter.index + 1}&quot;&gt;1\&lt;/div&gt;
 
-                     th:class="${m.stageStatus.name() == 'COMPLETED'}
-                        ? 'stage-card-completed'
-                        : (${m.stageStatus.name() == 'BLOCKED'}
-                            ? 'stage-card-blocked'
-                            : (${m.assignmentStatus.name() == 'PENDING'}
-                                ? 'stage-card-pending'
-                                : 'stage-card-inprogress'))"
-
-                     style="
-                        min-width:200px;
-                        flex:1;
-                     ">
-
-
-                    <div class="stage-number"
-                         th:text="${iter.index + 1}">
-                        1
-                    </div>
-
-
-                    <div style="
-                        font-size:12px;
-                        font-weight:600;
-                        color:#1A202C;
-                        margin-bottom:4px;
-                    "
-                    th:text="${m.stageName}">
-
-                        Shell Script
-
-                    </div>
-
-
-                    <div style="
-                        font-size:11px;
-                        color:#718096;
-                        margin-bottom:10px;
-                        line-height:1.5;
-                    "
-                    th:text="${m.stageDescription != null
-                        ? m.stageDescription
-                        : '—'}">
-                    </div>
-
-
-                    <div style="
-                        display:flex;
-                        align-items:center;
-                        gap:6px;
-                        margin-bottom:8px;
-                    ">
-
-                        <div class="user-avatar-sm"
-                             th:text="${#strings.toUpperCase(
-                                #strings.substring(
-                                    m.user.fullName,
-                                    0,
-                                    2
-                                )
-                             )}">
-                            AK
-                        </div>
-
-
-                        <span style="
-                            font-size:11px;
+                \&lt;!-- Stage name --&gt;
+                \&lt;div style=&quot;font-size:12px;
+                            font-weight:600;
                             color:#1A202C;
-                        "
-                        th:text="${m.user.fullName}">
-                            Arjun Kumar
-                        </span>
-
-                    </div>
-
-
-                    <div style="margin-bottom:6px;">
-
-                        <span th:if="${m.stageStatus.name() == 'COMPLETED'}"
-                              class="badge-approved">
-                            Completed
-                        </span>
-
-
-                        <span th:if="${m.stageStatus.name() == 'IN_PROGRESS'}"
-                              class="badge-pending">
-                            In Progress
-                        </span>
-
-
-                        <span th:if="${m.stageStatus.name() == 'BLOCKED'}"
-                              class="badge-rejected">
-                            Blocked
-                        </span>
-
-                    </div>
-
-
-                    <div style="font-size:10px;">
-
-                        <span th:if="${m.assignmentStatus.name() == 'ACCEPTED'}"
-                              style="color:#1F5C3A;">
-                            ✓ Accepted
-                        </span>
-
-
-                        <span th:if="${m.assignmentStatus.name() == 'DECLINED'}"
-                              style="color:#A11D2E;">
-                            ✗ Declined
-                        </span>
-
-
-                        <span th:if="${m.assignmentStatus.name() == 'PENDING'}"
-                              style="color:#718096;">
-                            ⏳ Awaiting response
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
-
-</div>
-
-</body>
-</html>
-            </textarea>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================================================
-         FILE 3
-         ===================================================== -->
-
-    <div class="code-section">
-
-        <div class="code-header">
-
-            <span class="code-title">
-                group-activity-create.html
-            </span>
-
-            <span class="code-type">
-                HTML / Thymeleaf
-            </span>
-
-        </div>
-
-
-        <div class="code-wrapper">
-
-            <button class="copy-btn"
-                    onclick="copyCode('code3', this)">
-                Copy
-            </button>
-
-
-            <textarea id="code3"
-                      class="code-box"
-                      readonly>
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>
-        VendorTrack — New Group Activity
-    </title>
-
-</head>
-
-<body>
-
-<div class="app-layout">
-
-    <main class="main-content">
-
-        <div class="top-bar">
-
-            <div>
-
-                <h1 class="page-title">
-                    New Group Activity
-                </h1>
-
-                <p class="page-subtitle">
-
-                    <a href="/activity/group"
-                       style="
-                        color:#A11D2E;
-                        text-decoration:none;
-                       ">
-
-                        ← Back to App Activities
-
-                    </a>
-
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <form th:action="@{/activity/group/create}"
-              method="post">
-
-
-            <div class="page-card"
-                 style="margin-bottom:16px;">
-
-                <div class="page-card-header">
-
-                    <div class="page-card-header-left">
-
-                        <i class="ti ti-info-circle"></i>
-
-                        <p class="card-title">
-                            Activity Details
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div style="
-                    padding:20px 24px;
-                ">
-
-
-                    <div style="
-                        display:grid;
-                        grid-template-columns:1fr 1fr;
-                        gap:16px;
-                        margin-bottom:16px;
-                    ">
-
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                App Name
-                            </label>
-
-                            <input type="text"
-                                   name="appName"
-                                   class="form-input-field"
-                                   placeholder="e.g. VendorTrack Login"
-                                   required/>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                Category
-                            </label>
-
-                            <select name="category"
-                                    class="form-select-field"
-                                    onchange="toggleCustomCategory(this)"
-                                    required>
-
-                                <option value="">
-                                    — Select Category —
-                                </option>
-
-                                <option th:each="cat : ${categories}"
-                                        th:value="${cat.name()}"
-                                        th:text="${#strings.replace(
-                                            cat.name(),
-                                            '_',
-                                            ' '
-                                        )}">
-                                </option>
-
-                            </select>
-
-
-                            <input type="text"
-                                   name="customCategory"
-                                   id="customCategoryInput"
-                                   class="form-input-field"
-                                   placeholder="Enter custom category"
-                                   style="
-                                        display:none;
-                                        margin-top:8px;
-                                   "/>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group"
-                         style="margin-bottom:16px;">
-
-                        <label class="form-label">
-                            Description
-                        </label>
-
-                        <textarea name="description"
-                                  class="form-input-field"
-                                  rows="3"
-                                  placeholder="What is this activity about?"
-                                  required></textarea>
-
-        </div>
-
-
-        <div style="
-                        display:grid;
-                        grid-template-columns:1fr 1fr 1fr;
-                        gap:16px;
-                        margin-bottom:16px;
-                    ">
-
-
-            <div class="form-group">
-
-                <label class="form-label">
-                    Status
-                </label>
-
-                <select name="status"
-                        class="form-select-field">
-
-                    <option value="IN_PROGRESS">
-                        In Progress
-                    </option>
-
-                    <option value="COMPLETED">
+                            margin-bottom:4px;&quot;
+                     th\:text=&quot;${m.stageName}&quot;&gt;
+                    Shell Script
+                \&lt;/div&gt;
+
+                \&lt;!-- Stage description --&gt;
+                \&lt;div style=&quot;font-size:11px;
+                            color:#718096;
+                            margin-bottom:10px;
+                            line-height:1.5;&quot;
+                     th\:text=&quot;${m.stageDescription != null
+                                ? m.stageDescription : &#x27;—&#x27;}&quot;&gt;
+                \&lt;/div&gt;
+
+                \&lt;!-- Member --&gt;
+                \&lt;div style=&quot;display\:flex;
+                            align-items\:center;
+                            gap:6px;
+                            margin-bottom:8px;&quot;&gt;
+                    \&lt;div class=&quot;user-avatar-sm&quot;
+                         th\:text=&quot;${#strings.toUpperCase(
+                                    \#strings.substring(
+                                    m.user.fullName,0,2))}&quot;&gt;
+                        AK
+                    \&lt;/div&gt;
+                    \&lt;span style=&quot;font-size:11px;
+                                 color:#1A202C;&quot;
+                          th\:text=&quot;${m.user.fullName}&quot;&gt;
+                        Arjun Kumar
+                    \&lt;/span&gt;
+                \&lt;/div&gt;
+
+                \&lt;!-- Stage status badge --&gt;
+                \&lt;div style=&quot;margin-bottom:6px;&quot;&gt;
+                    \&lt;span th\:if=&quot;${m.stageStatus.name()
+                                   \== &#x27;COMPLETED&#x27;}&quot;
+                          class=&quot;badge-approved&quot;&gt;
                         Completed
-                    </option>
-
-                    <option value="BLOCKED">
+                    \&lt;/span&gt;
+                    \&lt;span th\:if=&quot;${m.stageStatus.name()
+                                   \== &#x27;IN_PROGRESS&#x27;}&quot;
+                          class=&quot;badge-pending&quot;&gt;
+                        In Progress
+                    \&lt;/span&gt;
+                    \&lt;span th\:if=&quot;${m.stageStatus.name()
+                                   \== &#x27;BLOCKED&#x27;}&quot;
+                          class=&quot;badge-rejected&quot;&gt;
                         Blocked
-                    </option>
+                    \&lt;/span&gt;
+                \&lt;/div&gt;
 
-                </select>
+                \&lt;!-- Assignment status --&gt;
+                \&lt;div style=&quot;font-size:10px;&quot;&gt;
+                    \&lt;span th\:if=&quot;${m.assignmentStatus.name()
+                                   \== &#x27;ACCEPTED&#x27;}&quot;
+                          style=&quot;color:#1F5C3A;&quot;&gt;
+                        ✓ Accepted
+                    \&lt;/span&gt;
+                    \&lt;span th\:if=&quot;${m.assignmentStatus.name()
+                                   \== &#x27;DECLINED&#x27;}&quot;
+                          style=&quot;color:#A11D2E;&quot;&gt;
+                        ✗ Declined
+                    \&lt;/span&gt;
+                    \&lt;span th\:if=&quot;${m.assignmentStatus.name()
+                                   \== &#x27;PENDING&#x27;}&quot;
+                          style=&quot;color:#718096;&quot;&gt;
+                        ⏳ Awaiting response
+                    \&lt;/span&gt;
+                \&lt;/div&gt;
 
-            </div>
+            \&lt;/div&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
 
+\&lt;/main&gt;
+```
 
-            <div class="form-group">
+\&lt;/div&gt;
+\&lt;script src=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js)&quot;&gt;\&lt;/script&gt;
+\&lt;/body&gt;
+\&lt;/html&gt;
 
-                <label class="form-label">
-                    ETA (Target Date)
-                </label>
+\&lt;!DOCTYPE html&gt;
+\&lt;html xmlns\:th=&quot;[http://www.thymeleaf.org](http://www.thymeleaf.org/)&quot;&gt;
+\&lt;head&gt;
+\&lt;meta charset=&quot;UTF-8&quot;&gt;
+\&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+\&lt;title&gt;VendorTrack — New Group Activity\&lt;/title&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css](https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/dashboard.css}&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/pages.css}&quot;&gt;
+\&lt;/head&gt;
+\&lt;body&gt;
+\&lt;div class=&quot;app-layout&quot;&gt;
 
-                <input type="date"
-                       name="eta"
-                       class="form-input-field"/>
+```
+\&lt;aside class=&quot;sidebar&quot;&gt;
+    \&lt;div class=&quot;sidebar-logo&quot;&gt;
+        \&lt;img th\:src=&quot;@{/images/hdfc-logo.png}&quot; alt=&quot;HDFC&quot; class=&quot;hdfc-logo&quot;/&gt;
+        \&lt;div class=&quot;sidebar-divider&quot;&gt;\&lt;/div&gt;
+        \&lt;span class=&quot;sidebar-app-name&quot;&gt;VendorTrack\&lt;/span&gt;
+    \&lt;/div&gt;
+    \&lt;div class=&quot;sidebar-user&quot;&gt;
+        \&lt;div class=&quot;user-avatar&quot;
+             th\:text=&quot;${#strings.toUpperCase(#strings.substring(fullName,0,2))}&quot;&gt;DJ\&lt;/div&gt;
+        \&lt;div class=&quot;user-info&quot;&gt;
+            \&lt;p class=&quot;user-name&quot; th\:text=&quot;${fullName}&quot;&gt;Disha\&lt;/p&gt;
+            \&lt;p class=&quot;user-meta&quot; th\:text=&quot;${empCode}&quot;&gt;EMP001\&lt;/p&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+    \&lt;nav class=&quot;sidebar-nav&quot;&gt;
+        \&lt;p class=&quot;nav-section-label&quot;&gt;MENU\&lt;/p&gt;
+        \&lt;a href=&quot;/dashboard&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-layout-dashboard&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Dashboard\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/attendance&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-clock&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Attendance\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/leave&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-calendar-event&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Leave\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/activity&quot; class=&quot;nav-item active&quot;&gt;\&lt;i class=&quot;ti ti-list-check&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Activity\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/notifications&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-bell&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Notifications\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/holidays&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-calendar&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Holidays\&lt;/span&gt;\&lt;/a&gt;
+    \&lt;/nav&gt;
+    \&lt;div class=&quot;sidebar-footer&quot;&gt;
+        \&lt;a href=&quot;/logout&quot; class=&quot;logout-btn&quot;&gt;\&lt;i class=&quot;ti ti-logout&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Logout\&lt;/span&gt;\&lt;/a&gt;
+    \&lt;/div&gt;
+\&lt;/aside&gt;
 
-            </div>
+\&lt;main class=&quot;main-content&quot;&gt;
 
+    \&lt;div class=&quot;top-bar&quot;&gt;
+        \&lt;div&gt;
+            \&lt;h1 class=&quot;page-title&quot;&gt;New Group Activity\&lt;/h1&gt;
+            \&lt;p class=&quot;page-subtitle&quot;&gt;
+                \&lt;a href=&quot;/activity/group&quot;
+                   style=&quot;color:#A11D2E;text-decoration\:none;&quot;&gt;
+                    ← Back to App Activities
+                \&lt;/a&gt;
+            \&lt;/p&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
 
-            <div class="form-group">
+    \&lt;form th\:action=&quot;@{/activity/group/create}&quot;
+          method=&quot;post&quot;&gt;
 
-                <label class="form-label">
+        \&lt;!-- Activity Details --&gt;
+        \&lt;div class=&quot;page-card&quot; style=&quot;margin-bottom:16px;&quot;&gt;
+            \&lt;div class=&quot;page-card-header&quot;&gt;
+                \&lt;div class=&quot;page-card-header-left&quot;&gt;
+                    \&lt;i class=&quot;ti ti-info-circle&quot;&gt;\&lt;/i&gt;
+                    \&lt;p class=&quot;card-title&quot;&gt;Activity Details\&lt;/p&gt;
+                \&lt;/div&gt;
+            \&lt;/div&gt;
+            \&lt;div style=&quot;padding:20px 24px;&quot;&gt;
 
-                    Actual Completion Date
+                \&lt;!-- Row 1: App Name + Category --&gt;
+                \&lt;div style=&quot;display\:grid;
+                            grid-template-columns:1fr 1fr;
+                            gap:16px;
+                            margin-bottom:16px;&quot;&gt;
+                    \&lt;div class=&quot;form-group&quot;
+                         style=&quot;margin-bottom:0;&quot;&gt;
+                        \&lt;label class=&quot;form-label&quot;&gt;
+                            App Name
+                        \&lt;/label&gt;
+                        \&lt;input type=&quot;text&quot;
+                               name=&quot;appName&quot;
+                               class=&quot;form-input-field&quot;
+                               placeholder=&quot;e.g. VendorTrack Login&quot;
+                               required/&gt;
+                    \&lt;/div&gt;
+                    \&lt;div class=&quot;form-group&quot;
+                         style=&quot;margin-bottom:0;&quot;&gt;
+                        \&lt;label class=&quot;form-label&quot;&gt;
+                            Category
+                        \&lt;/label&gt;
+                        \&lt;select name=&quot;category&quot;
+                                class=&quot;form-select-field&quot;
+                                onchange=&quot;toggleCustomCategory(this)&quot;
+                                required&gt;
+                            \&lt;option value=&quot;&quot;&gt;
+                                — Select Category —
+                            \&lt;/option&gt;
+                            \&lt;option th\:each=&quot;cat : ${categories}&quot;
+                                    th\:value=&quot;${cat.name()}&quot;
+                                    th\:text=&quot;${#strings.replace(
+                                               cat.name(),
+                                               &#x27;\_&#x27;,&#x27; &#x27;)}&quot;&gt;
+                            \&lt;/option&gt;
+                        \&lt;/select&gt;
+                        \&lt;!-- Custom category input --&gt;
+                        \&lt;input type=&quot;text&quot;
+                               name=&quot;customCategory&quot;
+                               id=&quot;customCategoryInput&quot;
+                               class=&quot;form-input-field&quot;
+                               placeholder=&quot;Enter custom category&quot;
+                               style=&quot;display\:none;
+                                      margin-top:8px;&quot;/&gt;
+                    \&lt;/div&gt;
+                \&lt;/div&gt;
 
-                    <span class="optional">
-                                    (optional)
-                                </span>
+                \&lt;!-- Row 2: Description --&gt;
+                \&lt;div class=&quot;form-group&quot;
+                     style=&quot;margin-bottom:16px;&quot;&gt;
+                    \&lt;label class=&quot;form-label&quot;&gt;
+                        Description
+                    \&lt;/label&gt;
+                    \&lt;textarea name=&quot;description&quot;
+                              class=&quot;form-input-field&quot;
+                              rows=&quot;3&quot;
+                              placeholder=&quot;What is this activity about?&quot;
+                              required&gt;\&lt;/textarea&gt;
+                \&lt;/div&gt;
 
-                </label>
-
-                <input type="date"
-                       name="actualDate"
-                       class="form-input-field"/>
-
-            </div>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                Remarks / Update
-
-                <span class="optional">
+                \&lt;!-- Row 3: Status + ETA + Actual Date --&gt;
+                \&lt;div style=&quot;display\:grid;
+                            grid-template-columns:1fr 1fr 1fr;
+                            gap:16px;
+                            margin-bottom:16px;&quot;&gt;
+                    \&lt;div class=&quot;form-group&quot;
+                         style=&quot;margin-bottom:0;&quot;&gt;
+                        \&lt;label class=&quot;form-label&quot;&gt;
+                            Status
+                        \&lt;/label&gt;
+                        \&lt;select name=&quot;status&quot;
+                                class=&quot;form-select-field&quot;&gt;
+                            \&lt;option value=&quot;IN_PROGRESS&quot;&gt;
+                                In Progress
+                            \&lt;/option&gt;
+                            \&lt;option value=&quot;COMPLETED&quot;&gt;
+                                Completed
+                            \&lt;/option&gt;
+                            \&lt;option value=&quot;BLOCKED&quot;&gt;
+                                Blocked
+                            \&lt;/option&gt;
+                        \&lt;/select&gt;
+                    \&lt;/div&gt;
+                    \&lt;div class=&quot;form-group&quot;
+                         style=&quot;margin-bottom:0;&quot;&gt;
+                        \&lt;label class=&quot;form-label&quot;&gt;
+                            ETA (Target Date)
+                        \&lt;/label&gt;
+                        \&lt;input type=&quot;date&quot;
+                               name=&quot;eta&quot;
+                               class=&quot;form-input-field&quot;/&gt;
+                    \&lt;/div&gt;
+                    \&lt;div class=&quot;form-group&quot;
+                         style=&quot;margin-bottom:0;&quot;&gt;
+                        \&lt;label class=&quot;form-label&quot;&gt;
+                            Actual Completion Date
+                            \&lt;span class=&quot;optional&quot;&gt;
                                 (optional)
-                            </span>
-
-            </label>
-
-            <input type="text"
-                   name="remarks"
-                   class="form-input-field"
-                   placeholder="e.g. Shell script done, moving to wrapper"/>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<div class="page-card">
-
-    <div class="page-card-header">
-
-        <div class="page-card-header-left">
-
-            <i class="ti ti-users"></i>
-
-            <p class="card-title">
-                Assign Members & Stages
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div style="
-                    padding:20px 24px;
-                ">
-
-        <div style="
-                        display:grid;
-                        grid-template-columns:
-                            1fr 1fr 2fr 28px;
-                        gap:12px;
-                        padding-bottom:8px;
-                        border-bottom:1px solid #EEF0F3;
-                        margin-bottom:12px;
-                    ">
-
-            <div>
-                MEMBER
-            </div>
-
-            <div>
-                STAGE NAME
-            </div>
-
-            <div>
-                STAGE DESCRIPTION
-            </div>
-
-            <div></div>
-
-        </div>
-
-
-        <div id="memberRows">
-
-            <div class="member-assign-row">
-
-                <select name="memberUserIds"
-                        class="form-select-field"
-                        required>
-
-                    <option value="">
-                        — Select Member —
-                    </option>
-
-                    <option th:each="emp : ${employees}"
-                            th:value="${emp.id}"
-                            th:text="${emp.fullName + ' (' + emp.empCode + ')'}">
-                    </option>
-
-                </select>
-
-
-                <input type="text"
-                       name="stageNames"
-                       class="form-input-field"
-                       value="Requirement Gathering"
-                       placeholder="Stage name"
-                       required/>
-
-
-                <input type="text"
-                       name="stageDescriptions"
-                       class="form-input-field"
-                       placeholder="What should this member do?"/>
-
-
-                <button type="button"
-                        onclick="removeRow(this)">
-
-                    ✕
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <button type="button"
-                onclick="addMemberRow()">
-
-            + Add another member
-
-        </button>
-
-    </div>
-
-</div>
-
-
-<br>
-
-
-<button type="submit"
-        class="action-btn">
-
-    Create Activity
-
-</button>
-
-
-<a href="/activity/group"
-   class="action-btn-outline">
-
-    Cancel
-
-</a>
-
-</form>
-
-</main>
-
-</div>
-
-
-<script>
-
-    function addMemberRow() {
-
-        const container =
-            document.getElementById('memberRows');
-
-        const rows =
-            container.querySelectorAll(
-                '.member-assign-row'
-            );
-
-        const firstRow = rows[0];
-
-        const newRow =
-            firstRow.cloneNode(true);
-
-        newRow.querySelector(
-            'select[name="memberUserIds"]'
-        ).value = '';
-
-        newRow.querySelector(
-            'input[name="stageNames"]'
-        ).value = '';
-
-        newRow.querySelector(
-            'input[name="stageDescriptions"]'
-        ).value = '';
-
-        container.appendChild(newRow);
+                            \&lt;/span&gt;
+                        \&lt;/label&gt;
+                        \&lt;input type=&quot;date&quot;
+                               name=&quot;actualDate&quot;
+                               class=&quot;form-input-field&quot;/&gt;
+                    \&lt;/div&gt;
+                \&lt;/div&gt;
+
+                \&lt;!-- Row 4: Remarks --&gt;
+                \&lt;div class=&quot;form-group&quot;
+                     style=&quot;margin-bottom:0;&quot;&gt;
+                    \&lt;label class=&quot;form-label&quot;&gt;
+                        Remarks / Update
+                        \&lt;span class=&quot;optional&quot;&gt;
+                            (optional)
+                        \&lt;/span&gt;
+                    \&lt;/label&gt;
+                    \&lt;input type=&quot;text&quot;
+                           name=&quot;remarks&quot;
+                           class=&quot;form-input-field&quot;
+                           placeholder=&quot;e.g. Shell script done, moving to wrapper&quot;/&gt;
+                \&lt;/div&gt;
+
+            \&lt;/div&gt;
+        \&lt;/div&gt;
+
+        \&lt;!-- Member Assignment --&gt;
+        \&lt;div class=&quot;page-card&quot; style=&quot;margin-bottom:16px;&quot;&gt;
+            \&lt;div class=&quot;page-card-header&quot;&gt;
+                \&lt;div class=&quot;page-card-header-left&quot;&gt;
+                    \&lt;i class=&quot;ti ti-users&quot;&gt;\&lt;/i&gt;
+                    \&lt;p class=&quot;card-title&quot;&gt;
+                        Assign Members &amp; Stages
+                    \&lt;/p&gt;
+                \&lt;/div&gt;
+            \&lt;/div&gt;
+            \&lt;div style=&quot;padding:20px 24px;&quot;&gt;
+
+                \&lt;!-- Column headers --&gt;
+                \&lt;div style=&quot;display\:grid;
+                            grid-template-columns:
+                                1fr 1fr 2fr 28px;
+                            gap:12px;
+                            padding-bottom:8px;
+                            border-bottom:1px solid #EEF0F3;
+                            margin-bottom:12px;&quot;&gt;
+                    \&lt;div style=&quot;font-size:10px;
+                                font-weight:600;
+                                color:#718096;
+                                letter-spacing:0.5px;&quot;&gt;
+                        MEMBER
+                    \&lt;/div&gt;
+                    \&lt;div style=&quot;font-size:10px;
+                                font-weight:600;
+                                color:#718096;
+                                letter-spacing:0.5px;&quot;&gt;
+                        STAGE NAME
+                    \&lt;/div&gt;
+                    \&lt;div style=&quot;font-size:10px;
+                                font-weight:600;
+                                color:#718096;
+                                letter-spacing:0.5px;&quot;&gt;
+                        STAGE DESCRIPTION
+                    \&lt;/div&gt;
+                    \&lt;div&gt;\&lt;/div&gt;
+                \&lt;/div&gt;
+
+                \&lt;!-- Member rows container --&gt;
+                \&lt;div id=&quot;memberRows&quot;&gt;
+
+                    \&lt;!-- Row 1 — pre-filled with first default stage --&gt;
+                    \&lt;div class=&quot;member-assign-row&quot;
+                         style=&quot;display\:grid;
+                                grid-template-columns:
+                                    1fr 1fr 2fr 28px;
+                                gap:12px;
+                                align-items\:start;
+                                margin-bottom:10px;&quot;&gt;
+                        \&lt;select name=&quot;memberUserIds&quot;
+                                class=&quot;form-select-field&quot;
+                                required&gt;
+                            \&lt;option value=&quot;&quot;&gt;
+                                — Select Member —
+                            \&lt;/option&gt;
+                            \&lt;option
+                                th\:each=&quot;emp : ${employees}&quot;
+                                th\:value=&quot;${emp.id}&quot;
+                                th\:text=&quot;${emp.fullName
+                                           \+ &#x27; (&#x27;
+                                           \+ emp.empCode
+                                           \+ &#x27;)&#x27;}&quot;&gt;
+                            \&lt;/option&gt;
+                        \&lt;/select&gt;
+                        \&lt;input type=&quot;text&quot;
+                               name=&quot;stageNames&quot;
+                               class=&quot;form-input-field&quot;
+                               value=&quot;Requirement Gathering&quot;
+                               placeholder=&quot;Stage name&quot;
+                               required/&gt;
+                        \&lt;input type=&quot;text&quot;
+                               name=&quot;stageDescriptions&quot;
+                               class=&quot;form-input-field&quot;
+                               placeholder=&quot;What should this member do?&quot;/&gt;
+                        \&lt;button type=&quot;button&quot;
+                                onclick=&quot;removeRow(this)&quot;
+                                style=&quot;padding:8px;
+                                       background:#F0DCDE;
+                                       color:#A11D2E;
+                                       border\:none;
+                                       border-radius:6px;
+                                       cursor\:pointer;
+                                       margin-top:2px;&quot;&gt;
+                            \&lt;i class=&quot;ti ti-x&quot;
+                               style=&quot;font-size:12px;&quot;&gt;\&lt;/i&gt;
+                        \&lt;/button&gt;
+                    \&lt;/div&gt;
+
+                \&lt;/div&gt;
+
+                \&lt;!-- Add member button --&gt;
+                \&lt;button type=&quot;button&quot;
+                        onclick=&quot;addMemberRow()&quot;
+                        style=&quot;display\:flex;
+                               align-items\:center;
+                               gap:6px;
+                               padding:8px 14px;
+                               background\:transparent;
+                               border:1.5px dashed #DBDEE3;
+                               border-radius:8px;
+                               font-size:12px;
+                               color:#718096;
+                               cursor\:pointer;
+                               width:100%;
+                               justify-content\:center;
+                               margin-top:4px;&quot;&gt;
+                    \&lt;i class=&quot;ti ti-plus&quot;&gt;\&lt;/i&gt;
+                    Add another member
+                \&lt;/button&gt;
+
+            \&lt;/div&gt;
+        \&lt;/div&gt;
+
+        \&lt;!-- Form actions --&gt;
+        \&lt;div style=&quot;display\:flex; gap:10px;&quot;&gt;
+            \&lt;button type=&quot;submit&quot; class=&quot;action-btn&quot;&gt;
+                \&lt;i class=&quot;ti ti-check&quot;&gt;\&lt;/i&gt;
+                Create Activity
+            \&lt;/button&gt;
+            \&lt;a href=&quot;/activity/group&quot;
+               class=&quot;action-btn-outline&quot;&gt;
+                Cancel
+            \&lt;/a&gt;
+        \&lt;/div&gt;
+
+    \&lt;/form&gt;
+\&lt;/main&gt;
+```
+
+\&lt;/div&gt;
+
+\&lt;script src=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js)&quot;&gt;\&lt;/script&gt;
+\&lt;script th\:inline=&quot;javascript&quot;&gt;
+const defaultStages = /\*[[${defaultStages}]]\*/ [];
+let stageIndex = 1; // already have index 0
+
+```
+// Employee options HTML — built from Thymeleaf
+const employeeOptions = \`
+    \&lt;option value=&quot;&quot;&gt;— Select Member —\&lt;/option&gt;
+    /\*[# th\:each=&quot;emp : ${employees}&quot;]\*/
+    /\*[# th\:remove=&quot;all&quot;]\*/
+\`;
+
+// Simpler — just clone first row
+function addMemberRow() {
+    const container =
+            document.getElementById(&#x27;memberRows&#x27;);
+    const rows = container.querySelectorAll(
+            &#x27;.member-assign-row&#x27;);
+    const firstRow = rows[0];
+    const newRow = firstRow\.cloneNode(true);
+
+    // Reset values
+    newRow\.querySelector(
+            &#x27;select[name=&quot;memberUserIds&quot;]&#x27;).value = &#x27;&#x27;;
+    newRow\.querySelector(
+            &#x27;input[name=&quot;stageNames&quot;]&#x27;).value =
+            defaultStages[stageIndex]
+            || &#x27;Stage &#x27; + (stageIndex + 1);
+    newRow\.querySelector(
+            &#x27;input[name=&quot;stageDescriptions&quot;]&#x27;).value = &#x27;&#x27;;
+
+    stageIndex++;
+    container.appendChild(newRow);
+}
+
+function removeRow(btn) {
+    const rows = document.querySelectorAll(
+            &#x27;.member-assign-row&#x27;);
+    if (rows.length &lt;= 1) {
+        alert(&#x27;At least one member is required&#x27;);
+        return;
     }
+    btn.closest(&#x27;.member-assign-row&#x27;).remove();
+}
 
-
-    function removeRow(btn) {
-
-        const rows =
-            document.querySelectorAll(
-                '.member-assign-row'
-            );
-
-        if (rows.length <= 1) {
-
-            alert(
-                'At least one member is required'
-            );
-
-            return;
-        }
-
-        btn.closest(
-            '.member-assign-row'
-        ).remove();
-
-    }
-
-
-    function toggleCustomCategory(select) {
-
-        const customInput =
+function toggleCustomCategory(select) {
+    const customInput =
             document.getElementById(
-                'customCategoryInput'
-            );
-
-        if (select.value === 'OTHER') {
-
-            customInput.style.display =
-                'block';
-
-            customInput.required =
-                true;
-
-        } else {
-
-            customInput.style.display =
-                'none';
-
-            customInput.required =
-                false;
-
-            customInput.value =
-                '';
-
-        }
-
+                    &#x27;customCategoryInput&#x27;);
+    if (select.value === &#x27;OTHER&#x27;) {
+        customInput.style.display = &#x27;block&#x27;;
+        customInput.required = true;
+    } else {
+        customInput.style.display = &#x27;none&#x27;;
+        customInput.required = false;
+        customInput.value = &#x27;&#x27;;
     }
+}
+```
 
-</script>
+\&lt;/script&gt;
+\&lt;/body&gt;
+\&lt;/html&gt;
 
-</body>
-</html>
-</textarea>
+\&lt;!DOCTYPE html&gt;
+\&lt;html xmlns\:th=&quot;[http://www.thymeleaf.org](http://www.thymeleaf.org/)&quot;&gt;
+\&lt;head&gt;
+\&lt;meta charset=&quot;UTF-8&quot;&gt;
+\&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+\&lt;title&gt;VendorTrack — My Group Activities\&lt;/title&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; href=&quot;[https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css](https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css)&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/dashboard.css}&quot;&gt;
+\&lt;link rel=&quot;stylesheet&quot; th\:href=&quot;@{/css/pages.css}&quot;&gt;
+\&lt;/head&gt;
+\&lt;body&gt;
+\&lt;div class=&quot;app-layout&quot;&gt;
 
-</div>
+```
+\&lt;aside class=&quot;sidebar&quot;&gt;
+    \&lt;div class=&quot;sidebar-logo&quot;&gt;
+        \&lt;img th\:src=&quot;@{/images/hdfc-logo.png}&quot; alt=&quot;HDFC&quot; class=&quot;hdfc-logo&quot;/&gt;
+        \&lt;div class=&quot;sidebar-divider&quot;&gt;\&lt;/div&gt;
+        \&lt;span class=&quot;sidebar-app-name&quot;&gt;VendorTrack\&lt;/span&gt;
+    \&lt;/div&gt;
+    \&lt;div class=&quot;sidebar-user&quot;&gt;
+        \&lt;div class=&quot;user-avatar&quot;
+             th\:text=&quot;${#strings.toUpperCase(#strings.substring(fullName,0,2))}&quot;&gt;DJ\&lt;/div&gt;
+        \&lt;div class=&quot;user-info&quot;&gt;
+            \&lt;p class=&quot;user-name&quot; th\:text=&quot;${fullName}&quot;&gt;Disha\&lt;/p&gt;
+            \&lt;p class=&quot;user-meta&quot; th\:text=&quot;${empCode}&quot;&gt;EMP001\&lt;/p&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
+    \&lt;nav class=&quot;sidebar-nav&quot;&gt;
+        \&lt;p class=&quot;nav-section-label&quot;&gt;MENU\&lt;/p&gt;
+        \&lt;a href=&quot;/dashboard&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-layout-dashboard&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Dashboard\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/attendance&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-clock&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Attendance\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/leave&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-calendar-event&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Leave\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/activity&quot; class=&quot;nav-item active&quot;&gt;\&lt;i class=&quot;ti ti-list-check&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Activity\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/notifications&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-bell&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Notifications\&lt;/span&gt;\&lt;/a&gt;
+        \&lt;a href=&quot;/holidays&quot; class=&quot;nav-item&quot;&gt;\&lt;i class=&quot;ti ti-calendar&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Holidays\&lt;/span&gt;\&lt;/a&gt;
+    \&lt;/nav&gt;
+    \&lt;div class=&quot;sidebar-footer&quot;&gt;
+        \&lt;a href=&quot;/logout&quot; class=&quot;logout-btn&quot;&gt;\&lt;i class=&quot;ti ti-logout&quot;&gt;\&lt;/i&gt;\&lt;span&gt;Logout\&lt;/span&gt;\&lt;/a&gt;
+    \&lt;/div&gt;
+\&lt;/aside&gt;
 
-</div>
+\&lt;main class=&quot;main-content&quot;&gt;
 
+    \&lt;div class=&quot;top-bar&quot;&gt;
+        \&lt;div&gt;
+            \&lt;h1 class=&quot;page-title&quot;&gt;My Group Activities\&lt;/h1&gt;
+            \&lt;p class=&quot;page-subtitle&quot;&gt;
+                Activities you created or are assigned to
+            \&lt;/p&gt;
+        \&lt;/div&gt;
+        \&lt;div style=&quot;display\:flex; gap:8px;&quot;&gt;
+            \&lt;a href=&quot;/activity/group&quot;
+               class=&quot;action-btn-outline&quot;&gt;
+                \&lt;i class=&quot;ti ti-list-check&quot;&gt;\&lt;/i&gt;
+                All Activities
+            \&lt;/a&gt;
+            \&lt;a href=&quot;/activity/group/create&quot;
+               class=&quot;action-btn&quot;&gt;
+                \&lt;i class=&quot;ti ti-plus&quot;&gt;\&lt;/i&gt;
+                New Group Activity
+            \&lt;/a&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
 
+    \&lt;!-- Alerts --&gt;
+    \&lt;div th\:if=&quot;${successMessage}&quot; class=&quot;alert-success-bar&quot;&gt;
+        \&lt;i class=&quot;ti ti-circle-check&quot;&gt;\&lt;/i&gt;
+        \&lt;span th\:text=&quot;${successMessage}&quot;&gt;\&lt;/span&gt;
+    \&lt;/div&gt;
+    \&lt;div th\:if=&quot;${errorMessage}&quot; class=&quot;alert-error-bar&quot;&gt;
+        \&lt;i class=&quot;ti ti-alert-circle&quot;&gt;\&lt;/i&gt;
+        \&lt;span th\:text=&quot;${errorMessage}&quot;&gt;\&lt;/span&gt;
+    \&lt;/div&gt;
 
-<!-- =====================================================
-     FILE 4 — CSS
-     ===================================================== -->
+    \&lt;!-- Created by Me --&gt;
+    \&lt;div class=&quot;page-card&quot; style=&quot;margin-bottom:16px;&quot;&gt;
+        \&lt;div class=&quot;page-card-header&quot;&gt;
+            \&lt;div class=&quot;page-card-header-left&quot;&gt;
+                \&lt;i class=&quot;ti ti-crown&quot;&gt;\&lt;/i&gt;
+                \&lt;p class=&quot;card-title&quot;&gt;
+                    Created by Me
+                    \&lt;span class=&quot;user-count-badge&quot;
+                          th\:text=&quot;${#lists.size(createdByMe)}&quot;&gt;
+                        0
+                    \&lt;/span&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+            \&lt;a href=&quot;/activity/group/my/export-created&quot;
+               class=&quot;action-btn-outline&quot;
+               style=&quot;font-size:11px;padding:6px 12px;&quot;&gt;
+                \&lt;i class=&quot;ti ti-download&quot;&gt;\&lt;/i&gt; Export
+            \&lt;/a&gt;
+        \&lt;/div&gt;
 
-<div class="code-section">
+        \&lt;div th\:if=&quot;${#lists.isEmpty(createdByMe)}&quot;
+             class=&quot;att-empty&quot;&gt;
+            \&lt;i class=&quot;ti ti-list-search&quot;&gt;\&lt;/i&gt;
+            \&lt;p&gt;You haven&#x27;t created any group activities yet\&lt;/p&gt;
+        \&lt;/div&gt;
 
-    <div class="code-header">
+        \&lt;div th\:if=&quot;${!#lists.isEmpty(createdByMe)}&quot;
+             class=&quot;page-table-wrapper&quot;&gt;
+            \&lt;table class=&quot;page-table&quot;&gt;
+                \&lt;thead&gt;
+                    \&lt;tr&gt;
+                        \&lt;th&gt;APP NAME\&lt;/th&gt;
+                        \&lt;th&gt;CATEGORY\&lt;/th&gt;
+                        \&lt;th&gt;STATUS\&lt;/th&gt;
+                        \&lt;th&gt;ETA\&lt;/th&gt;
+                        \&lt;th&gt;REMARKS\&lt;/th&gt;
+                        \&lt;th&gt;MEMBERS\&lt;/th&gt;
+                        \&lt;th&gt;ACTIONS\&lt;/th&gt;
+                    \&lt;/tr&gt;
+                \&lt;/thead&gt;
+                \&lt;tbody&gt;
+                    \&lt;tr th\:each=&quot;act : ${createdByMe}&quot;&gt;
+                        \&lt;td style=&quot;font-weight:500;&quot;
+                            th\:text=&quot;${act.appName}&quot;&gt;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;span th\:if=&quot;${act.category.name()
+                                           != &#x27;OTHER&#x27;}&quot;
+                                  th\:text=&quot;${#strings.replace(
+                                             act.category.name(),
+                                             &#x27;\_&#x27;,&#x27; &#x27;)}&quot;&gt;
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${act.category.name()
+                                           \== &#x27;OTHER&#x27;}&quot;
+                                  th\:text=&quot;${act.customCategory
+                                             != null
+                                             ? act.customCategory
+                                             : &#x27;Other&#x27;}&quot;&gt;
+                            \&lt;/span&gt;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;span th\:if=&quot;${act.status.name()
+                                           \== &#x27;IN_PROGRESS&#x27;}&quot;
+                                  class=&quot;badge-pending&quot;&gt;
+                                In Progress
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${act.status.name()
+                                           \== &#x27;COMPLETED&#x27;}&quot;
+                                  class=&quot;badge-approved&quot;&gt;
+                                Completed
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${act.status.name()
+                                           \== &#x27;BLOCKED&#x27;}&quot;
+                                  class=&quot;badge-rejected&quot;&gt;
+                                Blocked
+                            \&lt;/span&gt;
+                        \&lt;/td&gt;
+                        \&lt;td th\:text=&quot;${act.eta != null
+                                      ? act.eta : &#x27;—&#x27;}&quot;&gt;
+                        \&lt;/td&gt;
+                        \&lt;td style=&quot;font-size:11px;
+                                   color:#718096;
+                                   max-width:150px;&quot;
+                            th\:text=&quot;${act.remarks != null
+                                      ? act.remarks : &#x27;—&#x27;}&quot;&gt;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;div style=&quot;display\:flex;gap:2px;&quot;&gt;
+                                \&lt;span
+                                    th\:each=&quot;m : ${act.members}&quot;
+                                    class=&quot;user-avatar-sm&quot;
+                                    th\:title=&quot;${m.user.fullName}&quot;
+                                    th\:text=&quot;${#strings.toUpperCase(
+                                               \#strings.substring(
+                                               m.user.fullName,
+                                               0,2))}&quot;&gt;
+                                \&lt;/span&gt;
+                            \&lt;/div&gt;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;div class=&quot;action-buttons&quot;&gt;
+                                \&lt;a th\:href=&quot;@{/activity/group/{id}(id=${act.id})}&quot;
+                                   class=&quot;edit-btn&quot;&gt;
+                                    \&lt;i class=&quot;ti ti-eye&quot;
+                                       style=&quot;font-size:12px;&quot;&gt;
+                                    \&lt;/i&gt; View
+                                \&lt;/a&gt;
+                                \&lt;!-- Update status modal trigger --&gt;
+                                \&lt;button class=&quot;edit-btn&quot;
+                                        th\:onclick=&quot;&#x27;openUpdateModal(&#x27;
+                                                    \+ ${act.id}
+                                                    \+ &#x27;,\\&#x27;&#x27;
+                                                    \+ ${act.status.name()}
+                                                    \+ &#x27;\\&#x27;,\\&#x27;&#x27;
+                                                    \+ ${act.remarks != null ? act.remarks : &#x27;&#x27;}
+                                                    \+ &#x27;\\&#x27;)&#x27;&quot;&gt;
+                                    \&lt;i class=&quot;ti ti-edit&quot;
+                                       style=&quot;font-size:12px;&quot;&gt;
+                                    \&lt;/i&gt; Update
+                                \&lt;/button&gt;
+                                \&lt;form th\:action=&quot;@{/activity/group/{id}/delete(id=${act.id})}&quot;
+                                      method=&quot;post&quot;
+                                      style=&quot;display\:inline;&quot;
+                                      onsubmit=&quot;return confirm(&#x27;Delete this activity?&#x27;)&quot;&gt;
+                                    \&lt;button type=&quot;submit&quot;
+                                            class=&quot;danger-btn&quot;&gt;
+                                        \&lt;i class=&quot;ti ti-trash&quot;
+                                           style=&quot;font-size:12px;&quot;&gt;
+                                        \&lt;/i&gt;
+                                    \&lt;/button&gt;
+                                \&lt;/form&gt;
+                            \&lt;/div&gt;
+                        \&lt;/td&gt;
+                    \&lt;/tr&gt;
+                \&lt;/tbody&gt;
+            \&lt;/table&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
 
-            <span class="code-title">
-                group-activity.css
-            </span>
+    \&lt;!-- Assigned to Me --&gt;
+    \&lt;div class=&quot;page-card&quot;&gt;
+        \&lt;div class=&quot;page-card-header&quot;&gt;
+            \&lt;div class=&quot;page-card-header-left&quot;&gt;
+                \&lt;i class=&quot;ti ti-user-check&quot;&gt;\&lt;/i&gt;
+                \&lt;p class=&quot;card-title&quot;&gt;
+                    Assigned to Me
+                    \&lt;span class=&quot;user-count-badge&quot;
+                          th\:text=&quot;${#lists.size(assignedToMe)}&quot;&gt;
+                        0
+                    \&lt;/span&gt;
+                \&lt;/p&gt;
+            \&lt;/div&gt;
+            \&lt;a href=&quot;/activity/group/my/export-assigned&quot;
+               class=&quot;action-btn-outline&quot;
+               style=&quot;font-size:11px;padding:6px 12px;&quot;&gt;
+                \&lt;i class=&quot;ti ti-download&quot;&gt;\&lt;/i&gt; Export
+            \&lt;/a&gt;
+        \&lt;/div&gt;
 
-        <span class="code-type">
-                CSS
-            </span>
+        \&lt;div th\:if=&quot;${#lists.isEmpty(assignedToMe)}&quot;
+             class=&quot;att-empty&quot;&gt;
+            \&lt;i class=&quot;ti ti-user-check&quot;&gt;\&lt;/i&gt;
+            \&lt;p&gt;No activities assigned to you\&lt;/p&gt;
+        \&lt;/div&gt;
 
-    </div>
+        \&lt;div th\:if=&quot;${!#lists.isEmpty(assignedToMe)}&quot;
+             class=&quot;page-table-wrapper&quot;&gt;
+            \&lt;table class=&quot;page-table&quot;&gt;
+                \&lt;thead&gt;
+                    \&lt;tr&gt;
+                        \&lt;th&gt;APP NAME\&lt;/th&gt;
+                        \&lt;th&gt;MY STAGE\&lt;/th&gt;
+                        \&lt;th&gt;STAGE DESC\&lt;/th&gt;
+                        \&lt;th&gt;STAGE STATUS\&lt;/th&gt;
+                        \&lt;th&gt;ASSIGNMENT\&lt;/th&gt;
+                        \&lt;th&gt;ETA\&lt;/th&gt;
+                        \&lt;th&gt;ACTIONS\&lt;/th&gt;
+                    \&lt;/tr&gt;
+                \&lt;/thead&gt;
+                \&lt;tbody&gt;
+                    \&lt;tr th\:each=&quot;m : ${assignedToMe}&quot;&gt;
+                        \&lt;td style=&quot;font-weight:500;&quot;
+                            th\:text=&quot;${m.groupActivity.appName}&quot;&gt;
+                        \&lt;/td&gt;
+                        \&lt;td th\:text=&quot;${m.stageName}&quot;&gt;
+                            Shell Script
+                        \&lt;/td&gt;
+                        \&lt;td style=&quot;font-size:11px;
+                                   color:#718096;
+                                   max-width:150px;&quot;
+                            th\:text=&quot;${m.stageDescription != null
+                                      ? m.stageDescription : &#x27;—&#x27;}&quot;&gt;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;!-- If accepted — show inline status dropdown --&gt;
+                            \&lt;div th\:if=&quot;${m.assignmentStatus.name()
+                                         \== &#x27;ACCEPTED&#x27;}&quot;&gt;
+                                \&lt;form th\:action=&quot;@{/activity/group/member/{id}/status(id=${m.id})}&quot;
+                                      method=&quot;post&quot;&gt;
+                                    \&lt;select name=&quot;stageStatus&quot;
+                                            class=&quot;form-select-field&quot;
+                                            style=&quot;font-size:11px;
+                                                   padding:4px 8px;&quot;
+                                            onchange=&quot;this.form.submit()&quot;&gt;
+                                        \&lt;option value=&quot;IN_PROGRESS&quot;
+                                                th\:selected=&quot;${m.stageStatus.name()==&#x27;IN_PROGRESS&#x27;}&quot;&gt;
+                                            In Progress
+                                        \&lt;/option&gt;
+                                        \&lt;option value=&quot;COMPLETED&quot;
+                                                th\:selected=&quot;${m.stageStatus.name()==&#x27;COMPLETED&#x27;}&quot;&gt;
+                                            Completed
+                                        \&lt;/option&gt;
+                                        \&lt;option value=&quot;BLOCKED&quot;
+                                                th\:selected=&quot;${m.stageStatus.name()==&#x27;BLOCKED&#x27;}&quot;&gt;
+                                            Blocked
+                                        \&lt;/option&gt;
+                                    \&lt;/select&gt;
+                                \&lt;/form&gt;
+                            \&lt;/div&gt;
+                            \&lt;!-- If not accepted — show status badge --&gt;
+                            \&lt;div th\:if=&quot;${m.assignmentStatus.name()
+                                         != &#x27;ACCEPTED&#x27;}&quot;&gt;
+                                \&lt;span class=&quot;badge-pending&quot;&gt;
+                                    Not Started
+                                \&lt;/span&gt;
+                            \&lt;/div&gt;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;span th\:if=&quot;${m.assignmentStatus.name()
+                                           \== &#x27;PENDING&#x27;}&quot;
+                                  class=&quot;badge-pending&quot;&gt;
+                                Pending
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${m.assignmentStatus.name()
+                                           \== &#x27;ACCEPTED&#x27;}&quot;
+                                  class=&quot;badge-approved&quot;&gt;
+                                Accepted
+                            \&lt;/span&gt;
+                            \&lt;span th\:if=&quot;${m.assignmentStatus.name()
+                                           \== &#x27;DECLINED&#x27;}&quot;
+                                  class=&quot;badge-rejected&quot;&gt;
+                                Declined
+                            \&lt;/span&gt;
+                        \&lt;/td&gt;
+                        \&lt;td th\:text=&quot;${m.groupActivity.eta != null
+                                      ? m.groupActivity.eta : &#x27;—&#x27;}&quot;&gt;
+                        \&lt;/td&gt;
+                        \&lt;td&gt;
+                            \&lt;div class=&quot;action-buttons&quot;&gt;
+                                \&lt;a th\:href=&quot;@{/activity/group/{id}(id=${m.groupActivity.id})}&quot;
+                                   class=&quot;edit-btn&quot;&gt;
+                                    \&lt;i class=&quot;ti ti-eye&quot;
+                                       style=&quot;font-size:12px;&quot;&gt;
+                                    \&lt;/i&gt; View
+                                \&lt;/a&gt;
+                                \&lt;!-- Accept --&gt;
+                                \&lt;form th\:if=&quot;${m.assignmentStatus.name()
+                                               \== &#x27;PENDING&#x27;}&quot;
+                                      th\:action=&quot;@{/activity/group/member/{id}/accept(id=${m.id})}&quot;
+                                      method=&quot;post&quot;
+                                      style=&quot;display\:inline;&quot;&gt;
+                                    \&lt;button type=&quot;submit&quot;
+                                            class=&quot;approve-btn&quot;&gt;
+                                        Accept
+                                    \&lt;/button&gt;
+                                \&lt;/form&gt;
+                                \&lt;!-- Decline --&gt;
+                                \&lt;form th\:if=&quot;${m.assignmentStatus.name()
+                                               \== &#x27;PENDING&#x27;}&quot;
+                                      th\:action=&quot;@{/activity/group/member/{id}/decline(id=${m.id})}&quot;
+                                      method=&quot;post&quot;
+                                      style=&quot;display\:inline;&quot;
+                                      onsubmit=&quot;return confirm(&#x27;Decline this assignment?&#x27;)&quot;&gt;
+                                    \&lt;button type=&quot;submit&quot;
+                                            class=&quot;danger-btn&quot;&gt;
+                                        Decline
+                                    \&lt;/button&gt;
+                                \&lt;/form&gt;
+                            \&lt;/div&gt;
+                        \&lt;/td&gt;
+                    \&lt;/tr&gt;
+                \&lt;/tbody&gt;
+            \&lt;/table&gt;
+        \&lt;/div&gt;
+    \&lt;/div&gt;
 
+\&lt;/main&gt;
+```
 
-    <div class="code-wrapper">
+\&lt;/div&gt;
 
-        <button class="copy-btn"
-                onclick="copyCode('code4', this)">
-            Copy
-        </button>
+\&lt;!-- Update Activity Modal --&gt;
+\&lt;div class=&quot;modal-overlay&quot; id=&quot;updateModal&quot;&gt;
+\&lt;div class=&quot;modal-card&quot; style=&quot;width:400px;&quot;&gt;
+\&lt;div class=&quot;modal-header&quot;&gt;
+\&lt;div&gt;
+\&lt;p class=&quot;modal-title&quot;&gt;Update Activity\&lt;/p&gt;
+\&lt;p class=&quot;modal-subtitle&quot;&gt;
+Update status and remarks
+\&lt;/p&gt;
+\&lt;/div&gt;
+\&lt;button class=&quot;modal-close&quot;
+onclick=&quot;closeUpdateModal()&quot;&gt;
+\&lt;i class=&quot;ti ti-x&quot;&gt;\&lt;/i&gt;
+\&lt;/button&gt;
+\&lt;/div&gt;
+\&lt;div class=&quot;modal-body&quot;&gt;
+\&lt;form id=&quot;updateForm&quot; method=&quot;post&quot;&gt;
+\&lt;div class=&quot;form-group&quot;&gt;
+\&lt;label class=&quot;form-label&quot;&gt;Status\&lt;/label&gt;
+\&lt;select name=&quot;status&quot;
+id=&quot;updateStatus&quot;
+class=&quot;form-select-field&quot;&gt;
+\&lt;option value=&quot;IN_PROGRESS&quot;&gt;
+In Progress
+\&lt;/option&gt;
+\&lt;option value=&quot;COMPLETED&quot;&gt;
+Completed
+\&lt;/option&gt;
+\&lt;option value=&quot;BLOCKED&quot;&gt;
+Blocked
+\&lt;/option&gt;
+\&lt;/select&gt;
+\&lt;/div&gt;
+\&lt;div class=&quot;form-group&quot;&gt;
+\&lt;label class=&quot;form-label&quot;&gt;
+Remarks / Update
+\&lt;/label&gt;
+\&lt;input type=&quot;text&quot;
+name=&quot;remarks&quot;
+id=&quot;updateRemarks&quot;
+class=&quot;form-input-field&quot;
+placeholder=&quot;Latest update...&quot;/&gt;
+\&lt;/div&gt;
+\&lt;div class=&quot;form-group&quot;&gt;
+\&lt;label class=&quot;form-label&quot;&gt;
+Actual Completion Date
+\&lt;span class=&quot;optional&quot;&gt;(optional)\&lt;/span&gt;
+\&lt;/label&gt;
+\&lt;input type=&quot;date&quot;
+name=&quot;actualDate&quot;
+class=&quot;form-input-field&quot;/&gt;
+\&lt;/div&gt;
+\&lt;div class=&quot;modal-actions&quot;&gt;
+\&lt;button type=&quot;button&quot;
+class=&quot;btn-secondary&quot;
+onclick=&quot;closeUpdateModal()&quot;&gt;
+Cancel
+\&lt;/button&gt;
+\&lt;button type=&quot;submit&quot;
+class=&quot;btn-primary&quot;&gt;
+Save Changes
+\&lt;/button&gt;
+\&lt;/div&gt;
+\&lt;/form&gt;
+\&lt;/div&gt;
+\&lt;/div&gt;
+\&lt;/div&gt;
 
+\&lt;script src=&quot;[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js)&quot;&gt;\&lt;/script&gt;
+\&lt;script&gt;
+function openUpdateModal(id, status, remarks) {
+document.getElementById(&#x27;updateForm&#x27;).action =
+&#x27;/activity/group/&#x27; + id + &#x27;/update&#x27;;
+document.getElementById(&#x27;updateStatus&#x27;).value = status;
+document.getElementById(&#x27;updateRemarks&#x27;).value = remarks;
+document.getElementById(&#x27;updateModal&#x27;)
+.style.display = &#x27;flex&#x27;;
+}
 
-        <textarea id="code4"
-                  class="code-box"
-                  readonly>
-/* ── Stage pipeline cards ───────────────────────────────── */
+function closeUpdateModal() {
+document.getElementById(&#x27;updateModal&#x27;)
+.style.display = &#x27;none&#x27;;
+}
+
+document.getElementById(&#x27;updateModal&#x27;)
+.addEventListener(&#x27;click&#x27;, function(e) {
+if (e.target === this) closeUpdateModal();
+});
+
+window\.onload = function() {
+const s = document.querySelector(&#x27;.alert-success-bar&#x27;);
+if (s) setTimeout(() =&gt; {
+s.style.transition = &#x27;opacity 0.5s&#x27;;
+s.style.opacity = &#x27;0&#x27;;
+setTimeout(() =&gt; s.remove(), 500);
+}, 4000);
+const e = document.querySelector(&#x27;.alert-error-bar&#x27;);
+if (e) setTimeout(() =&gt; {
+e.style.transition = &#x27;opacity 0.5s&#x27;;
+e.style.opacity = &#x27;0&#x27;;
+setTimeout(() =&gt; e.remove(), 500);
+}, 5000);
+};
+\&lt;/script&gt;
+\&lt;/body&gt;
+\&lt;/html&gt;
+
+/\* ── Stage pipeline cards ───────────────────────────────── \*/
 
 .stage-card-completed {
 
-    border: 1px solid #1F5C3A;
+border: 1px solid #1F5C3A;
 
-    background: #F0FFF4;
+background: #F0FFF4;
 
-    border-radius: 10px;
+border-radius: 10px;
 
-    padding: 16px;
+padding: 16px;
+
 }
-
 
 .stage-card-inprogress {
 
-    border: 1px solid #D69E2E;
+border: 1px solid #D69E2E;
 
-    background: #FFFBEB;
+background: #FFFBEB;
 
-    border-radius: 10px;
+border-radius: 10px;
 
-    padding: 16px;
+padding: 16px;
+
 }
-
 
 .stage-card-blocked {
 
-    border: 1px solid #A11D2E;
+border: 1px solid #A11D2E;
 
-    background: #FFF5F5;
+background: #FFF5F5;
 
-    border-radius: 10px;
+border-radius: 10px;
 
-    padding: 16px;
+padding: 16px;
+
 }
-
 
 .stage-card-pending {
 
-    border: 1px solid #DBDEE3;
+border: 1px solid #DBDEE3;
 
-    background: #F8FAFC;
+background: #F8FAFC;
 
-    border-radius: 10px;
+border-radius: 10px;
 
-    padding: 16px;
+padding: 16px;
+
 }
-
 
 .stage-number {
 
-    width: 24px;
+width: 24px;
 
-    height: 24px;
+height: 24px;
 
-    border-radius: 50%;
+border-radius: 50%;
 
-    background: #EEF0F3;
+background: #EEF0F3;
 
-    display: flex;
+display: flex;
 
-    align-items: center;
+align-items: center;
 
-    justify-content: center;
+justify-content: center;
 
-    font-size: 10px;
+font-size: 10px;
 
-    font-weight: 600;
+font-weight: 600;
 
-    color: #718096;
+color: #718096;
 
-    margin-bottom: 10px;
+margin-bottom: 10px;
+
 }
-
 
 .stage-card-completed .stage-number {
 
-    background: #1F5C3A;
+background: #1F5C3A;
 
-    color: white;
+color: white;
+
 }
-
 
 .stage-card-inprogress .stage-number {
 
-    background: #D69E2E;
+background: #D69E2E;
 
-    color: white;
+color: white;
+
 }
-
 
 .stage-card-blocked .stage-number {
 
-    background: #A11D2E;
+background: #A11D2E;
 
-    color: white;
+color: white;
+
 }
 
-
-/* ── Tabs bar ────────────────────────────────────────────── */
+/\* ── Tabs bar ────────────────────────────────────────────── \*/
 
 .tabs-bar {
 
-    display: flex;
+display: flex;
 
-    border-bottom: 1px solid #DBDEE3;
+border-bottom: 1px solid #DBDEE3;
 
-    margin-bottom: 20px;
+margin-bottom: 20px;
+
 }
-
 
 .tab-item {
 
-    padding: 10px 20px;
+padding: 10px 20px;
 
-    font-size: 13px;
+font-size: 13px;
 
-    font-weight: 500;
+font-weight: 500;
 
-    color: #718096;
+color: #718096;
 
-    cursor: pointer;
+cursor: pointer;
 
-    border-bottom: 2px solid transparent;
+border-bottom: 2px solid transparent;
 
-    margin-bottom: -1px;
+margin-bottom: -1px;
 
-    text-decoration: none;
+text-decoration: none;
+
 }
 
+.tab-item\:hover {
 
-.tab-item:hover {
+color: #1A202C;
 
-    color: #1A202C;
 }
-
 
 .tab-item.active {
 
-    color: #A11D2E;
+color: #A11D2E;
 
-    border-bottom-color: #A11D2E;
+border-bottom-color: #A11D2E;
+
 }
-            </textarea>
-
-    </div>
-
-</div>
-
-</div>
 
 
-<script>
 
-    function copyCode(id, button) {
+i want this to be displayed inside my html page, so basically html css inside html
 
-        const code =
-            document.getElementById(id).value;
-
-        navigator.clipboard.writeText(code)
-            .then(function () {
-
-                const original =
-                    button.innerText;
-
-                button.innerText =
-                    "Copied!";
-
-                setTimeout(function () {
-
-                    button.innerText =
-                        original;
-
-                }, 1500);
-
-            })
-            .catch(function () {
-
-                alert(
-                    "Could not copy the code."
-                );
-
-            });
-
-    }
-
-</script>
-
+Can u pls give me its code</pre>
 </body>
 </html>
